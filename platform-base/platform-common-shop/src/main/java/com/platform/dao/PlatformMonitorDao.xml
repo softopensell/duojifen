@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.PlatformMonitorDao">
+
+    <resultMap type="com.platform.entity.PlatformMonitorEntity" id="platformMonitorMap">
+        <result property="id" column="id"/>
+        <result property="monitorDateNumber" column="monitor_date_number"/>
+        <result property="monitorType" column="monitor_type"/>
+        <result property="monitorUserAbnormalSum" column="monitor_user_abnormal_sum"/>
+        <result property="monitorDate" column="monitor_date"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.PlatformMonitorEntity">
+		select
+			`id`,
+			`monitor_date_number`,
+			`monitor_type`,
+			`monitor_user_abnormal_sum`,
+			`monitor_date`,
+			`create_time`
+		from platform_monitor
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.PlatformMonitorEntity">
+		select
+    		`id`,
+    		`monitor_date_number`,
+    		`monitor_type`,
+    		`monitor_user_abnormal_sum`,
+    		`monitor_date`,
+    		`create_time`
+		from platform_monitor
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from platform_monitor
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.PlatformMonitorEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into platform_monitor(
+			`monitor_date_number`,
+			`monitor_type`,
+			`monitor_user_abnormal_sum`,
+			`monitor_date`,
+			`create_time`)
+		values(
+			#{monitorDateNumber},
+			#{monitorType},
+			#{monitorUserAbnormalSum},
+			#{monitorDate},
+			#{createTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.PlatformMonitorEntity">
+		update platform_monitor 
+		<set>
+			<if test="monitorDateNumber != null">`monitor_date_number` = #{monitorDateNumber}, </if>
+			<if test="monitorType != null">`monitor_type` = #{monitorType}, </if>
+			<if test="monitorUserAbnormalSum != null">`monitor_user_abnormal_sum` = #{monitorUserAbnormalSum}, </if>
+			<if test="monitorDate != null">`monitor_date` = #{monitorDate}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from platform_monitor where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from platform_monitor where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

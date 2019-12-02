@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiUserInvitedChgLogMapper">
+
+    <resultMap type="com.platform.entity.UserInvitedChgLogVo" id="userInvitedChgLogMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="oldInvitedUserId" column="old_invited_user_id"/>
+        <result property="newInvitedUserId" column="new_invited_user_id"/>
+        <result property="oldInvitedParentUserIds" column="old_invited_parent_user_ids"/>
+        <result property="newInvitedParentUserIds" column="new_invited_parent_user_ids"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.UserInvitedChgLogVo">
+		select
+			`id`,
+			`user_id`,
+			`old_invited_user_id`,
+			`new_invited_user_id`,
+			`old_invited_parent_user_ids`,
+			`new_invited_parent_user_ids`,
+			`create_time`
+		from t_user_invited_chg_log
+		where user_id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.UserInvitedChgLogVo">
+		select
+    		`id`,
+    		`user_id`,
+    		`old_invited_user_id`,
+    		`new_invited_user_id`,
+    		`old_invited_parent_user_ids`,
+    		`new_invited_parent_user_ids`,
+    		`create_time`
+		from t_user_invited_chg_log
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by user_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_user_invited_chg_log
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.UserInvitedChgLogVo">
+		insert into t_user_invited_chg_log(
+			`id`,
+			`user_id`,
+			`old_invited_user_id`,
+			`new_invited_user_id`,
+			`old_invited_parent_user_ids`,
+			`new_invited_parent_user_ids`,
+			`create_time`)
+		values(
+			#{id},
+			#{userId},
+			#{oldInvitedUserId},
+			#{newInvitedUserId},
+			#{oldInvitedParentUserIds},
+			#{newInvitedParentUserIds},
+			#{createTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.UserInvitedChgLogVo">
+		update t_user_invited_chg_log 
+		<set>
+			<if test="id != null">`id` = #{id}, </if>
+			<if test="oldInvitedUserId != null">`old_invited_user_id` = #{oldInvitedUserId}, </if>
+			<if test="newInvitedUserId != null">`new_invited_user_id` = #{newInvitedUserId}, </if>
+			<if test="oldInvitedParentUserIds != null">`old_invited_parent_user_ids` = #{oldInvitedParentUserIds}, </if>
+			<if test="newInvitedParentUserIds != null">`new_invited_parent_user_ids` = #{newInvitedParentUserIds}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+	<delete id="delete">
+		delete from t_user_invited_chg_log where user_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_user_invited_chg_log where user_id in 
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+</mapper>

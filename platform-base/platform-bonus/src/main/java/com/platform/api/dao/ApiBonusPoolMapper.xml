@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.api.dao.ApiBonusPoolMapper">
+
+    <resultMap type="com.platform.api.entity.BonusPoolVo" id="bonusPoolMap">
+        <result property="id" column="id"/>
+        <result property="poolNumber" column="pool_number"/>
+        <result property="poolMoney" column="pool_money"/>
+        <result property="poolType" column="pool_type"/>
+        <result property="poolRemark" column="pool_remark"/>
+        <result property="createtime" column="createtime"/>
+        <result property="updatetime" column="updatetime"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+	<select id="queryByPoolNumber" resultType="com.platform.api.entity.BonusPoolVo">
+		select
+			`id`,
+			`pool_number`,
+			`pool_money`,
+			`pool_type`,
+			`pool_remark`,
+			`createtime`,
+			`updatetime`,
+			`status`
+		from bonus_pool
+		where pool_number = #{poolNumber}
+	</select>
+	<select id="queryObject" resultType="com.platform.api.entity.BonusPoolVo">
+		select
+			`id`,
+			`pool_number`,
+			`pool_money`,
+			`pool_type`,
+			`pool_remark`,
+			`createtime`,
+			`updatetime`,
+			`status`
+		from bonus_pool
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.api.entity.BonusPoolVo">
+		select
+    		`id`,
+    		`pool_number`,
+    		`pool_money`,
+    		`pool_type`,
+    		`pool_remark`,
+    		`createtime`,
+    		`updatetime`,
+    		`status`
+		from bonus_pool
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from bonus_pool
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.api.entity.BonusPoolVo" useGeneratedKeys="true" keyProperty="id">
+		insert into bonus_pool(
+			`pool_number`,
+			`pool_money`,
+			`pool_type`,
+			`pool_remark`,
+			`createtime`,
+			`updatetime`,
+			`status`)
+		values(
+			#{poolNumber},
+			#{poolMoney},
+			#{poolType},
+			#{poolRemark},
+			#{createtime},
+			#{updatetime},
+			#{status})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.api.entity.BonusPoolVo">
+		update bonus_pool 
+		<set>
+			<if test="poolNumber != null">`pool_number` = #{poolNumber}, </if>
+			<if test="poolMoney != null">`pool_money` = #{poolMoney}, </if>
+			<if test="poolType != null">`pool_type` = #{poolType}, </if>
+			<if test="poolRemark != null">`pool_remark` = #{poolRemark}, </if>
+			<if test="createtime != null">`createtime` = #{createtime}, </if>
+			<if test="updatetime != null">`updatetime` = #{updatetime}, </if>
+			<if test="status != null">`status` = #{status}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from bonus_pool where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from bonus_pool where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<update id="incrBonusPoolMoney">
+		UPDATE   `bonus_pool` SET pool_number = pool_number +#{incrMoney}
+		 where pool_number =#{poolNumber} 
+	</update>
+
+</mapper>

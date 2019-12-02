@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiUserPayCardMapper">
+
+    <resultMap type="com.platform.entity.UserPayCardVo" id="userPayCardMap">
+        <result property="id" column="id"/>
+        <result property="cardType" column="card_type"/>
+        <result property="cardName" column="card_name"/>
+        <result property="cardNumber" column="card_number"/>
+        <result property="cardRealName" column="card_real_name"/>
+        <result property="cardStatu" column="card_statu"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="companySn" column="company_sn"/>
+        <result property="status" column="status"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.UserPayCardVo">
+		select
+			`id`,
+			`card_type`,
+			`card_name`,
+			`card_number`,
+			`card_real_name`,
+			`card_statu`,
+			`user_id`,
+			`user_name`,
+			`company_sn`,
+			`status`,
+			`create_date`,
+			`update_date`
+		from t_user_pay_card
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.UserPayCardVo">
+		select
+    		`id`,
+    		`card_type`,
+    		`card_name`,
+    		`card_number`,
+    		`card_real_name`,
+    		`card_statu`,
+    		`user_id`,
+    		`user_name`,
+    		`company_sn`,
+    		`status`,
+    		`create_date`,
+    		`update_date`
+		from t_user_pay_card
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_user_pay_card
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.UserPayCardVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_user_pay_card(
+			`card_type`,
+			`card_name`,
+			`card_number`,
+			`card_real_name`,
+			`card_statu`,
+			`user_id`,
+			`user_name`,
+			`company_sn`,
+			`status`,
+			`create_date`,
+			`update_date`)
+		values(
+			#{cardType},
+			#{cardName},
+			#{cardNumber},
+			#{cardRealName},
+			#{cardStatu},
+			#{userId},
+			#{userName},
+			#{companySn},
+			#{status},
+			#{createDate},
+			#{updateDate})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.UserPayCardVo">
+		update t_user_pay_card 
+		<set>
+			<if test="cardType != null">`card_type` = #{cardType}, </if>
+			<if test="cardName != null">`card_name` = #{cardName}, </if>
+			<if test="cardNumber != null">`card_number` = #{cardNumber}, </if>
+			<if test="cardRealName != null">`card_real_name` = #{cardRealName}, </if>
+			<if test="cardStatu != null">`card_statu` = #{cardStatu}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="companySn != null">`company_sn` = #{companySn}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createDate != null">`create_date` = #{createDate}, </if>
+			<if test="updateDate != null">`update_date` = #{updateDate}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_user_pay_card where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_user_pay_card where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

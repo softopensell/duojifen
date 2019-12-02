@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.platform.dao.ApiUserMapper">
+
+    <resultMap type="com.platform.entity.UserVo" id="userMap">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="realName" column="real_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="roleId" column="role_id"/>
+        <result property="state" column="state"/>
+        <result property="photo" column="photo"/>
+        <result property="fromNo" column="from_no"/>
+        <result property="fromType" column="from_type"/>
+        <result property="sex" column="sex"/>
+        <result property="birthday" column="birthday"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="weixinOpenid" column="weixin_openid"/>
+        <result property="nickname" column="nickname"/>
+        <result property="registerIp" column="register_ip"/>
+        <result property="avatar" column="avatar"/>
+        <result property="registerTime" column="register_time"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="lastLoginIp" column="last_login_ip"/>
+        <result property="lastPosition" column="last_position"/>
+        <result property="webApp" column="web_app"/>
+        <result property="authTypeStatu" column="auth_type_statu"/>
+        <result property="balance" column="balance"/>
+        <result property="amount" column="amount"/>
+        <result property="totalPoint" column="total_point"/>
+        <result property="point" column="point"/>
+        <result property="totalIncome" column="total_income"/>
+        <result property="waitingIncome" column="waiting_income"/>
+        <result property="invitationCode" column="invitation_code"/>
+        <result property="integralScore" column="integral_score"/>
+        <result property="freezeBalance" column="freeze_balance"/>
+        <result property="createtime" column="createtime"/>
+        <result property="updatetime" column="updatetime"/>
+    </resultMap>
+
+	<!-- <select id="queryObject" resultType="com.platform.entity.UserVo">
+		select
+			`user_id`,
+			`user_name`,
+			`real_name`,
+			`mobile`,
+			`email`,
+			`password`,
+			`role_id`,
+			`state`,
+			`photo`,
+			`from_no`,
+			`from_type`,
+			`sex`,
+			`birthday`,
+			`country`,
+			`province`,
+			`city`,
+			`address`,
+			`weixin_openid`,
+			`nickname`,
+			`register_ip`,
+			`avatar`,
+			`register_time`,
+			`last_login_time`,
+			`last_login_ip`,
+			`last_position`,
+			`web_app`,
+			`auth_type_statu`,
+			`balance`,
+			`amount`,
+			`total_point`,
+			`point`,
+			`total_income`,
+			`waiting_income`,
+			`invitation_code`,
+			`integral_score`,
+			`freeze_balance`,
+			`createtime`,
+			`updatetime`
+		from t_user
+		where user_id = #{id}
+	</select> -->
+
+	<select id="queryList" resultType="com.platform.entity.UserVo">
+		select
+    		`user_id`,
+    		`user_name`,
+    		`real_name`,
+    		`mobile`,
+    		`email`,
+    		`password`,
+    		`role_id`,
+    		`state`,
+    		`photo`,
+    		`from_no`,
+    		`from_type`,
+    		`sex`,
+    		`birthday`,
+    		`country`,
+    		`province`,
+    		`city`,
+    		`address`,
+    		`weixin_openid`,
+    		`nickname`,
+    		`register_ip`,
+    		`avatar`,
+    		`register_time`,
+    		`last_login_time`,
+    		`last_login_ip`,
+    		`last_position`,
+    		`web_app`,
+    		`auth_type_statu`,
+    		`balance`,
+    		`amount`,
+    		`total_point`,
+    		`point`,
+    		`total_income`,
+    		`waiting_income`,
+    		`invitation_code`,
+    		`integral_score`,
+    		`freeze_balance`,
+    		`createtime`,
+    		`updatetime`
+		from t_user
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by user_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_user
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.UserVo" useGeneratedKeys="true" keyProperty="userId">
+		insert into t_user(
+			`user_name`,
+			`real_name`,
+			`mobile`,
+			`email`,
+			`password`,
+			`role_id`,
+			`state`,
+			`photo`,
+			`from_no`,
+			`from_type`,
+			`sex`,
+			`birthday`,
+			`country`,
+			`province`,
+			`city`,
+			`address`,
+			`weixin_openid`,
+			`nickname`,
+			`register_ip`,
+			`avatar`,
+			`register_time`,
+			`last_login_time`,
+			`last_login_ip`,
+			`last_position`,
+			`web_app`,
+			`auth_type_statu`,
+			`balance`,
+			`amount`,
+			`total_point`,
+			`point`,
+			`total_income`,
+			`waiting_income`,
+			`invitation_code`,
+			`integral_score`,
+			`freeze_balance`,
+			`createtime`,
+			`updatetime`)
+		values(
+			#{userName},
+			#{realName},
+			#{mobile},
+			#{email},
+			#{password},
+			#{roleId},
+			#{state},
+			#{photo},
+			#{fromNo},
+			#{fromType},
+			#{sex},
+			#{birthday},
+			#{country},
+			#{province},
+			#{city},
+			#{address},
+			#{weixinOpenid},
+			#{nickname},
+			#{registerIp},
+			#{avatar},
+			#{registerTime},
+			#{lastLoginTime},
+			#{lastLoginIp},
+			#{lastPosition},
+			#{webApp},
+			#{authTypeStatu},
+			#{balance},
+			#{amount},
+			#{totalPoint},
+			#{point},
+			#{totalIncome},
+			#{waitingIncome},
+			#{invitationCode},
+			#{integralScore},
+			#{freezeBalance},
+			#{createtime},
+			#{updatetime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.UserVo">
+		update t_user 
+		<set>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="realName != null">`real_name` = #{realName}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="roleId != null">`role_id` = #{roleId}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="photo != null">`photo` = #{photo}, </if>
+			<if test="fromNo != null">`from_no` = #{fromNo}, </if>
+			<if test="fromType != null">`from_type` = #{fromType}, </if>
+			<if test="sex != null">`sex` = #{sex}, </if>
+			<if test="birthday != null">`birthday` = #{birthday}, </if>
+			<if test="country != null">`country` = #{country}, </if>
+			<if test="province != null">`province` = #{province}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="weixinOpenid != null">`weixin_openid` = #{weixinOpenid}, </if>
+			<if test="nickname != null">`nickname` = #{nickname}, </if>
+			<if test="registerIp != null">`register_ip` = #{registerIp}, </if>
+			<if test="avatar != null">`avatar` = #{avatar}, </if>
+			<if test="registerTime != null">`register_time` = #{registerTime}, </if>
+			<if test="lastLoginTime != null">`last_login_time` = #{lastLoginTime}, </if>
+			<if test="lastLoginIp != null">`last_login_ip` = #{lastLoginIp}, </if>
+			<if test="lastPosition != null">`last_position` = #{lastPosition}, </if>
+			<if test="webApp != null">`web_app` = #{webApp}, </if>
+			<if test="authTypeStatu != null">`auth_type_statu` = #{authTypeStatu}, </if>
+			<if test="balance != null">`balance` = #{balance}, </if>
+			<if test="amount != null">`amount` = #{amount}, </if>
+			<if test="totalPoint != null">`total_point` = #{totalPoint}, </if>
+			<if test="point != null">`point` = #{point}, </if>
+			<if test="totalIncome != null">`total_income` = #{totalIncome}, </if>
+			<if test="waitingIncome != null">`waiting_income` = #{waitingIncome}, </if>
+			<if test="invitationCode != null">`invitation_code` = #{invitationCode}, </if>
+			<if test="integralScore != null">`integral_score` = #{integralScore}, </if>
+			<if test="freezeBalance != null">`freeze_balance` = #{freezeBalance}, </if>
+			<if test="createtime != null">`createtime` = #{createtime}, </if>
+			<if test="updatetime != null">`updatetime` = #{updatetime}</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+	<delete id="delete">
+		delete from t_user where user_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_user where user_id in 
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+
+<select id="queryObject" resultType="com.platform.entity.UserVo">
+		select * from t_user where user_id = #{userId}
+	</select>
+
+	<select id="queryByMobile" resultType="com.platform.entity.UserVo">
+		select * from t_user where mobile = #{mobile}
+	</select>
+	
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.SmsLogVo" id="smslogMap">
+        <result property="id" column="id"/>
+        <result property="user_id" column="userId"/>
+        <result property="phone" column="phone"/>
+        <result property="log_date" column="logDate"/>
+        <result property="sms_code" column="smsCode"/>
+        <result property="send_status" column="sendStatus"/>
+        <result property="sms_text" column="smsText"/>
+    </resultMap>
+
+    <select id="querySmsCodeByUserId" resultMap="smslogMap">
+        select
+        a.id,
+        a.user_id,
+        a.phone,
+        a.log_date,
+        a.sms_code,
+        a.send_status,
+        a.sms_text
+        from t_sms_log a
+        left join t_sms_log b on a.user_id = b.user_id and b.log_date > a.log_date
+        where a.user_id = #{user_id} and b.id is null
+    </select>
+    
+    
+      <select id="querySmsCodeByPhone" resultMap="smslogMap">
+        select
+        a.id,
+        a.user_id,
+        a.phone,
+        a.log_date,
+        a.sms_code,
+        a.send_status,
+        a.sms_text
+        from t_sms_log a
+        left join t_sms_log b on a.phone = b.phone and b.log_date > a.log_date
+        where a.phone = #{phone} and b.id is null
+    </select>
+
+    <insert id="saveSmsCodeLog" parameterType="com.platform.entity.SmsLogVo">
+        insert into t_sms_log(
+        `id`,
+        `user_id`,
+        `phone`,
+        `log_date`,
+        `sms_code`,
+        `send_status`,
+        `sms_text`)
+        values(
+        #{id},
+        #{userId},
+        #{phone},
+        #{logDate},
+        #{smsCode},
+        #{sendStatus},
+        #{smsText}
+        )
+    </insert>
+</mapper>

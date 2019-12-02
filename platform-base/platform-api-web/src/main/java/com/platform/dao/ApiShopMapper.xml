@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiShopMapper">
+
+    <resultMap type="com.platform.entity.ShopVo" id="shopMap">
+        <result property="id" column="id"/>
+        <result property="shopType" column="shop_type"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="shopLogo" column="shop_logo"/>
+        <result property="shopDesc" column="shop_desc"/>
+        <result property="shopContactName" column="shop_contact_name"/>
+        <result property="shopContactPhone" column="shop_contact_phone"/>
+        <result property="provinceId" column="province_id"/>
+        <result property="cityId" column="city_id"/>
+        <result property="regionId" column="region_id"/>
+        <result property="address" column="address"/>
+        <result property="remark" column="remark"/>
+        <result property="statu" column="statu"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="auditStatu" column="audit_statu"/>
+        <result property="goodsSum" column="goods_sum"/>
+        <result property="orderSum" column="order_sum"/>
+        <result property="companySn" column="company_sn"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.ShopVo">
+		select
+			`id`,
+			`shop_type`,
+			`shop_name`,
+			`shop_logo`,
+			`shop_desc`,
+			`shop_contact_name`,
+			`shop_contact_phone`,
+			`province_id`,
+			`city_id`,
+			`region_id`,
+			`address`,
+			`remark`,
+			`statu`,
+			`create_user_id`,
+			`audit_statu`,
+			`goods_sum`,
+			`order_sum`,
+			`company_sn`,
+			`create_time`,
+			`update_time`
+		from t_shop
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.ShopVo">
+		select
+    		`id`,
+    		`shop_type`,
+    		`shop_name`,
+    		`shop_logo`,
+    		`shop_desc`,
+    		`shop_contact_name`,
+    		`shop_contact_phone`,
+    		`province_id`,
+    		`city_id`,
+    		`region_id`,
+    		`address`,
+    		`remark`,
+    		`statu`,
+    		`create_user_id`,
+    		`audit_statu`,
+    		`goods_sum`,
+    		`order_sum`,
+    		`company_sn`,
+    		`create_time`,
+    		`update_time`
+		from t_shop
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_shop
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.ShopVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_shop(
+			`shop_type`,
+			`shop_name`,
+			`shop_logo`,
+			`shop_desc`,
+			`shop_contact_name`,
+			`shop_contact_phone`,
+			`province_id`,
+			`city_id`,
+			`region_id`,
+			`address`,
+			`remark`,
+			`statu`,
+			`create_user_id`,
+			`audit_statu`,
+			`goods_sum`,
+			`order_sum`,
+			`company_sn`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{shopType},
+			#{shopName},
+			#{shopLogo},
+			#{shopDesc},
+			#{shopContactName},
+			#{shopContactPhone},
+			#{provinceId},
+			#{cityId},
+			#{regionId},
+			#{address},
+			#{remark},
+			#{statu},
+			#{createUserId},
+			#{auditStatu},
+			#{goodsSum},
+			#{orderSum},
+			#{companySn},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.ShopVo">
+		update t_shop 
+		<set>
+			<if test="shopType != null">`shop_type` = #{shopType}, </if>
+			<if test="shopName != null">`shop_name` = #{shopName}, </if>
+			<if test="shopLogo != null">`shop_logo` = #{shopLogo}, </if>
+			<if test="shopDesc != null">`shop_desc` = #{shopDesc}, </if>
+			<if test="shopContactName != null">`shop_contact_name` = #{shopContactName}, </if>
+			<if test="shopContactPhone != null">`shop_contact_phone` = #{shopContactPhone}, </if>
+			<if test="provinceId != null">`province_id` = #{provinceId}, </if>
+			<if test="cityId != null">`city_id` = #{cityId}, </if>
+			<if test="regionId != null">`region_id` = #{regionId}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="statu != null">`statu` = #{statu}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="auditStatu != null">`audit_statu` = #{auditStatu}, </if>
+			<if test="goodsSum != null">`goods_sum` = #{goodsSum}, </if>
+			<if test="orderSum != null">`order_sum` = #{orderSum}, </if>
+			<if test="companySn != null">`company_sn` = #{companySn}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_shop where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_shop where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

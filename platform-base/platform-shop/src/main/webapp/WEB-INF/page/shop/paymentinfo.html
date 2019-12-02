@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-select v-model="q.moneyTypeWallet" @on-change="query" filterable  placeholder="分类">
+	                  <i-option :value="2">余额转出记录</i-option> 
+	                  <i-option :value="0">余额支付</i-option> 
+	                  <i-option :value="1">余额支付数量</i-option> 
+	                  <i-option :value="3">余额转入记录</i-option> 
+	                  <i-option :value="62">积分兑换记录</i-option> 
+	                  <i-option :value="92">积分支付记录</i-option> 
+	                  <i-option :value="43">资产权益收益</i-option> 
+	                  <i-option :value="411">服务分享收益</i-option> 
+	                  <i-option :value="421">幸运星星收益</i-option> 
+	                  <i-option :value="431">分享社区收益</i-option> 
+	                  <i-option :value="4000">社区活动基金</i-option> 
+	                  <i-option :value="5">提现记录</i-option> 
+	                  <i-option :value="6">充值记录</i-option> 
+	                  <i-option :value="1010">服务中心分红</i-option> 
+	                  <i-option :value="1011">服务中心充值</i-option> 
+	                  <i-option :value="1020">提现分红</i-option> 
+	                  
+	                  <i-option :value="10000">平台增加余额</i-option> 
+	                  <i-option :value="10010">平台增加资产</i-option> 
+	                  <i-option :value="10020">平台增加积分</i-option> 
+	                  <i-option :value="10001">平台扣除余额</i-option> 
+	                  <i-option :value="10011">平台扣除资产</i-option> 
+	                  <i-option :value="10021">平台扣除积分</i-option> 
+	                  
+	                  
+	                </i-select>
+                </i-col>
+                
+                <i-col span="4">
+                    <i-input v-model="q.sn" @on-enter="query" placeholder="流水号"/>
+                </i-col>
+                <i-col span="4">
+                    <i-input v-model="q.userName" @on-enter="query" placeholder="账号"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+                
+                
+                <div class="buttons-group">
+                #if($shiro.hasPermission("user:takeoffMoney"))
+                  <i-button type="info" @click="addTakeOffMoneyTap"><i class="fa fa-plus"></i>&nbsp;平台扣费</i-button>
+                #end
+                #if($shiro.hasPermission("user:addMoney"))
+                 <i-button type="warning" @click="toAddMoneyTap"><i class="fa fa-eur"></i>&nbsp;平台充值</i-button>
+                #end 
+            </div>
+                
+            </div>
+            
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="!showList">
+        <p slot="title">{{title}}</p>
+        <i-form ref="formValidate" :label-width="180">
+            <Form-item label="会员" prop="userName">
+                 <i-col span="6">
+                  <i-input type="text" v-model="curUser.userName" icon="eye" readonly="readonly"
+                         @on-click="selectUser" readonly="readonly" placeholder="选择会员账号" :value="curUser.userName"/>
+                </i-col>
+            </Form-item>
+            <Form-item label="扣除类型" prop="userName">
+                 <i-col span="6">
+                  <i-select v-model="payType" placeholder="分类">
+	                  <i-option :value="0">余额</i-option> 
+	                  <i-option :value="1">积分</i-option> 
+	                  <i-option :value="2">资产</i-option> 
+	                </i-select>
+                </i-col>
+            </Form-item>
+            <Form-item label="金额" prop="money">
+                 <i-col span="6">
+                  <Input-number :min="0"  v-model="money" placeholder="输入金额"/>
+                </i-col>
+            </Form-item>
+            <Form-item label="备注" prop="remark">
+                 <i-col span="6">
+                  <i-input v-model="remark" type="textarea" :autosize="{minRows: 5,maxRows: 10}"
+                                 placeholder="备注..."/>
+                </i-col>
+            </Form-item>
+            <Form-item label="财务密码" prop="payPassword" v-show="tapAction==2">
+                 <i-col span="6">
+                 <i-input v-model="payPassword" placeholder="输入财务支付密码"  type="password"/>
+                </i-col>
+            </Form-item>
+            
+            <Form-item>
+                <i-button type="primary" @click="toTakeOffMoney">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+</div>
+
+<script src="${rc.contextPath}/js/shop/paymentinfo.js?_${date.systemTime}"></script>
+
+</body>
+</html>

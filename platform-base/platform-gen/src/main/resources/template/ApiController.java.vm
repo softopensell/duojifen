@@ -1,0 +1,161 @@
+package ${package}.api;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+
+import ${package}.api.entity.*;
+import ${package}.api.service.*;
+import ${package}.api.entity.${className}Vo;
+import ${package}.api.service.Api${className}Service;
+import ${package}.util.ApiBaseAction;
+import ${package}.annotation.IgnoreAuth;
+import ${package}.annotation.LoginUser;
+import ${package}.utils.PageUtils;
+import ${package}.utils.Query;
+import ${package}.utils.R;
+
+/**
+ * ${comments}ApiController
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Api(tags = "${className}") 
+@RestController
+@RequestMapping("/api/${pathName}")
+public class Api${className}Controller extends ApiBaseAction {
+    @Autowired
+    private Api${className}Service api${className}Service;
+
+    /**
+     * 查看列表
+     */
+    @ApiOperation(value = "${className}_查看列表")
+    @PostMapping("/list")
+    public Object list(@LoginUser UserVo loginUser) {
+                  
+         JSONObject jsonParam = getJsonRequest();
+        Integer page = 1;
+        Integer size = 10;
+         page = jsonParam.getInteger("page");
+         size = jsonParam.getInteger("size");         
+                  
+    	 Map params = new HashMap();
+        params.put("user_id", loginUser.getUserId());
+        params.put("page", page);
+        params.put("limit", size);
+        params.put("sidx", "id");
+        params.put("order", "asc");
+        //查询列表数据
+        Query query = new Query(params);
+
+        List<${className}Vo> ${classname}List = api${className}Service.queryList(query);
+        int total = api${className}Service.queryTotal(query);
+
+        PageUtils pageUtil = new PageUtils(${classname}List, total, query.getLimit(), query.getPage());
+
+        return toResponsSuccess(pageUtil);
+    }
+
+    /**
+     * 查看信息
+     */
+    @ApiOperation(value = "${className}_查看信息")
+    @RequestMapping("/info")
+    public Object info(@LoginUser UserVo loginUser) {
+    	JSONObject jsonParam = getJsonRequest();
+        ${pk.attrType} id = jsonParam.get${pk.attrType}("id");
+     	Map resultObj = new HashMap();
+        
+        ${className}Vo ${classname} = api${className}Service.queryObject(id);
+		if (null == ${classname}) {
+            return toResponsObject(400, "数据不存在", "");
+        }
+        
+		resultObj.put("${classname}", ${classname});
+		
+		return toResponsSuccess(resultObj);
+    }
+
+    /**
+     * 保存
+     */
+    @ApiOperation(value = "保存_${className}")
+    @RequestMapping("/save")
+    public Object save(@LoginUser UserVo loginUser) {
+
+		 JSONObject jsonParam = getJsonRequest();
+    	 ${pk.attrType} id = jsonParam.get${pk.attrType}("id");
+    	 ${className}Vo ${classname}= new ${className}Vo();
+    	 ${classname}.setId(id);
+        int num = api${className}Service.save(${classname});
+    	 if (num > 0) {
+             return toResponsMsgSuccess("保存成功");
+         } else {
+             return toResponsFail("保存失败");
+         }
+
+    }
+
+    /**
+     * 修改
+     */
+    @ApiOperation(value = "修改_${className}")
+    @RequestMapping("/update")
+    public Object update(@LoginUser UserVo loginUser) {
+    	JSONObject jsonParam = getJsonRequest();
+    	${pk.attrType} id = jsonParam.get${pk.attrType}("id");
+    	${className}Vo ${classname}  = api${className}Service.queryObject(id);
+        int num = api${className}Service.update(${classname});
+
+        if (num > 0) {
+            return toResponsMsgSuccess("修改成功");
+        } else {
+            return toResponsFail("修改失败");
+        }
+         
+    }
+
+    /**
+     * 删除
+     */
+    @ApiOperation(value = "删除_${className}") 
+    @RequestMapping("/delete")
+    public Object delete(@RequestBody ${pk.attrType}[] ${pk.attrname}s) {
+       int num =  api${className}Service.deleteBatch(${pk.attrname}s);
+
+        if (num > 0) {
+            return toResponsMsgSuccess("删除成功");
+        } else {
+            return toResponsFail("删除失败");
+        }
+    }
+
+    /**
+     * 查看所有列表
+     */
+     @ApiOperation(value = "查看所有列表_${className}")
+    @RequestMapping("/queryAll")
+    public Object queryAll(@RequestParam Map<String, Object> params) {
+		Map resultObj = new HashMap();
+        List<${className}Vo> list = api${className}Service.queryList(params);
+		resultObj.put("list", list);
+        return toResponsSuccess(resultObj);
+    }
+}

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ActivityItemDao">
+
+    <resultMap type="com.platform.entity.ActivityItemEntity" id="activityItemMap">
+        <result property="id" column="id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="memberId" column="member_id"/>
+        <result property="title" column="title"/>
+        <result property="itemList" column="item_list"/>
+        <result property="description" column="description"/>
+        <result property="statu" column="statu"/>
+        <result property="provinceId" column="province_id"/>
+        <result property="cityId" column="city_id"/>
+        <result property="regionId" column="region_id"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="organizerName" column="organizer_name"/>
+        <result property="organizerLinkName" column="organizer_link_name"/>
+        <result property="organizerLinkPhone" column="organizer_link_phone"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="clickSum" column="click_sum"/>
+        <result property="itemKind" column="item_kind"/>
+        <result property="itemLogo" column="item_logo"/>
+        <result property="jobsSum" column="jobs_sum"/>
+        <result property="ticketSum" column="ticket_sum"/>
+        <result property="itemType" column="item_type"/>
+        <result property="applyPeopleSum" column="apply_people_sum"/>
+        <result property="productSum" column="product_sum"/>
+        <result property="virtualProductSum" column="virtual_product_sum"/>
+        <result property="virtualApplyPeopleSum" column="virtual_apply_people_sum"/>
+        <result property="applyEndTime" column="apply_end_time"/>
+        <result property="applyStatu" column="apply_statu"/>
+        <result property="applyIntro" column="apply_intro"/>
+        <result property="productPrice" column="product_price"/>
+        <result property="itemSequence" column="item_sequence"/>
+        <result property="itemAuditStatu" column="item_audit_statu"/>
+        <result property="itemAuditRefuse" column="item_audit_refuse"/>
+        <result property="praiseSum" column="praise_sum"/>
+        <result property="itemMaxSum" column="item_max_sum"/>
+        <result property="companySn" column="company_sn"/>
+        <result property="itemPayType" column="item_pay_type"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.ActivityItemEntity">
+		select
+			`id`,
+			`item_no`,
+			`member_id`,
+			`title`,
+			`item_list`,
+			`description`,
+			`statu`,
+			`province_id`,
+			`city_id`,
+			`region_id`,
+			`address`,
+			`create_time`,
+			`update_time`,
+			`organizer_name`,
+			`organizer_link_name`,
+			`organizer_link_phone`,
+			`start_time`,
+			`end_time`,
+			`click_sum`,
+			`item_kind`,
+			`item_logo`,
+			`jobs_sum`,
+			`ticket_sum`,
+			`item_type`,
+			`apply_people_sum`,
+			`product_sum`,
+			`virtual_product_sum`,
+			`virtual_apply_people_sum`,
+			`apply_end_time`,
+			`apply_statu`,
+			`apply_intro`,
+			`product_price`,
+			`item_sequence`,
+			`item_audit_statu`,
+			`item_audit_refuse`,
+			`praise_sum`,
+			`item_max_sum`,
+			`item_pay_type`,
+			`company_sn`
+		from activity_item
+		where id = #{id}
+	</select>
+	
+	<select id="queryObjectByItemNo" resultType="com.platform.entity.ActivityItemEntity">
+		select
+			`id`,
+			`item_no`,
+			`member_id`,
+			`title`,
+			`item_list`,
+			`description`,
+			`statu`,
+			`province_id`,
+			`city_id`,
+			`region_id`,
+			`address`,
+			`create_time`,
+			`update_time`,
+			`organizer_name`,
+			`organizer_link_name`,
+			`organizer_link_phone`,
+			`start_time`,
+			`end_time`,
+			`click_sum`,
+			`item_kind`,
+			`item_logo`,
+			`jobs_sum`,
+			`ticket_sum`,
+			`item_type`,
+			`apply_people_sum`,
+			`product_sum`,
+			`virtual_product_sum`,
+			`virtual_apply_people_sum`,
+			`apply_end_time`,
+			`apply_statu`,
+			`apply_intro`,
+			`product_price`,
+			`item_sequence`,
+			`item_audit_statu`,
+			`item_audit_refuse`,
+			`praise_sum`,
+			`item_max_sum`,
+			`item_pay_type`,
+			`company_sn`
+		from activity_item
+		where item_no = #{itemNo}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.ActivityItemEntity">
+		select
+    		`id`,
+    		`item_no`,
+    		`member_id`,
+    		`title`,
+    		`item_list`,
+    		`description`,
+    		`statu`,
+    		`province_id`,
+    		`city_id`,
+    		`region_id`,
+    		`address`,
+    		`create_time`,
+    		`update_time`,
+    		`organizer_name`,
+    		`organizer_link_name`,
+    		`organizer_link_phone`,
+    		`start_time`,
+    		`end_time`,
+    		`click_sum`,
+    		`item_kind`,
+    		`item_logo`,
+    		`jobs_sum`,
+    		`ticket_sum`,
+    		`item_type`,
+    		`apply_people_sum`,
+    		`product_sum`,
+    		`virtual_product_sum`,
+    		`virtual_apply_people_sum`,
+    		`apply_end_time`,
+    		`apply_statu`,
+    		`apply_intro`,
+    		`product_price`,
+    		`item_sequence`,
+    		`item_audit_statu`,
+    		`item_audit_refuse`,
+    		`praise_sum`,
+    		`item_max_sum`,
+    		`item_pay_type`,
+    		`company_sn`
+		from activity_item
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from activity_item
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.ActivityItemEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into activity_item(
+			`item_no`,
+			`member_id`,
+			`title`,
+			`item_list`,
+			`description`,
+			`statu`,
+			`province_id`,
+			`city_id`,
+			`region_id`,
+			`address`,
+			`create_time`,
+			`update_time`,
+			`organizer_name`,
+			`organizer_link_name`,
+			`organizer_link_phone`,
+			`start_time`,
+			`end_time`,
+			`click_sum`,
+			`item_kind`,
+			`item_logo`,
+			`jobs_sum`,
+			`ticket_sum`,
+			`item_type`,
+			`apply_people_sum`,
+			`product_sum`,
+			`virtual_product_sum`,
+			`virtual_apply_people_sum`,
+			`apply_end_time`,
+			`apply_statu`,
+			`apply_intro`,
+			`product_price`,
+			`item_sequence`,
+			`item_audit_statu`,
+			`item_audit_refuse`,
+			`praise_sum`,
+			`item_max_sum`,
+			`item_pay_type`,
+			`company_sn`)
+		values(
+			#{itemNo},
+			#{memberId},
+			#{title},
+			#{itemList},
+			#{description},
+			#{statu},
+			#{provinceId},
+			#{cityId},
+			#{regionId},
+			#{address},
+			#{createTime},
+			#{updateTime},
+			#{organizerName},
+			#{organizerLinkName},
+			#{organizerLinkPhone},
+			#{startTime},
+			#{endTime},
+			#{clickSum},
+			#{itemKind},
+			#{itemLogo},
+			#{jobsSum},
+			#{ticketSum},
+			#{itemType},
+			#{applyPeopleSum},
+			#{productSum},
+			#{virtualProductSum},
+			#{virtualApplyPeopleSum},
+			#{applyEndTime},
+			#{applyStatu},
+			#{applyIntro},
+			#{productPrice},
+			#{itemSequence},
+			#{itemAuditStatu},
+			#{itemAuditRefuse},
+			#{praiseSum},
+			#{itemMaxSum},
+			#{itemPayType},
+			#{companySn})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.ActivityItemEntity">
+		update activity_item 
+		<set>
+			<if test="itemNo != null">`item_no` = #{itemNo}, </if>
+			<if test="memberId != null">`member_id` = #{memberId}, </if>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="itemList != null">`item_list` = #{itemList}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="statu != null">`statu` = #{statu}, </if>
+			<if test="provinceId != null">`province_id` = #{provinceId}, </if>
+			<if test="cityId != null">`city_id` = #{cityId}, </if>
+			<if test="regionId != null">`region_id` = #{regionId}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="organizerName != null">`organizer_name` = #{organizerName}, </if>
+			<if test="organizerLinkName != null">`organizer_link_name` = #{organizerLinkName}, </if>
+			<if test="organizerLinkPhone != null">`organizer_link_phone` = #{organizerLinkPhone}, </if>
+			<if test="startTime != null">`start_time` = #{startTime}, </if>
+			<if test="endTime != null">`end_time` = #{endTime}, </if>
+			<if test="clickSum != null">`click_sum` = #{clickSum}, </if>
+			<if test="itemKind != null">`item_kind` = #{itemKind}, </if>
+			<if test="itemLogo != null">`item_logo` = #{itemLogo}, </if>
+			<if test="jobsSum != null">`jobs_sum` = #{jobsSum}, </if>
+			<if test="ticketSum != null">`ticket_sum` = #{ticketSum}, </if>
+			<if test="itemType != null">`item_type` = #{itemType}, </if>
+			<if test="applyPeopleSum != null">`apply_people_sum` = #{applyPeopleSum}, </if>
+			<if test="productSum != null">`product_sum` = #{productSum}, </if>
+			<if test="virtualProductSum != null">`virtual_product_sum` = #{virtualProductSum}, </if>
+			<if test="virtualApplyPeopleSum != null">`virtual_apply_people_sum` = #{virtualApplyPeopleSum}, </if>
+			<if test="applyEndTime != null">`apply_end_time` = #{applyEndTime}, </if>
+			<if test="applyStatu != null">`apply_statu` = #{applyStatu}, </if>
+			<if test="applyIntro != null">`apply_intro` = #{applyIntro}, </if>
+			<if test="productPrice != null">`product_price` = #{productPrice}, </if>
+			<if test="itemSequence != null">`item_sequence` = #{itemSequence}, </if>
+			<if test="itemAuditStatu != null">`item_audit_statu` = #{itemAuditStatu}, </if>
+			<if test="itemAuditRefuse != null">`item_audit_refuse` = #{itemAuditRefuse}, </if>
+			<if test="praiseSum != null">`praise_sum` = #{praiseSum}, </if>
+			<if test="itemMaxSum != null">`item_max_sum` = #{itemMaxSum}, </if>
+			<if test="itemPayType != null">`item_pay_type` = #{itemPayType}, </if>
+			<if test="companySn != null">`company_sn` = #{companySn}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from activity_item where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from activity_item where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

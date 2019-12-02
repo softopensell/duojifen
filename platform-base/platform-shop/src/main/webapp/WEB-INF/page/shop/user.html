@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+
+	<div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.userName" @on-enter="query" placeholder="账号"/>
+                </i-col>
+                <i-col span="4">
+                    <i-input v-model="q.mobile" @on-enter="query" placeholder="手机号码"/>
+                </i-col>
+                <i-col span="4">
+                    <i-select v-model="q.state" @on-change="query" filterable  placeholder="客户状态">
+	                  <!--  
+	                  <i-option v-for="status in userStatuss" :value="status.value" :key="status.value">{{status.name}}
+	                   </i-option> 
+	                   -->
+	                  <i-option :value="0">预注册</i-option> 
+	                  <i-option :value="1">成功</i-option> 
+	                  <i-option :value="2">失败</i-option> 
+	                  <i-option :value="2">下线</i-option> 
+	                </i-select>
+	
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+            </div>
+            
+            <div class="buttons-group">
+              <!--  
+               #if($shiro.hasPermission("user:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end 
+                -->
+                #if($shiro.hasPermission("user:update"))
+               <!--  <i-button type="primary" @click="deptTree">deptTree</i-button> -->
+                <i-button type="warning" @click="toModUserLevelModal"><i class="fa fa-pencil-square-o"></i>&nbsp;修改会员级别</i-button> 
+                <i-button type="error" @click="toStopBonusTask"><i class="fa fa-time"></i>&nbsp;停止分红</i-button>
+                <i-button type="info" @click="toBonusTask"><i class="fa fa-eur"></i>&nbsp;立即分红</i-button>
+               <!--  <i-button type="error" @click="toModShareLastTimeModal"><i class="fa fa-time"></i>&nbsp;修改上次分红时间</i-button> -->
+                <i-button type="error" @click="toBrokeNode"><i class="fa fa-time"></i>&nbsp;断节点</i-button>
+                #end
+                
+               #if($shiro.hasPermission("user:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end 
+                
+               <!--  <i-button type="error" @click="toShowMoveMoneyTap"><i class="fa fa-time"></i>&nbsp;转账</i-button> -->
+                <!-- #if($shiro.hasPermission("paymentinfo:list"))
+                <i-button type="info" @click="toIntegralList"><i class="fa fa-eur"></i>&nbsp;转积分记录</i-button>
+                #end  --> 
+                
+            </div>
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    <Card v-show="!showList&&showUserInfoModal">
+        <p slot="title">{{title}}</p>
+		<i-form ref="formValidate" :model="user" :rules="ruleValidate" :label-width="120">
+		   <Row>
+             <i-col span="6">
+              <Form-item label="代注册人">
+                         {{signupUser.userName}}({{signupUser.createUserId}})
+              </Form-item>
+              </i-col>
+             </Row>
+             <Row>
+                <i-col span="6">
+           		 <Form-item label="登录账号">
+                	{{user.userName}}({{user.userId}})
+            	</Form-item>
+             </i-col>
+	             <i-col span="6">
+		            <Form-item label="昵称" prop="nickname">
+		                <i-input v-model="user.nickname" placeholder="姓名"/>
+		            </Form-item>
+		            </i-col>
+            </Row>
+            
+             <Row>
+                <i-col span="6">
+	             <Form-item label="登录密码" prop="password">
+	                <i-input type="password" v-model="user.password" placeholder="登录密码"/>
+	            </Form-item>
+	            </i-col>
+	             <i-col span="6">
+	            <Form-item label="支付密码" prop="payPassword">
+	                <i-input type="password" v-model="user.payPassword" placeholder="支付密码"/>
+	            </Form-item>
+	            </i-col>
+            </Row>
+           <Row>
+              <i-col span="6"> 
+            <Form-item label="手机" prop="mobile">
+                <i-input v-model="user.mobile" placeholder="手机"/>
+            </Form-item>
+            </i-col>
+            </Row>
+             <Row>
+            <i-col span="6">
+            <Form-item label="性别" prop="sex">
+                <Radio-group v-model="user.sex">
+	                    <Radio v-for="usex in userSexs" :label="usex.value">
+	                        <span>{{usex.name}}</span>
+	                    </Radio>
+	                </Radio-group>
+            </Form-item>
+            </Row>
+             <Row>
+              <i-col span="6">
+               <Form-item label="推荐人（多支关系）">
+                 {{user.signupInvitedPhone}}
+               </Form-item>
+            </i-col>
+	             <i-col span="6">
+		            <Form-item label="二叉树关系">
+			           {{user.signupNodePhone}}
+		            </Form-item>
+              </i-col>
+            </Row>
+            <Card >
+       			 <p slot="title">收货地址</p> 
+             <Row>
+               <Form-item label="省市">
+                <i-col span="6">
+                <i-select v-model="provinceId"  @on-change="changeProvince">
+                    <i-option v-for="item in provinceItems" :value="item.id" :key="item.id">{{ item.name }}</i-option>
+                </i-select>
+                 </i-col>
+                 <i-col span="6">
+                 <i-select v-model="cityId"  @on-change="changeCity">
+                    <i-option v-for="item in cityItems" :value="item.id" :key="item.id">{{ item.name }}</i-option>
+                </i-select>
+                  </i-col>
+                 <i-col span="6">
+                <i-select v-model="regionId"  @on-change="changeRegion">
+                    <i-option v-for="item in regionItems" :value="item.id" :key="item.id">{{ item.name }}</i-option>
+                </i-select>
+              </i-col>
+              </Form-item>
+              </Row> 
+              
+             <Row>
+             <i-col span="16">
+               <Form-item label="详细地址" prop="address">
+                  <i-input type="text" v-model="user.address"  placeholder="详细地址"/>
+              </Form-item>
+              </i-col>
+             </Row>
+             <Row>
+             <i-col span="12">
+               <Form-item label="联系人" prop="addrLinkName">
+                  <i-input type="text" v-model="user.addrLinkName"  placeholder="联系人"/>
+              </Form-item>
+              </i-col>
+             <i-col span="12">
+               <Form-item label="联系电话" prop="addrPhone">
+                  <i-input type="text" v-model="user.addrPhone"  placeholder="联系电话"/>
+              </Form-item>
+              </i-col>
+             </Row>
+          </Card>  
+            <Form-item style="margin-top:20px;">
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+	
+	
+	
+	
+	
+	 <Card v-show="!showList&&showNodeModal">
+        <p slot="title">{{title}}</p>
+		<i-form  :label-width="180">
+             <Row>
+              <i-col span="6">
+               <Form-item label="注册时推荐人（多支关系）">
+                   {{recommondBonusPointsVo.userName}}
+               </Form-item>
+              </i-col>
+	          <i-col span="6">
+		            <Form-item label="注册时二叉树关系">
+			           {{nodeBonusPointsVo.userName}}
+		            </Form-item>
+              </i-col>
+            </Row>
+            <Row>
+                 <i-col span="16">
+            <Form-item label="选择新的推荐人">
+                  <i-input type="text" v-model="recommondUserVo.userName" icon="eye" readonly="readonly"
+                         @on-click="selectRecommondUser" readonly="readonly" placeholder="选择新的推荐人" :value="recommondUserVo.userName"/>
+            </Form-item>
+                </i-col>
+           </Row> 
+           
+            <Row>
+              <i-col span="16">
+            <Form-item label="选择新的节点人">
+                  <i-input type="text" v-model="nodeUserVo.userName" icon="eye" readonly="readonly"
+                         @on-click="selectNodeUser" readonly="readonly" placeholder="选择新的节点人" :value="nodeUserVo.userName"/>
+            </Form-item>
+                </i-col>
+           </Row> 
+           
+            
+            <Form-item style="margin-top:20px;">
+                <i-button type="primary" @click="changeNodeTap">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+	
+	
+	
+	
+	<div id="addIntegralLayer" style="display: none;padding:10px;">
+		<Card>
+	        <Row>
+	        	<i-col span="24">
+	        			<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户名</b>：{{addIntegerUser.userName}}
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        			<b>转积分数量</b>：<Input-number :min="1" :step="1" v-model="addIntegerUser.integralScore" placeholder="积分数量"
+                                      style="width: 140px;"/>
+	        	</i-col>
+	        </Row>
+	     </Card>
+	</div>
+	
+	<Modal
+        title="确认注册"
+        v-model="auditUserSuccessModal"
+        @on-ok="auditUserSuccess"
+        >
+       <i-form ref="formValidate" :rules="ruleValidate" :label-width="180">
+	        <Row>
+	        	<i-col span="24">
+	        			<b>代注册账号</b>：{{signupUser.userName}}--ID({{signupUser.userId}})
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        			<b>推荐人账号</b>：{{invitedUser.userName}}--ID({{invitedUser.userId}})
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        			<b>节点账号</b>：{{inviteNodeUser.userName}}--ID({{inviteNodeUser.userId}})
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        	<b>子节点情况</b>
+	        	
+	        	 <Card shadow v-for="node in subNodeUsers" >
+                   <p >
+                   <span v-if="node.invitedUserId!=null">左节点</span>
+                   <span v-if="node.invitedRightUserId!=null">右节点</span>
+                    {{node.userName}}
+                   </p>
+                </Card>
+                </i-col>
+	        </Row>
+	        
+        </i-form>
+    </Modal>
+    
+    <Modal
+        title="充值"
+        v-model="rechargeMoneyModal"
+        @on-ok="toRechargeMoneyTap"
+        >
+       <i-form :label-width="180">
+	        <Row>
+	        	<i-col span="24">
+	        	   <Form-item label="账号名称">
+	        			{{user.userName}}
+	        	   </Form-item>
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        	   <Form-item label="账号余额">
+	        			{{user.balance}}
+	        	   </Form-item>
+	        	</i-col>
+	        </Row>
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="充值金额" prop="money">
+	            	<Input-number :min="100" :step="100" v-model="money" placeholder="充值金额"/>
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+	         
+        </i-form>
+    </Modal>
+    
+    
+    
+     <Modal
+        title="修改用户分红时间"
+        v-model="modShareLastTimeModal"
+        @on-ok="modShareLastTimeTap"
+        >
+       <i-form :label-width="80">
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="上次结束时间" prop="shareInvestLastTime">
+	        	     <Date-picker type="datetime" placeholder="选择日期"
+                                                 v-model="user.shareInvestLastTime" format="yyyy-MM-dd HH:mm:ss" ></Date-picker>
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+	         
+        </i-form>
+    </Modal>
+    
+    
+    <Modal
+        title="修改会员级别"
+        v-model="modUserLevelModal"
+        @on-ok="toModUserLevelTap"
+        >
+       <i-form :label-width="180">
+	        <Row>
+	        	<i-col span="24">
+	        	   <Form-item label="账号名称">
+	        			{{user.userName}}
+	        	   </Form-item>
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        	   <Form-item label="当前级别">
+	        			{{user.userLevelTypeName}}
+	        	   </Form-item>
+	        	</i-col>
+	        </Row>
+	        
+	        <Row>
+	        	<i-col span="24">
+	             <Form-item label="选择级别" prop="userLevelType">
+	                <i-select v-model="user.userLevelType" filterable>
+	                    <i-option v-for="item in signupUserLevelTypes" :value="item.id" :key="item.id">{{item.userLevelName}}
+	                    </i-option>
+	                </i-select>
+	             </Form-item>
+	        	</i-col>
+	        </Row>
+	        
+        </i-form>
+    </Modal>
+    
+    
+    
+     <Modal
+        title="加钱转账"
+        v-model="showMoveMoneyModal"
+        @on-ok="toMoveMoneyTap"
+        >
+       <i-form :label-width="180">
+	        <Row>
+	        	<i-col span="24">
+	        	   <Form-item label="付钱UserId">
+	        			<Input-number  v-model="movePayUserId" placeholder="付钱UserId"/>
+	        	   </Form-item>
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        	   <Form-item label="收款方">
+	        	   <Input-number  v-model="moveToUserId" placeholder="付钱UserId"/>
+	        	   </Form-item>
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	             <Form-item label="转移金额" prop="userLevelType">
+	               <Input-number :min="0" :step="1" v-model="moveMoney" placeholder="转移金额"/>
+	             </Form-item>
+	        	</i-col>
+	        </Row>
+	        
+        </i-form>
+    </Modal>
+    
+    
+</div>
+
+<!-- 选择部门 -->
+<div id="deptLayer" style="display: none;padding:10px;">
+    <ul id="deptTree" class="ztree"></ul>
+</div>
+
+<script src="${rc.contextPath}/js/shop/user.js?_${date.systemTime}"></script>
+</body>
+</html>

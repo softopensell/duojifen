@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>订单表</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="3">
+                    <i-input v-model="q.orderNo" @on-enter="query" placeholder="订单号"/>
+                </i-col>
+                <i-col span="3">
+                    <i-input v-model="q.userName" @on-enter="query" placeholder="客户名称"/>
+                </i-col>
+                <i-col span="3">
+                     <i-select v-model="q.orderStatus" filterable placeholder="订单状态">
+	                   	<i-option v-for="os in orderStatuss" :value="os.value" :key="os.value">{{os.name}}</i-option>
+	                </i-select>
+                </i-col>
+                <i-col span="5">
+                	<Date-picker type="daterange" format="yyyy-MM-dd" placeholder="订单时间" v-model="q.queryDate"></Date-picker>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+            </div>
+            <div class="buttons-group">
+                <!-- #if($shiro.hasPermission("goodsorder:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("goodsorder:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end -->
+               <!--  #if($shiro.hasPermission("goodsorder:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end -->
+                 <i-button type="info" @click="exportOrder"><i class="fa ios-cloud-downlond"></i>&nbsp;导出订单</i-button>
+                 
+                 <Upload  style="width: 100px;float: left;" action="../goodsorder/importExcel" :format="['xlsx','xls']"
+                                max-size="2048"
+                                :on-success="handleSuccessExcel" :on-format-error="handleFormatError"
+                                :show-upload-list="false"
+                                :on-exceeded-size="handleMaxSize">
+                            <i-button icon="ios-cloud-upload-outline">导入发货单</i-button>
+                 </Upload> 
+                 
+            </div>
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    <div  v-show="!showList&&showDetail">
+    	<i-form ref="formValidate" :model="goodsOrder" :rules="ruleValidate" :label-width="80">
+		 <Card>
+	        <p slot="title">{{title}}</p>
+	        <Row>
+	        	<i-col span="8">
+	        			<b>订单号</b>：{{goodsOrder.orderNo}}
+	        	</i-col>
+	        	<i-col span="8">
+	        			<b>客户名称</b>：{{goodsOrder.userName}}
+	        	</i-col>
+	        	<i-col span="3">
+	        			<b>订单状态</b>：{{goodsOrder.orderStatusName}}
+	        	</i-col>
+	        </Row>
+	        <i-table border  :columns="orderDetailColumns" :data="goodsOrderDetailTableDatas"></i-table>
+	     </Card>
+	     <Card>
+	        <p slot="title">收货信息</p>
+	        <Row>
+	        	<i-col span="5">
+	        			<b>收货人</b>：{{goodsOrder.contactName}}
+	        	</i-col>
+	        	<i-col span="5">
+	        			<b>联系电话</b>：{{goodsOrder.telephone}}
+	        	</i-col>
+	        	<i-col span="14">
+	        			<b>收货地址</b>：{{goodsOrder.pcrdetail}}
+	        	</i-col>
+	        </Row>
+	     </Card>
+	     <Card>
+	        <p slot="title">付款信息</p>
+	        <Row>
+	        	<i-col span="5">
+	        			<b>付款方式</b>：{{goodsOrder.payTypeName}}
+	        	</i-col>
+	        	<i-col span="5">
+	        			<b>收款状态</b>：{{goodsOrder.payStatusName}}
+	        	</i-col>
+	        </Row>
+	     </Card>
+	     <Card v-if="goodsOrder.orderStatus!=1&&goodsOrder.orderStatus!=5&&goodsOrder.orderStatus!=6&&goodsOrder.orderStatus!=7&&goodsOrder.orderStatus!=8">
+	        <p slot="title">物流信息</p>
+	        <Row>
+	        	<i-col span="5" v-if="goodsOrder.orderStatus==2">
+	        			<Form-item label="快递公司" prop="logisticsName">
+				                <i-input v-model="goodsOrder.logisticsName"  placeholder="快递公司"/>
+			            </Form-item>
+	        	</i-col>
+	        	<i-col span="5" v-if="goodsOrder.orderStatus==2">
+	        			<Form-item label="快递单号" prop="logisticsNumber">
+				                <i-input v-model="goodsOrder.logisticsNumber"  placeholder="快递单号"/>
+			            </Form-item>
+	        	</i-col>
+	        	<i-col span="5" v-if="goodsOrder.orderStatus==3||goodsOrder.orderStatus==4||goodsOrder.orderStatus==9">
+	        			<b>快递公司</b>：{{goodsOrder.logisticsName}}
+	        	</i-col>
+	        	<i-col span="5" v-if="goodsOrder.orderStatus==3||goodsOrder.orderStatus==4||goodsOrder.orderStatus==9">
+	        			<b>快递单号</b>：{{goodsOrder.logisticsNumber}}
+	        	</i-col>
+	        	<i-col span="5" v-if="goodsOrder.orderStatus==3||goodsOrder.orderStatus==4||goodsOrder.orderStatus==9">
+	        			<b>发货时间</b>：{{goodsOrder.sendOrderTime}}
+	        	</i-col>
+	        	<i-col span="5" v-if="goodsOrder.orderStatus==3||goodsOrder.orderStatus==4||goodsOrder.orderStatus==9">
+	        			<b>收货时间</b>：{{goodsOrder.logisticsReceiveTime}}
+	        	</i-col>
+	        </Row>
+	     </Card>
+	     <Card>
+	     	<i-button v-if="goodsOrder.orderStatus==2" type="primary" @click="confirmSubmit('formValidate')" style="margin-right:10px">确认发货</i-button>
+	     	<i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+	     </Card>
+	     </i-form>
+    </div>
+</div>
+
+<script src="${rc.contextPath}/js/shop/goodsorder.js?_${date.systemTime}"></script>
+</body>
+</html>

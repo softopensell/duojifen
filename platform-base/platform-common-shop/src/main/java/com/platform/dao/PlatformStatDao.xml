@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.PlatformStatDao">
+
+    <resultMap type="com.platform.entity.PlatformStatEntity" id="platformStatMap">
+        <result property="id" column="id"/>
+        <result property="statDateNumber" column="stat_date_number"/>
+        <result property="statDateType" column="stat_date_type"/>
+        <result property="statMemberId" column="stat_member_id"/>
+        <result property="statUserTotalSum" column="stat_user_total_sum"/>
+        <result property="statUserV0Sum" column="stat_user_v0_sum"/>
+        <result property="statUserV1Sum" column="stat_user_v1_sum"/>
+        <result property="statUserV2Sum" column="stat_user_v2_sum"/>
+        <result property="statUserV3Sum" column="stat_user_v3_sum"/>
+        <result property="statUserV4Sum" column="stat_user_v4_sum"/>
+        <result property="statUserDayAddSum" column="stat_user_day_add_sum"/>
+        <result property="statUserDayAddV0Sum" column="stat_user_day_add_v0_sum"/>
+        <result property="statUserDayAddV1Sum" column="stat_user_day_add_v1_sum"/>
+        <result property="statUserDayAddV2Sum" column="stat_user_day_add_v2_sum"/>
+        <result property="statUserDayAddV3Sum" column="stat_user_day_add_v3_sum"/>
+        <result property="statUserDayAddV4Sum" column="stat_user_day_add_v4_sum"/>
+        <result property="statUserTotalZc" column="stat_user_total_zc"/>
+        <result property="statUserTotalJf" column="stat_user_total_jf"/>
+        <result property="statUserTotalSyZc" column="stat_user_total_sy_zc"/>
+        <result property="statUserTotalCz" column="stat_user_total_cz"/>
+        <result property="statUserTotalFund" column="stat_user_total_fund"/>
+        <result property="statDayRate" column="stat_day_rate"/>
+        <result property="statDayPayBalanceSum" column="stat_day_pay_balance_sum"/>
+        <result property="statDayPayBalance" column="stat_day_pay_balance"/>
+        <result property="statDayPayJfSum" column="stat_day_pay_jf_sum"/>
+        <result property="statDayPayJf" column="stat_day_pay_jf"/>
+        <result property="statDayMoneyRechargeSum" column="stat_day_money_recharge_sum"/>
+        <result property="statDayMoneyRecharge" column="stat_day_money_recharge"/>
+        <result property="statDayBalanceZzInSum" column="stat_day_balance_zz_in_sum"/>
+        <result property="statDayBalanceZzIn" column="stat_day_balance_zz_in"/>
+        <result property="statDayBalanceZzOutSum" column="stat_day_balance_zz_out_sum"/>
+        <result property="statDayBalanceZzOut" column="stat_day_balance_zz_out"/>
+        <result property="statDayMoneyTxSum" column="stat_day_money_tx_sum"/>
+        <result property="statDayMoneyTx" column="stat_day_money_tx"/>
+        <result property="statDayJfZzSum" column="stat_day_jf_zz_sum"/>
+        <result property="statDayJfZz" column="stat_day_jf_zz"/>
+        <result property="statDayJfDhSum" column="stat_day_jf_dh_sum"/>
+        <result property="statDayJfDh" column="stat_day_jf_dh"/>
+        <result property="statDayMoneyQySum" column="stat_day_money_qy_sum"/>
+        <result property="statDayMoneyQy" column="stat_day_money_qy"/>
+        <result property="statDayMoneyFwSum" column="stat_day_money_fw_sum"/>
+        <result property="statDayMoneyFw" column="stat_day_money_fw"/>
+        <result property="statDayMoneyXxSum" column="stat_day_money_xx_sum"/>
+        <result property="statDayMoneyXx" column="stat_day_money_xx"/>
+        <result property="statDayMoneySqSum" column="stat_day_money_sq_sum"/>
+        <result property="statDayMoneySq" column="stat_day_money_sq"/>
+        <result property="statDayMoneyFundSum" column="stat_day_money_fund_sum"/>
+        <result property="statDayMoneyFund" column="stat_day_money_fund"/>
+        <result property="statDate" column="stat_date"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.PlatformStatEntity">
+		select
+			`id`,
+			`stat_date_number`,
+			`stat_date_type`,
+			`stat_member_id`,
+			`stat_user_total_sum`,
+			`stat_user_v0_sum`,
+			`stat_user_v1_sum`,
+			`stat_user_v2_sum`,
+			`stat_user_v3_sum`,
+			`stat_user_v4_sum`,
+			`stat_user_day_add_sum`,
+			`stat_user_day_add_v0_sum`,
+			`stat_user_day_add_v1_sum`,
+			`stat_user_day_add_v2_sum`,
+			`stat_user_day_add_v3_sum`,
+			`stat_user_day_add_v4_sum`,
+			`stat_user_total_zc`,
+			`stat_user_total_jf`,
+			`stat_user_total_sy_zc`,
+			`stat_user_total_fund`,
+			`stat_day_rate`,
+			`stat_day_pay_balance_sum`,
+			`stat_day_pay_balance`,
+			`stat_day_pay_jf_sum`,
+			`stat_day_pay_jf`,
+			`stat_day_money_recharge_sum`,
+			`stat_day_money_recharge`,
+			`stat_day_balance_zz_in_sum`,
+			`stat_day_balance_zz_in`,
+			`stat_day_balance_zz_out_sum`,
+			`stat_day_balance_zz_out`,
+			`stat_day_money_tx_sum`,
+			`stat_day_money_tx`,
+			`stat_day_jf_zz_sum`,
+			`stat_day_jf_zz`,
+			`stat_day_jf_dh_sum`,
+			`stat_day_jf_dh`,
+			`stat_day_money_qy_sum`,
+			`stat_day_money_qy`,
+			`stat_day_money_fw_sum`,
+			`stat_day_money_fw`,
+			`stat_day_money_xx_sum`,
+			`stat_day_money_xx`,
+			`stat_day_money_sq_sum`,
+			`stat_day_money_sq`,
+			`stat_day_money_fund_sum`,
+			`stat_day_money_fund`,
+			`stat_user_total_cz`,
+			`stat_date`,
+			`create_time`
+		from platform_stat
+		where id = #{id}
+	</select>
+ 
+	<select id="queryList" resultType="com.platform.entity.PlatformStatEntity">
+		select
+    		`id`,
+    		`stat_date_number`,
+    		`stat_date_type`,
+    		`stat_member_id`,
+    		`stat_user_total_sum`,
+    		`stat_user_v0_sum`,
+    		`stat_user_v1_sum`,
+    		`stat_user_v2_sum`,
+    		`stat_user_v3_sum`,
+    		`stat_user_v4_sum`,
+    		`stat_user_day_add_sum`,
+    		`stat_user_day_add_v0_sum`,
+    		`stat_user_day_add_v1_sum`,
+    		`stat_user_day_add_v2_sum`,
+    		`stat_user_day_add_v3_sum`,
+    		`stat_user_day_add_v4_sum`,
+    		`stat_user_total_zc`,
+    		`stat_user_total_jf`,
+    		`stat_user_total_sy_zc`,
+    		`stat_user_total_fund`,
+    		`stat_day_rate`,
+    		`stat_day_pay_balance_sum`,
+    		`stat_day_pay_balance`,
+    		`stat_day_pay_jf_sum`,
+    		`stat_day_pay_jf`,
+    		`stat_day_money_recharge_sum`,
+    		`stat_day_money_recharge`,
+    		`stat_day_balance_zz_in_sum`,
+    		`stat_day_balance_zz_in`,
+    		`stat_day_balance_zz_out_sum`,
+    		`stat_day_balance_zz_out`,
+    		`stat_day_money_tx_sum`,
+    		`stat_day_money_tx`,
+    		`stat_day_jf_zz_sum`,
+    		`stat_day_jf_zz`,
+    		`stat_day_jf_dh_sum`,
+    		`stat_day_jf_dh`,
+    		`stat_day_money_qy_sum`,
+    		`stat_day_money_qy`,
+    		`stat_day_money_fw_sum`,
+    		`stat_day_money_fw`,
+    		`stat_day_money_xx_sum`,
+    		`stat_day_money_xx`,
+    		`stat_day_money_sq_sum`,
+    		`stat_day_money_sq`,
+    		`stat_day_money_fund_sum`,
+    		`stat_day_money_fund`,
+    		`stat_user_total_cz`,
+    		`stat_date`,
+    		`create_time`
+		from platform_stat
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from platform_stat
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.PlatformStatEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into platform_stat(
+			`stat_date_number`,
+			`stat_date_type`,
+			`stat_member_id`,
+			`stat_user_total_sum`,
+			`stat_user_v0_sum`,
+			`stat_user_v1_sum`,
+			`stat_user_v2_sum`,
+			`stat_user_v3_sum`,
+			`stat_user_v4_sum`,
+			`stat_user_day_add_sum`,
+			`stat_user_day_add_v0_sum`,
+			`stat_user_day_add_v1_sum`,
+			`stat_user_day_add_v2_sum`,
+			`stat_user_day_add_v3_sum`,
+			`stat_user_day_add_v4_sum`,
+			`stat_user_total_zc`,
+			`stat_user_total_jf`,
+			`stat_user_total_sy_zc`,
+			`stat_user_total_fund`,
+			`stat_day_rate`,
+			`stat_day_pay_balance_sum`,
+			`stat_day_pay_balance`,
+			`stat_day_pay_jf_sum`,
+			`stat_day_pay_jf`,
+			`stat_day_money_recharge_sum`,
+			`stat_day_money_recharge`,
+			`stat_day_balance_zz_in_sum`,
+			`stat_day_balance_zz_in`,
+			`stat_day_balance_zz_out_sum`,
+			`stat_day_balance_zz_out`,
+			`stat_day_money_tx_sum`,
+			`stat_day_money_tx`,
+			`stat_day_jf_zz_sum`,
+			`stat_day_jf_zz`,
+			`stat_day_jf_dh_sum`,
+			`stat_day_jf_dh`,
+			`stat_day_money_qy_sum`,
+			`stat_day_money_qy`,
+			`stat_day_money_fw_sum`,
+			`stat_day_money_fw`,
+			`stat_day_money_xx_sum`,
+			`stat_day_money_xx`,
+			`stat_day_money_sq_sum`,
+			`stat_day_money_sq`,
+			`stat_day_money_fund_sum`,
+			`stat_day_money_fund`,
+			`stat_user_total_cz`,
+			`stat_date`,
+			`create_time`)
+		values(
+			#{statDateNumber},
+			#{statDateType},
+			#{statMemberId},
+			#{statUserTotalSum},
+			#{statUserV0Sum},
+			#{statUserV1Sum},
+			#{statUserV2Sum},
+			#{statUserV3Sum},
+			#{statUserV4Sum},
+			#{statUserDayAddSum},
+			#{statUserDayAddV0Sum},
+			#{statUserDayAddV1Sum},
+			#{statUserDayAddV2Sum},
+			#{statUserDayAddV3Sum},
+			#{statUserDayAddV4Sum},
+			#{statUserTotalZc},
+			#{statUserTotalJf},
+			#{statUserTotalSyZc},
+			#{statUserTotalFund},
+			#{statDayRate},
+			#{statDayPayBalanceSum},
+			#{statDayPayBalance},
+			#{statDayPayJfSum},
+			#{statDayPayJf},
+			#{statDayMoneyRechargeSum},
+			#{statDayMoneyRecharge},
+			#{statDayBalanceZzInSum},
+			#{statDayBalanceZzIn},
+			#{statDayBalanceZzOutSum},
+			#{statDayBalanceZzOut},
+			#{statDayMoneyTxSum},
+			#{statDayMoneyTx},
+			#{statDayJfZzSum},
+			#{statDayJfZz},
+			#{statDayJfDhSum},
+			#{statDayJfDh},
+			#{statDayMoneyQySum},
+			#{statDayMoneyQy},
+			#{statDayMoneyFwSum},
+			#{statDayMoneyFw},
+			#{statDayMoneyXxSum},
+			#{statDayMoneyXx},
+			#{statDayMoneySqSum},
+			#{statDayMoneySq},
+			#{statDayMoneyFundSum},
+			#{statDayMoneyFund},
+			#{statUserTotalCz},
+			#{statDate},
+			#{createTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.PlatformStatEntity">
+		update platform_stat 
+		<set>
+			<if test="statDateNumber != null">`stat_date_number` = #{statDateNumber}, </if>
+			<if test="statDateType != null">`stat_date_type` = #{statDateType}, </if>
+			<if test="statMemberId != null">`stat_member_id` = #{statMemberId}, </if>
+			<if test="statUserTotalSum != null">`stat_user_total_sum` = #{statUserTotalSum}, </if>
+			<if test="statUserV0Sum != null">`stat_user_v0_sum` = #{statUserV0Sum}, </if>
+			<if test="statUserV1Sum != null">`stat_user_v1_sum` = #{statUserV1Sum}, </if>
+			<if test="statUserV2Sum != null">`stat_user_v2_sum` = #{statUserV2Sum}, </if>
+			<if test="statUserV3Sum != null">`stat_user_v3_sum` = #{statUserV3Sum}, </if>
+			<if test="statUserV4Sum != null">`stat_user_v4_sum` = #{statUserV4Sum}, </if>
+			<if test="statUserDayAddSum != null">`stat_user_day_add_sum` = #{statUserDayAddSum}, </if>
+			<if test="statUserDayAddV0Sum != null">`stat_user_day_add_v0_sum` = #{statUserDayAddV0Sum}, </if>
+			<if test="statUserDayAddV1Sum != null">`stat_user_day_add_v1_sum` = #{statUserDayAddV1Sum}, </if>
+			<if test="statUserDayAddV2Sum != null">`stat_user_day_add_v2_sum` = #{statUserDayAddV2Sum}, </if>
+			<if test="statUserDayAddV3Sum != null">`stat_user_day_add_v3_sum` = #{statUserDayAddV3Sum}, </if>
+			<if test="statUserDayAddV4Sum != null">`stat_user_day_add_v4_sum` = #{statUserDayAddV4Sum}, </if>
+			<if test="statUserTotalZc != null">`stat_user_total_zc` = #{statUserTotalZc}, </if>
+			<if test="statUserTotalJf != null">`stat_user_total_jf` = #{statUserTotalJf}, </if>
+			<if test="statUserTotalSyZc != null">`stat_user_total_sy_zc` = #{statUserTotalSyZc}, </if>
+			<if test="statUserTotalFund != null">`stat_user_total_fund` = #{statUserTotalFund}, </if>
+			<if test="statDayRate != null">`stat_day_rate` = #{statDayRate}, </if>
+			<if test="statDayPayBalanceSum != null">`stat_day_pay_balance_sum` = #{statDayPayBalanceSum}, </if>
+			<if test="statDayPayBalance != null">`stat_day_pay_balance` = #{statDayPayBalance}, </if>
+			<if test="statDayPayJfSum != null">`stat_day_pay_jf_sum` = #{statDayPayJfSum}, </if>
+			<if test="statDayPayJf != null">`stat_day_pay_jf` = #{statDayPayJf}, </if>
+			<if test="statDayMoneyRechargeSum != null">`stat_day_money_recharge_sum` = #{statDayMoneyRechargeSum}, </if>
+			<if test="statDayMoneyRecharge != null">`stat_day_money_recharge` = #{statDayMoneyRecharge}, </if>
+			<if test="statDayBalanceZzInSum != null">`stat_day_balance_zz_in_sum` = #{statDayBalanceZzInSum}, </if>
+			<if test="statDayBalanceZzIn != null">`stat_day_balance_zz_in` = #{statDayBalanceZzIn}, </if>
+			<if test="statDayBalanceZzOutSum != null">`stat_day_balance_zz_out_sum` = #{statDayBalanceZzOutSum}, </if>
+			<if test="statDayBalanceZzOut != null">`stat_day_balance_zz_out` = #{statDayBalanceZzOut}, </if>
+			<if test="statDayMoneyTxSum != null">`stat_day_money_tx_sum` = #{statDayMoneyTxSum}, </if>
+			<if test="statDayMoneyTx != null">`stat_day_money_tx` = #{statDayMoneyTx}, </if>
+			<if test="statDayJfZzSum != null">`stat_day_jf_zz_sum` = #{statDayJfZzSum}, </if>
+			<if test="statDayJfZz != null">`stat_day_jf_zz` = #{statDayJfZz}, </if>
+			<if test="statDayJfDhSum != null">`stat_day_jf_dh_sum` = #{statDayJfDhSum}, </if>
+			<if test="statDayJfDh != null">`stat_day_jf_dh` = #{statDayJfDh}, </if>
+			<if test="statDayMoneyQySum != null">`stat_day_money_qy_sum` = #{statDayMoneyQySum}, </if>
+			<if test="statDayMoneyQy != null">`stat_day_money_qy` = #{statDayMoneyQy}, </if>
+			<if test="statDayMoneyFwSum != null">`stat_day_money_fw_sum` = #{statDayMoneyFwSum}, </if>
+			<if test="statDayMoneyFw != null">`stat_day_money_fw` = #{statDayMoneyFw}, </if>
+			<if test="statDayMoneyXxSum != null">`stat_day_money_xx_sum` = #{statDayMoneyXxSum}, </if>
+			<if test="statDayMoneyXx != null">`stat_day_money_xx` = #{statDayMoneyXx}, </if>
+			<if test="statDayMoneySqSum != null">`stat_day_money_sq_sum` = #{statDayMoneySqSum}, </if>
+			<if test="statDayMoneySq != null">`stat_day_money_sq` = #{statDayMoneySq}, </if>
+			<if test="statDayMoneyFundSum != null">`stat_day_money_fund_sum` = #{statDayMoneyFundSum}, </if>
+			<if test="statDayMoneyFund != null">`stat_day_money_fund` = #{statDayMoneyFund}, </if>
+			<if test="statDate != null">`stat_date` = #{statDate}, </if>
+			<if test="statUserTotalCz != null">`stat_user_total_cz` = #{statUserTotalCz}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from platform_stat where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from platform_stat where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

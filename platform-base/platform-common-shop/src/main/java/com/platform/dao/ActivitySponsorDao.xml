@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ActivitySponsorDao">
+
+    <resultMap type="com.platform.entity.ActivitySponsorEntity" id="activitySponsorMap">
+        <result property="id" column="id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="sponsorName" column="sponsor_name"/>
+        <result property="sponsorLogo" column="sponsor_logo"/>
+        <result property="sponsorDesc" column="sponsor_desc"/>
+        <result property="sponsorMoney" column="sponsor_money"/>
+        <result property="statu" column="statu"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.ActivitySponsorEntity">
+		select
+			`id`,
+			`item_no`,
+			`sponsor_name`,
+			`sponsor_logo`,
+			`sponsor_desc`,
+			`sponsor_money`,
+			`statu`
+		from activity_sponsor
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.ActivitySponsorEntity">
+		select
+    		`id`,
+    		`item_no`,
+    		`sponsor_name`,
+    		`sponsor_logo`,
+    		`sponsor_desc`,
+    		`sponsor_money`,
+    		`statu`
+		from activity_sponsor
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from activity_sponsor
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.ActivitySponsorEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into activity_sponsor(
+			`item_no`,
+			`sponsor_name`,
+			`sponsor_logo`,
+			`sponsor_desc`,
+			`sponsor_money`,
+			`statu`)
+		values(
+			#{itemNo},
+			#{sponsorName},
+			#{sponsorLogo},
+			#{sponsorDesc},
+			#{sponsorMoney},
+			#{statu})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.ActivitySponsorEntity">
+		update activity_sponsor 
+		<set>
+			<if test="itemNo != null">`item_no` = #{itemNo}, </if>
+			<if test="sponsorName != null">`sponsor_name` = #{sponsorName}, </if>
+			<if test="sponsorLogo != null">`sponsor_logo` = #{sponsorLogo}, </if>
+			<if test="sponsorDesc != null">`sponsor_desc` = #{sponsorDesc}, </if>
+			<if test="sponsorMoney != null">`sponsor_money` = #{sponsorMoney}, </if>
+			<if test="statu != null">`statu` = #{statu}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from activity_sponsor where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from activity_sponsor where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop.xsd ">
+	<!-- *************************** 工作任务调度 *************************** -->
+    <!-- 要调用的工作类 -->
+    <bean id="quartzDealBounusEveryDayJob" class="com.platform.quartz.cron.job.QuartzDealBonusEveryDayJob"></bean>
+    <!-- 可继续加新的任务   -->
+    <!-- 要调用的工作类结束 -->
+
+    
+    <bean id="quartzDealBounusEveryDayJobTask"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 调用的类 -->
+        <property name="targetObject">
+            <ref bean="quartzDealBounusEveryDayJob"/>
+        </property>
+        <!-- 调用类中的方法 -->
+        <property name="targetMethod">
+            <value>tofinishBounsEveryShare</value>
+        </property>
+    </bean>
+    <bean id="quartzDealEveryDayStatJobTask"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 调用的类 -->
+        <property name="targetObject">
+            <ref bean="quartzDealBounusEveryDayJob"/>
+        </property>
+        <!-- 调用类中的方法 -->
+        <property name="targetMethod">
+            <value>toDealEveryStat</value>
+        </property>
+    </bean>
+    
+    
+    <!-- 可继续加新的   -->
+    <!-- 定义调用对象和调用对象的方法结束 -->
+    <!-- 定义触发时间 -->
+    
+    <bean id="doQuartzDealBounusEveryDayJobTaskTime" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="quartzDealBounusEveryDayJobTask"/>
+        </property>
+        <!-- cron表达式   此处定义-->
+        <property name="cronExpression">
+            <!-- 每分钟第1秒触发一次-->
+            <!-- <value>1 * * * * ?</value> -->
+            <!-- 每1分钟触发一次-->
+            <!--<value>0 0/1 * * * ?</value> -->
+            <!-- 每1小时触发一次-->
+            <!--  <value>0 0 0/1 * * ? </value> -->
+           	<!-- 每30分钟 第1秒触发一次-->
+            <!-- <value>1 0/30 * * * ? *</value> -->
+           	<!-- 每10分钟 第1秒触发一次-->
+            <!-- <value>1 0/10 * * * ? *</value> -->
+            <!-- 每10分钟 第30秒触发一次-->
+            <!-- <value>0 0/1 * * * ? *</value> -->
+           		 
+           	<value>1 0 1 * * ? </value>
+           		 
+        </property>
+    </bean> 
+    
+    <bean id="doQuartzDealEveryDayStatJobTaskTime" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <ref bean="quartzDealEveryDayStatJobTask"/>
+        </property>
+        <!-- cron表达式   此处定义-->
+        <property name="cronExpression">
+           	<!--  
+           	<value>1 0 5 * * ? </value> 
+           	-->
+           	<value>1 0 5 * * ? </value> 
+        </property>
+    </bean> 
+    
+    <!-- 可继续加新的   -->
+    <!-- 定义触发时间结束 -->
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序   -->
+	<!--     
+	<bean id="start_common_mall" lazy-init="false" autowire="no"  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="doQuartzDealBounusEveryDayJobTaskTime"/>
+                <ref bean="doQuartzDealEveryDayStatJobTaskTime"/>
+            </list>
+        </property>
+    </bean>
+     -->
+    <!-- 总管理类结束   -->
+</beans>

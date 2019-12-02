@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.name" @on-enter="query" placeholder="名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("activityitem:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("activityitem:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("activityitem:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+            </div>
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="!showList">
+        <p slot="title">{{title}}</p>
+        <Tabs value="name1">
+         <Tab-Pane label="通用信息" name="name1">
+		  <i-form ref="formValidate" :model="activityItem" :rules="ruleValidate" :label-width="100">
+            <Row>
+                 <i-col span="12">
+                     <Form-item label="分类" prop="itemType">
+	                     <i-select v-model="activityItem.itemType"  placeholder="分类">
+		                  <i-option :value="10">展会活动</i-option> 
+		                  <i-option :value="100">招商活动</i-option> 
+		                  <i-option :value="1000">其他活动</i-option> 
+		                </i-select>
+		            </Form-item>
+                 </i-col>
+             </Row>
+             <Row>
+                 <i-col span="12">
+                     <Form-item label="活动标题" prop="title">
+		                <i-input v-model="activityItem.title" placeholder="活动标题"/>
+		            </Form-item>
+                 </i-col>
+             </Row>
+            <Row>
+             <i-col span="6">
+            <Form-item label="开始时间" prop="startTime">
+                 <Date-picker type="datetime" placeholder="活动开始时间"
+                             v-model="activityItem.startTime"></Date-picker>
+            </Form-item>
+            </i-col>
+             <i-col span="6">
+            <Form-item label="结束时间" prop="endTime">
+                 <Date-picker type="datetime" placeholder="活动结束时间"
+                             v-model="activityItem.endTime"></Date-picker>
+            </Form-item>
+            </i-col>
+             <i-col span="6">
+            <Form-item label="截止时间" prop="applyEndTime">
+                 <Date-picker type="datetime" placeholder="报名截止时间"
+                             v-model="activityItem.applyEndTime"></Date-picker>
+            </Form-item>
+            </i-col>
+            </Row>
+            
+            <Row>
+                 <i-col span="12">
+                     <Form-item label="活动地点" prop="address">
+		                <i-input v-model="activityItem.address" placeholder="活动地点"/>
+		            </Form-item>
+                 </i-col>
+             </Row>
+            
+            <Row>
+                 <i-col span="12">
+                     <Form-item label="封面图片" prop="itemLogo">
+                         <i-input v-model="activityItem.itemLogo" placeholder="封面图片"/>
+                     </Form-item>
+                 </i-col>
+                 <i-col span="3">
+                     <Form-item :label-width="1">
+                         <Upload style="width: 300px;" action="../sys/oss/upload" :format="['jpg','jpeg','png']"
+                                 max-size="2048"
+                                 :on-success="handleSuccessImgUrl" :on-format-error="handleFormatError"
+                                 :show-upload-list="false"
+                                 :on-exceeded-size="handleMaxSize">
+                             <i-button icon="ios-cloud-upload-outline">上传图片</i-button>
+                         </Upload>
+                     </Form-item>
+                 </i-col>
+                 <i-col span="3">
+                     <Form-item :label-width="1">
+                         <i-button icon="eye" @click="eyeImageImgUrl">预览图片</i-button>
+                     </Form-item>
+                 </i-col>
+             </Row>
+            <Row>
+             <i-col span="6">
+             <Form-item label="报名方式" prop="itemPayType">
+                 <i-select v-model="activityItem.itemPayType"  placeholder="支付方式">
+                  <i-option :value="0">现金</i-option> 
+                  <i-option :value="1">积分</i-option> 
+                  <i-option :value="2">资产</i-option> 
+                </i-select>
+            </Form-item>
+            </i-col>
+             <i-col span="6">
+            <Form-item label="门票金额" prop="productPrice">
+                <Input-number :min="0" :step="1" v-model="activityItem.productPrice" placeholder="门票金额"/>
+            </Form-item>
+            </i-col>
+             <i-col span="6">
+            <Form-item label="顺序" prop="itemSequence">
+            	 <Input-number :min="0" :step="1" v-model="activityItem.itemSequence" placeholder="顺序"/>
+            </Form-item>
+            </i-col>
+            </Row>
+            <Row>
+                 <i-col span="6">
+                     <Form-item label="主办单位" prop="organizerName">
+		                <i-input v-model="activityItem.organizerName" placeholder="主办方"/>
+		            </Form-item>
+                 </i-col>
+                 <i-col span="6">
+                    <Form-item label="主办联系人" prop="organizerLinkName">
+		                <i-input v-model="activityItem.organizerLinkName" placeholder="主办方联系人"/>
+		            </Form-item>
+                 </i-col>
+                 <i-col span="6">
+                  <Form-item label="主办电话" prop="organizerLinkPhone">
+	                <i-input v-model="activityItem.organizerLinkPhone" placeholder="主办方电话"/>
+	            </Form-item>
+                 </i-col>
+             </Row>
+        </i-form>
+        </Tab-Pane>
+        <Tab-Pane label="详细描述" name="name2">
+         	<i-form :label-width="100">
+            <Row>
+            <i-col span="18">
+            <div id="activityDesc"></div>
+            </i-col>
+           </i-form>
+         </Tab-Pane>
+       </Tabs>
+        <div style="padding-left: 20px; margin-bottom: 60px;">
+            <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+            <i-button type="warning" @click="reload" style="margin-left: 8px"/>
+            返回</i-button>
+            <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+        </div>
+	</Card>
+	
+	<Modal v-model="showAuditActivity" 
+    		fullscreen  
+    		width="800"
+    		title="审核"
+    		@on-ok="saveOrUpdate"
+    >
+       <i-form  :label-width="100">
+		<Card>
+	        <Row>
+	           <i-col span="24">
+       			 <Form-item label="活动标题">
+       				 {{activityItem.title}}
+	             </Form-item>
+	        	</i-col>
+	        </Row>
+	        <Row>
+             <i-col span="6">
+	             <Form-item label="发布状态" prop="statu">
+	                 <i-select v-model="activityItem.statu"  placeholder="发布状态">
+	                  <i-option :value="0">未发布</i-option> 
+	                  <i-option :value="1">待发布</i-option> 
+	                  <i-option :value="2">已发布</i-option> 
+	                  <i-option :value="3">已下线</i-option> 
+	                  <i-option :value="10">已删除</i-option> 
+	                </i-select>
+	            </Form-item>
+	          </i-col>
+            </Row>
+	        <Row>
+             <i-col span="6">
+	             <Form-item label="审核状态" prop="itemAuditStatu">
+	                 <i-select v-model="activityItem.itemAuditStatu"  placeholder="审核状态">
+	                  <i-option :value="0">未审核</i-option> 
+	                  <i-option :value="1">待审核</i-option> 
+	                  <i-option :value="2">已通过</i-option> 
+	                  <i-option :value="3">已拒绝</i-option> 
+	                  <i-option :value="4">待重审</i-option> 
+	                </i-select>
+	            </Form-item>
+	          </i-col>
+            </Row>
+	     </Card>
+	    </i-form>
+    </Modal>
+	
+	
+	
+</div>
+
+<script src="${rc.contextPath}/js/shop/activityitem.js?_${date.systemTime}"></script>
+</body>
+</html>

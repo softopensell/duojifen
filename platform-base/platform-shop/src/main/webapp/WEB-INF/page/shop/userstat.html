@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+	<Card>
+        	<p slot="title">账户信息({{userTotalStat.userEntity.userName}})</p>
+			   <Row :gutter="24" style="margin-top:20px;">
+			        <i-col span="4">   
+		 				用户余额：<font color='red' size=3>￥{{userTotalStat.userEntity.balance}}</font>
+		            </i-col>
+		            <i-col span="4">
+		 				用户积分：<font color='red' size=3>￥{{userTotalStat.userEntity.integralScore}}</font>
+		            </i-col>
+		              <i-col span="4">
+		 				总资产：<font color='red' size=3>￥{{userTotalStat.userEntity.totalInvestIncomeMoney}}</font>
+		            </i-col>
+		            <i-col span="4">
+		 				资产收益：<font color='red' size=3>￥{{userTotalStat.userEntity.investIncomeMoney}}</font>
+		            </i-col>
+		            
+			  		<i-col span="4">
+		 				剩余资产：<font color='red' size=3>￥{{userTotalStat.userEntity.surplusInvestMoney}}</font>
+		            </i-col>
+		          
+		            <i-col span="4">
+		 				联系手机：<font color='red' size=3>{{userTotalStat.userEntity.mobile}}</font>
+		            </i-col>
+				</Row>
+		   <br>
+     </Card>
+     
+     <Card>
+        	<p slot="title">统计余额：{{statBalance}}
+        	<br/>
+        	{{userTotalStat.userEntity.userPreBalance+(userTotalStat.payTotalMap.walletType10000+userTotalStat.payTotalMap.walletType1020+userTotalStat.payTotalMap.walletType6+userTotalStat.payTotalMap.walletType3+userTotalStat.payTotalMap.walletType43+userTotalStat.payTotalMap.walletType411+userTotalStat.payTotalMap.walletType421+userTotalStat.payTotalMap.walletType431+userTotalStat.payTotalMap.walletType64-userTotalStat.payTotalMap.walletType62-userTotalStat.payTotalMap.walletType5-userTotalStat.payTotalMap.walletType2-userTotalStat.payTotalMap.walletType0-userTotalStat.payTotalMap.walletType1-userTotalStat.payTotalMap.walletType10001)|numFilter}}</p>
+			   <Row :gutter="24" style="margin-top:20px;">
+					<i-col span="4">
+		 				充值总额：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType6}}</font>
+		 				</br>
+		 				充值单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType6Sum}}</font>
+		            </i-col>
+		            
+		             <i-col span="4">
+		 				提现总额：<font color='red' size=3>￥{{(userTotalStat.payTotalMap.walletType5)|numFilter}}</font>
+		 				</br>
+		 				提现次数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType5Sum}}</font>
+		            </i-col>
+		            
+		            
+		             <i-col span="4">
+		 				积分兑换：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType62}}</font>
+		 				</br>
+		 				兑换单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType62Sum}}</font>
+		            </i-col>
+		            
+		             <i-col span="4">
+		 				余额转出：<font color='red' size=3>￥{{(userTotalStat.payTotalMap.walletType2)|numFilter}}</font>
+		 				</br>
+		 				转出次数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType2Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				余额转入：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType3}}</font>
+		 				</br>
+		 				转入单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType3Sum}}</font>
+		            </i-col>
+		            
+		            <i-col span="4">
+		 				总收益：<font color='red' size=3>￥{{(userTotalStat.payTotalMap.walletType43+userTotalStat.payTotalMap.walletType411+userTotalStat.payTotalMap.walletType421+userTotalStat.payTotalMap.walletType431)|numFilter}}</font>
+		 				</br>
+		 				总条数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType43Sum+userTotalStat.payTotalMap.walletType411Sum+userTotalStat.payTotalMap.walletType421Sum+userTotalStat.payTotalMap.walletType431Sum}}</font>
+		            </i-col>
+		           
+		            
+					<i-col span="4">
+		 				积分消费：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType1}}</font>
+		 				</br>
+		 				消费单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType1Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				分红数量：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType1020}}</font>
+		 				</br>
+		 				分红单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType1020Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				平台余额扣除：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType10001}}</font>
+		 				</br>
+		 				余额扣除次数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType10001Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				平台资产扣除：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType10011}}</font>
+		 				</br>
+		 				资产扣除单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType10011Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				积分扣除数量：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType10021}}</font>
+		 				</br>
+		 				积分扣除单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType10021Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				平台增加余额：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType10000}}</font>
+		 				</br>
+		 				平台余额次数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType10000Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				平台资产增加：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType10010}}</font>
+		 				</br>
+		 				平台扣除单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType10010Sum}}</font>
+		            </i-col>
+		            
+					<i-col span="4">
+		 				积分增加数量：<font color='red' size=3>￥{{userTotalStat.payTotalMap.walletType10020}}</font>
+		 				</br>
+		 				积分增加单数：<font color='red' size=3>{{userTotalStat.payTotalMap.walletType10020Sum}}</font>
+		            </i-col>
+		            
+		            
+				</Row>
+		   <br>
+     </Card>
+	<Card>
+      <p slot="title">账户流水信息</p>
+        <Row :gutter="16">
+            <div class="search-group">
+            
+                <i-col span="4">
+                    <i-select v-model="q.moneyTypeWallet" @on-change="query" filterable  placeholder="分类" :value="q.moneyTypeWallet">
+	                  <i-option :value="2">余额转出记录</i-option> 
+	                  <i-option :value="0">余额支付</i-option> 
+	                  <i-option :value="1">余额支付数量</i-option> 
+	                  <i-option :value="3">余额转入记录</i-option> 
+	                  <i-option :value="62">积分兑换记录</i-option> 
+	                  <i-option :value="92">积分支付记录</i-option> 
+	                  <i-option :value="43">资产权益收益</i-option> 
+	                  <i-option :value="411">服务分享收益</i-option> 
+	                  <i-option :value="421">幸运星星收益</i-option> 
+	                  <i-option :value="431">分享社区收益</i-option> 
+	                  <i-option :value="4000">社区活动基金</i-option> 
+	                  <i-option :value="5">提现记录</i-option> 
+	                  <i-option :value="6">充值记录</i-option> 
+	                  <i-option :value="1010">服务中心分红</i-option> 
+	                  <i-option :value="1011">服务中心充值</i-option> 
+	                  <i-option :value="1020">提现分红</i-option> 
+	                  <i-option :value="10000">平台增加余额</i-option> 
+	                  <i-option :value="10010">平台增加资产</i-option> 
+	                  <i-option :value="10020">平台增加积分</i-option> 
+	                  <i-option :value="10001">平台扣除余额</i-option> 
+	                  <i-option :value="10011">平台扣除资产</i-option> 
+	                  <i-option :value="10021">平台扣除积分</i-option> 
+	                </i-select>
+                </i-col>
+                
+                <i-col span="4">
+                    <i-input v-model="q.name" @on-enter="query" placeholder="流水号"/>
+                </i-col>
+                <i-col span="4">
+                    <i-input v-model="q.userName" @on-enter="query" placeholder="账号"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+            </div>
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+	    
+	   </Card>
+    </div>
+</div>
+
+<script src="${rc.contextPath}/js/shop/userStat.js?_${date.systemTime}"></script>
+</body>
+</html>

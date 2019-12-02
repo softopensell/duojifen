@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.api.dao.ApiBonusPoolJoinMemberMapper">
+
+    <resultMap type="com.platform.api.entity.BonusPoolJoinMemberVo" id="bonusPoolJoinMemberMap">
+        <result property="id" column="id"/>
+        <result property="poolDateNumber" column="pool_date_number"/>
+        <result property="poolJoinMemberId" column="pool_join_member_id"/>
+        <result property="poolJoinMoney" column="pool_join_money"/>
+        <result property="poolJoinSum" column="pool_join_sum"/>
+        <result property="createtime" column="createtime"/>
+        <result property="status" column="status"/>
+        <result property="poolJoinType" column="pool_join_type"/>
+    </resultMap>
+
+	<select id="queryByDateNumberAndMemberId" resultType="com.platform.api.entity.BonusPoolJoinMemberVo">
+		select
+			`id`,
+			`pool_date_number`,
+			`pool_join_member_id`,
+			`pool_join_money`,
+			`pool_join_sum`,
+			`createtime`,
+			`status`,
+			`pool_join_type`
+		from bonus_pool_join_member
+		where pool_date_number = #{poolDateNumber} and pool_join_member_id = #{poolJoinMemberId}
+	</select>
+	
+	<update id="incrBonusPoolJoinMemberMoney">
+		UPDATE   `bonus_pool_join_member` SET pool_join_money = pool_join_money +#{incrMoney},pool_join_sum = pool_join_sum +1
+		 where pool_date_number =#{poolDateNumber} and pool_join_member_id = #{poolJoinMemberId}
+	</update>
+	
+	
+	<select id="queryObject" resultType="com.platform.api.entity.BonusPoolJoinMemberVo">
+		select
+			`id`,
+			`pool_date_number`,
+			`pool_join_member_id`,
+			`pool_join_money`,
+			`pool_join_sum`,
+			`createtime`,
+			`status`,
+			`pool_join_type`
+		from bonus_pool_join_member
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.api.entity.BonusPoolJoinMemberVo">
+		select
+    		`id`,
+    		`pool_date_number`,
+    		`pool_join_member_id`,
+    		`pool_join_money`,
+    		`pool_join_sum`,
+    		`createtime`,
+    		`status`,
+    		`pool_join_type`
+		from bonus_pool_join_member
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+		<if test="poolJoinMemberId != null and poolJoinMemberId >0 ">
+			AND pool_join_member_id = #{poolJoinMemberId}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from bonus_pool_join_member
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+        <if test="poolJoinMemberId != null and poolJoinMemberId >0 ">
+			AND pool_join_member_id = #{poolJoinMemberId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.api.entity.BonusPoolJoinMemberVo" useGeneratedKeys="true" keyProperty="id">
+		insert into bonus_pool_join_member(
+			`pool_date_number`,
+			`pool_join_member_id`,
+			`pool_join_money`,
+			`pool_join_sum`,
+			`createtime`,
+			`status`,
+			`pool_join_type`)
+		values(
+			#{poolDateNumber},
+			#{poolJoinMemberId},
+			#{poolJoinMoney},
+			#{poolJoinSum},
+			#{createtime},
+			#{status},
+			#{poolJoinType})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.api.entity.BonusPoolJoinMemberVo">
+		update bonus_pool_join_member 
+		<set>
+			<if test="poolDateNumber != null">`pool_date_number` = #{poolDateNumber}, </if>
+			<if test="poolJoinMemberId != null">`pool_join_member_id` = #{poolJoinMemberId}, </if>
+			<if test="poolJoinMoney != null">`pool_join_money` = #{poolJoinMoney}, </if>
+			<if test="poolJoinSum != null">`pool_join_sum` = #{poolJoinSum}, </if>
+			<if test="createtime != null">`createtime` = #{createtime}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="poolJoinType != null">`pool_join_type` = #{poolJoinType}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from bonus_pool_join_member where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from bonus_pool_join_member where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

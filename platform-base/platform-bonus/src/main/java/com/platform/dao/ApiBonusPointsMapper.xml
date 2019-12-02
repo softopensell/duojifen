@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiBonusPointsMapper">
+
+     <resultMap type="com.platform.entity.BonusPointsVo" id="bonusPointsMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="bonusInvitedSum" column="bonus_invited_sum"/>
+        <result property="bonusTeamInvitedPoints" column="bonus_team_invited_points"/>
+        <result property="bonusMeInvitedPoints" column="bonus_me_invited_points"/>
+        <result property="status" column="status"/>
+        <result property="invitedUserId" column="invited_user_id"/>
+        <result property="invitedParentUserIds" column="invited_parent_user_ids"/>
+        <result property="invitedPointUserId" column="invited_point_user_id"/>
+        <result property="invitedPointUserIds" column="invited_point_user_ids"/>
+        <result property="userRoleType" column="user_role_type"/>
+        <result property="userNamedType" column="user_named_type"/>
+        <result property="bonusTeamRoleManagerSum" column="bonus_team_role_manager_sum"/>
+        <result property="bonusTeamRoleShopperOneSum" column="bonus_team_role_shopper_one_sum"/>
+        <result property="bonusTeamRoleShopperTwoSum" column="bonus_team_role_shopper_two_sum"/>
+        <result property="bonusTeamRoleShopperThreeSum" column="bonus_team_role_shopper_three_sum"/>
+        <result property="bonusTeamRoleShopperFourSum" column="bonus_team_role_shopper_four_sum"/>
+        <result property="canGenerateQr" column="can_generate_qr"/>
+        
+        <result property="bloodType" column="blood_type"/>
+        <result property="bloodUpType" column="blood_up_type"/>
+        <result property="invitedRightUserId" column="invited_right_user_id"/>
+        
+    </resultMap>
+    
+    <select id="queryByUserIdAndBloodType" resultType="com.platform.entity.BonusPointsVo">
+		select
+			bp.`id`,
+    		bp.`create_time`,
+    		bp.`update_time`,
+    		bp.`user_id`,
+    		bp.`bonus_invited_sum`,
+    		bp.`bonus_team_invited_points`,
+    		bp.`bonus_me_invited_points`,
+    		bp.`status`,
+    		bp.`invited_user_id`,
+    		bp.`invited_parent_user_ids`,
+    		bp.`invited_point_user_id`,
+    		bp.`invited_point_user_ids`,
+    		bp.`user_role_type`,
+    		bp.`user_named_type`,
+    		bp.`bonus_team_role_manager_sum`,
+    		bp.`bonus_team_role_shopper_one_sum`,
+    		bp.`bonus_team_role_shopper_two_sum`,
+    		bp.`bonus_team_role_shopper_three_sum`,
+    		bp.`bonus_team_role_shopper_four_sum`,
+    		bp.`can_generate_qr`,
+    		bp.`blood_type`,
+    		bp.`blood_up_type`,
+    		bp.`invited_right_user_id`,
+    		u.user_name as userName,
+    		u.photo as userPhoto
+		from t_bonus_points bp
+		left join t_user u on bp.user_id = u.user_id
+		where bp.user_id = #{userId} and bp.blood_type = #{bloodType}
+	</select>
+  <select id="queryByParentUserId" resultType="com.platform.entity.BonusPointsVo">
+		select
+			bp.`id`,
+    		bp.`create_time`,
+    		bp.`update_time`,
+    		bp.`user_id`,
+    		bp.`bonus_invited_sum`,
+    		bp.`bonus_team_invited_points`,
+    		bp.`bonus_me_invited_points`,
+    		bp.`status`,
+    		bp.`invited_user_id`,
+    		bp.`invited_parent_user_ids`,
+    		bp.`invited_point_user_id`,
+    		bp.`invited_point_user_ids`,
+    		bp.`user_role_type`,
+    		bp.`user_named_type`,
+    		bp.`bonus_team_role_manager_sum`,
+    		bp.`bonus_team_role_shopper_one_sum`,
+    		bp.`bonus_team_role_shopper_two_sum`,
+    		bp.`bonus_team_role_shopper_three_sum`,
+    		bp.`bonus_team_role_shopper_four_sum`,
+    		bp.`can_generate_qr`,
+    		bp.`blood_type`,
+    		bp.`blood_up_type`,
+    		bp.`invited_right_user_id`,
+    		u.user_name as userName,
+    		u.photo as userPhoto
+		from t_bonus_points bp
+		left join t_user u on bp.user_id = u.user_id
+		where ( bp.invited_user_id = #{userId} or  bp.invited_right_user_id = #{userId} ) and bp.blood_type = #{bloodType}
+	</select>
+    
+	<select id="queryObject" resultType="com.platform.entity.BonusPointsVo">
+		select
+			`id`,
+			`create_time`,
+			`update_time`,
+			`user_id`,
+			`bonus_invited_sum`,
+			`bonus_team_invited_points`,
+			`bonus_me_invited_points`,
+			`status`,
+			`invited_user_id`,
+			`invited_parent_user_ids`,
+			`invited_point_user_id`,
+			`invited_point_user_ids`,
+			`user_role_type`,
+			`user_named_type`,
+			`bonus_team_role_manager_sum`,
+			`bonus_team_role_shopper_one_sum`,
+			`bonus_team_role_shopper_two_sum`,
+			`bonus_team_role_shopper_three_sum`,
+			`bonus_team_role_shopper_four_sum`,
+			`can_generate_qr`,
+			`blood_type`,
+			`blood_up_type`,
+			`invited_right_user_id`
+		from t_bonus_points
+		where id = #{id}
+	</select>
+	
+	<select id="getUesrPoint" resultType="com.platform.entity.BonusPointsVo">
+		select
+			*
+		from t_bonus_points
+		where user_id = #{userId}  and blood_type = #{bloodType}
+	</select>
+
+	<select id="getUserPointByUserIds" resultType="com.platform.entity.BonusPointsVo">
+		select
+			*
+		from t_bonus_points
+		 where user_id in 
+		<foreach item="user_id" collection="userIds" open="(" separator="," close=")">
+			#{user_id}
+		</foreach>
+		
+	</select>
+	<select id="findByUserRoleType" resultType="com.platform.entity.BonusPointsVo">
+		select
+			*
+		from t_bonus_points
+		 where user_role_type in 
+		<foreach item="user_role_type" collection="userRoles" open="(" separator="," close=")">
+			#{user_role_type}
+		</foreach>
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.BonusPointsVo">
+		select
+    		bp.`id`,
+    		bp.`create_time`,
+    		bp.`update_time`,
+    		bp.`user_id`,
+    		bp.`bonus_invited_sum`,
+    		bp.`bonus_team_invited_points`,
+    		bp.`bonus_me_invited_points`,
+    		bp.`status`,
+    		bp.`invited_user_id`,
+    		bp.`invited_parent_user_ids`,
+    		bp.`invited_point_user_id`,
+    		bp.`invited_point_user_ids`,
+    		bp.`user_role_type`,
+    		bp.`user_named_type`,
+    		bp.`bonus_team_role_manager_sum`,
+    		bp.`bonus_team_role_shopper_one_sum`,
+    		bp.`bonus_team_role_shopper_two_sum`,
+    		bp.`bonus_team_role_shopper_three_sum`,
+    		bp.`bonus_team_role_shopper_four_sum`,
+    		bp.`can_generate_qr`,
+    		bp.`blood_type`,
+    		bp.`blood_up_type`,
+    		bp.`invited_right_user_id`
+    		<if test="queryType == 'teamList'">
+    		,u.user_name as userName,
+    		u.photo as userPhoto
+    		</if>
+		from t_bonus_points bp
+		<if test="queryType == 'teamList'">
+			left join t_user u on bp.user_id = u.user_id
+		</if>
+		WHERE 1=1
+		<if test="invitedUserId != null and invitedUserId != ''">
+			AND bp.invited_user_id = #{invitedUserId}
+		</if>
+		<if test="invited_point_user_id != null and invited_point_user_id != ''">
+			AND bp.invited_point_user_id = #{invited_point_user_id}
+		</if>
+		<if test="invitedParentUserIds != null and invitedParentUserIds != ''">
+			AND bp.invited_parent_user_ids LIKE concat('%',#{invitedParentUserIds},'%')
+		</if>
+		 and bp.blood_type = #{bloodType}
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_bonus_points bp
+		<if test="queryType == 'teamList'">
+			left join t_user u on bp.user_id = u.user_id
+		</if>
+		WHERE 1=1
+        <if test="invitedUserId != null ">
+			AND bp.invited_user_id = #{invitedUserId}
+		</if>
+        <if test="userRoleType != null">
+			AND bp.user_role_type = #{userRoleType}
+		</if>
+        <if test="userRoleTypes != null ">
+			AND bp.user_role_type in 
+			<foreach item="userRoleType" collection="userRoleTypes" open="(" separator="," close=")">
+				#{userRoleType}
+			</foreach>
+		</if>
+		 and bp.blood_type = #{bloodType}
+		
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.BonusPointsVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_bonus_points(
+			`create_time`,
+			`update_time`,
+			`user_id`,
+			`bonus_invited_sum`,
+			`bonus_team_invited_points`,
+			`bonus_me_invited_points`,
+			`status`,
+			`invited_user_id`,
+			`invited_parent_user_ids`,
+			`invited_point_user_id`,
+			`invited_point_user_ids`,
+			`user_role_type`,
+			`user_named_type`,
+			`bonus_team_role_manager_sum`,
+			`bonus_team_role_shopper_one_sum`,
+			`bonus_team_role_shopper_two_sum`,
+			`bonus_team_role_shopper_three_sum`,
+			`bonus_team_role_shopper_four_sum`,
+			`can_generate_qr`,
+			`blood_type`,
+			`blood_up_type`,
+			`invited_right_user_id`)
+		values(
+			#{createTime},
+			#{updateTime},
+			#{userId},
+			#{bonusInvitedSum},
+			#{bonusTeamInvitedPoints},
+			#{bonusMeInvitedPoints},
+			#{status},
+			#{invitedUserId},
+			#{invitedParentUserIds},
+			#{invitedPointUserId},
+			#{invitedPointUserIds},
+			#{userRoleType},
+			#{userNamedType},
+			#{bonusTeamRoleManagerSum},
+			#{bonusTeamRoleShopperOneSum},
+			#{bonusTeamRoleShopperTwoSum},
+			#{bonusTeamRoleShopperThreeSum},
+			#{bonusTeamRoleShopperFourSum},
+			#{canGenerateQr},
+			#{bloodType},
+			#{bloodUpType},
+			#{invitedRightUserId})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.BonusPointsVo">
+		update t_bonus_points 
+		<set>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="bonusInvitedSum != null">`bonus_invited_sum` = #{bonusInvitedSum}, </if>
+			<if test="bonusTeamInvitedPoints != null">`bonus_team_invited_points` = #{bonusTeamInvitedPoints}, </if>
+			<if test="bonusMeInvitedPoints != null">`bonus_me_invited_points` = #{bonusMeInvitedPoints}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="invitedUserId != null">`invited_user_id` = #{invitedUserId}, </if>
+			<if test="invitedParentUserIds != null">`invited_parent_user_ids` = #{invitedParentUserIds}, </if>
+			<if test="invitedPointUserId != null">`invited_point_user_id` = #{invitedPointUserId}, </if>
+			<if test="invitedPointUserIds != null">`invited_point_user_ids` = #{invitedPointUserIds}, </if>
+			<if test="userRoleType != null">`user_role_type` = #{userRoleType}, </if>
+			<if test="userNamedType != null">`user_named_type` = #{userNamedType}, </if>
+			<if test="bonusTeamRoleManagerSum != null">`bonus_team_role_manager_sum` = #{bonusTeamRoleManagerSum}, </if>
+			<if test="bonusTeamRoleShopperOneSum != null">`bonus_team_role_shopper_one_sum` = #{bonusTeamRoleShopperOneSum}, </if>
+			<if test="bonusTeamRoleShopperTwoSum != null">`bonus_team_role_shopper_two_sum` = #{bonusTeamRoleShopperTwoSum}, </if>
+			<if test="bonusTeamRoleShopperThreeSum != null">`bonus_team_role_shopper_three_sum` = #{bonusTeamRoleShopperThreeSum}, </if>
+			<if test="bonusTeamRoleShopperFourSum != null">`bonus_team_role_shopper_four_sum` = #{bonusTeamRoleShopperFourSum}, </if>
+			<if test="canGenerateQr != null">`can_generate_qr` = #{canGenerateQr}, </if>
+			<if test="bloodType != null">`blood_type` = #{bloodType}, </if>
+			<if test="bloodUpType != null">`blood_up_type` = #{bloodUpType}, </if>
+			<if test="invitedRightUserId != null">`invited_right_user_id` = #{invitedRightUserId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<update id="addBonusTeamInvitedPoints">
+		UPDATE   `t_bonus_points` SET bonus_team_invited_points = bonus_team_invited_points +#{incrPoint}
+		 where user_id in 
+		<foreach item="user_id" collection="userIds" open="(" separator="," close=")">
+			#{user_id}
+		</foreach>
+	</update>
+	
+	<update id="addBonusTeamInvitedSum">
+		UPDATE   `t_bonus_points` SET bonus_invited_sum = bonus_invited_sum +#{incrSum}
+		 where user_id in 
+		<foreach item="user_id" collection="userIds" open="(" separator="," close=")">
+			#{user_id}
+		</foreach>
+	</update>
+	
+	
+	<update id="reduceBonusTeamInvitedPoints">
+		UPDATE   `t_bonus_points` SET bonus_team_invited_points = bonus_team_invited_points -#{incrPoint}
+		 where user_id in 
+		<foreach item="user_id" collection="userIds" open="(" separator="," close=")">
+			#{user_id}
+		</foreach>
+	</update>
+	
+	<update id="reduceBonusTeamInvitedSum">
+		UPDATE   `t_bonus_points` SET bonus_invited_sum = bonus_invited_sum -#{incrSum}
+		 where user_id in 
+		<foreach item="user_id" collection="userIds" open="(" separator="," close=")">
+			#{user_id}
+		</foreach>
+	</update>
+	
+	
+	<delete id="delete">
+		delete from t_bonus_points where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_bonus_points where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

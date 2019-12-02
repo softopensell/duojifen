@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.UserDao">
+
+    <resultMap type="com.platform.entity.UserEntity" id="userMap">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="realName" column="real_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="roleId" column="role_id"/>
+        <result property="state" column="state"/>
+        <result property="photo" column="photo"/>
+        <result property="fromNo" column="from_no"/>
+        <result property="fromType" column="from_type"/>
+        <result property="sex" column="sex"/>
+        <result property="birthday" column="birthday"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="weixinOpenid" column="weixin_openid"/>
+        <result property="nickname" column="nickname"/>
+        <result property="registerIp" column="register_ip"/>
+        <result property="avatar" column="avatar"/>
+        <result property="registerTime" column="register_time"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="lastLoginIp" column="last_login_ip"/>
+        <result property="lastPosition" column="last_position"/>
+        <result property="authTypeStatu" column="auth_type_statu"/>
+        <result property="balance" column="balance"/>
+        <result property="amount" column="amount"/>
+        <result property="totalPoint" column="total_point"/>
+        <result property="point" column="point"/>
+        <result property="totalIncome" column="total_income"/>
+        <result property="waitingIncome" column="waiting_income"/>
+        <result property="integralScore" column="integral_score"/>
+        <result property="freezeBalance" column="freeze_balance"/>
+        <result property="createtime" column="createtime"/>
+        <result property="updatetime" column="updatetime"/>
+        
+        <result property="payPassword" column="pay_password"/>
+        <result property="paibag" column="paibag"/>
+        <result property="fund" column="fund"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="addrPhone" column="addr_phone"/>
+        <result property="addrLinkName" column="addr_link_name"/>
+        <result property="signupInvitedPhone" column="signup_invited_phone"/>
+        <result property="signupNodePhone" column="signup_node_phone"/>
+        <result property="signupUserLevelType" column="signup_user_level_type"/>
+        
+        
+        
+        <result property="totalInverstOrderSum" column="total_invest_order_sum"/>
+        <result property="totalInvestMoney" column="total_invest_money"/>
+        <result property="totalInvestIncomeMoney" column="total_invest_income_money"/>
+        <result property="investIncomeMoney" column="invest_income_money"/>
+        <result property="surplusInvestMoney" column="surplus_invest_money"/>
+        <result property="shareInvestLastTime" column="share_invest_last_time"/>
+        <result property="userLevelType" column="user_level_type"/>
+        <result property="userNodeBonusLevel" column="user_node_bonus_level"/>
+        <result property="blockchainSecret" column="blockchain_secret"/>
+        
+        <result property="googleSecret" column="google_secret"/>
+        <result property="userPreBalance" column="user_pre_balance"/>
+    </resultMap>
+    
+    <select id="queryByUserName" resultType="com.platform.entity.UserEntity">
+		select
+			*
+		from t_user
+		where user_name = #{userName}
+	</select>
+    <select id="getById" resultType="com.platform.entity.UserEntity">
+		select
+			*
+		from t_user
+		where user_id = #{id}
+	</select>
+    <select id="queryNodesByParentNodeName" resultType="com.platform.entity.UserEntity">
+		select
+			*
+		from t_user
+		where signup_node_phone = #{signupNodePhone}
+	</select>
+	
+	<select id="queryByMobile" resultType="com.platform.entity.UserEntity">
+		select * from t_user where mobile = #{mobile}
+	</select>
+
+	<select id="queryObject" resultType="com.platform.entity.UserEntity">
+		select
+			u.`user_id`,
+			u.`user_name`,
+			u.`real_name`,
+			u.`mobile`,
+			u.`email`,
+			u.`password`,
+			u.`role_id`,
+			u.`state`,
+			u.`photo`,
+			u.`from_no`,
+			u.`from_type`,
+			u.`sex`,
+			u.`birthday`,
+			u.`country`,
+			u.`province`,
+			u.`city`,
+			u.`address`,
+			u.`weixin_openid`,
+			u.`nickname`,
+			u.`register_ip`,
+			u.`avatar`,
+			u.`register_time`,
+			u.`last_login_time`,
+			u.`last_login_ip`,
+			u.`last_position`,
+			u.`auth_type_statu`,
+			u.`balance`,
+			u.`amount`,
+			u.`total_point`,
+			u.`point`,
+			u.`total_income`,
+			u.`waiting_income`,
+			u.`integral_score`,
+			u.`freeze_balance`,
+			u.`createtime`,
+			u.`updatetime`,
+			u.`pay_password`,
+			u.`paibag`,
+			u.`fund`,
+			u.`create_user_id`,
+			u.`addr_phone`,
+			u.`addr_link_name`,
+			u.`signup_invited_phone`,
+			u.`signup_node_phone`,
+			u.`signup_user_level_type`,
+			u.`total_invest_money`,
+			u.`total_invest_income_money`,
+			u.`invest_income_money`,
+			u.`surplus_invest_money`,
+			u.`share_invest_last_time`,
+			u.`user_level_type`,
+			u.`user_pre_balance`,
+			u.`google_secret`,
+			u.`blockchain_secret`,
+			u.`user_node_bonus_level`,
+			ul.user_level_name userLevelTypeName,
+			bp.bonus_team_invited_points bonusTeamInvitedPoints,
+			bp.bonus_me_invited_points bonusMeInvitedPoints
+        from t_user u 
+        LEFT JOIN t_user_invest_level ul on u.user_level_type = ul.user_level_type
+        LEFT JOIN t_bonus_points bp on bp.user_id = u.user_id and bp.blood_type=1
+        
+		where u.user_id = #{id}
+	</select>
+	
+	<select id="queryByUserIds" resultType="com.platform.entity.UserEntity">
+		select
+    		*
+		from t_user
+		WHERE 1=1 and user_id in 
+		<foreach item="userId" collection="userIds" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</select>
+	
+	<select id="getByUserIds" resultType="com.platform.entity.UserEntity">
+		select
+    		u.*,
+			ul.user_level_name userLevelTypeName
+		from t_user u 
+        LEFT JOIN t_user_invest_level ul on u.user_level_type = ul.user_level_type
+		WHERE 1=1 
+		and user_id in
+		<foreach item="userId" collection="userIds" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</select>
+	
+
+	<select id="queryList" resultType="com.platform.entity.UserEntity">
+		select
+    		u.`user_id`,
+    		u.`user_name`,
+    		u.`real_name`,
+    		u.`mobile`,
+    		u.`email`,
+    		u.`password`,
+    		u.`role_id`,
+    		u.`state`,
+    		u.`photo`,
+    		u.`from_no`,
+    		u.`from_type`,
+    		u.`sex`,
+    		u.`birthday`,
+    		u.`country`,
+    		u.`province`,
+    		u.`city`,
+    		u.`address`,
+    		u.`weixin_openid`,
+    		u.`nickname`,
+    		u.`register_ip`,
+    		u.`avatar`,
+    		u.`register_time`,
+    		u.`last_login_time`,
+    		u.`last_login_ip`,
+    		u.`last_position`,
+    		u.`auth_type_statu`,
+    		u.`balance`,
+    		u.`amount`,
+    		u.`total_point`,
+    		u.`point`,
+    		u.`total_income`,
+    		u.`waiting_income`,
+    		u.`integral_score`,
+    		u.`freeze_balance`,
+    		u.`createtime`,
+    		u.`updatetime`,
+    		u.`pay_password`,
+			u.`paibag`,
+			u.`fund`,
+			u.`create_user_id`,
+			u.`addr_phone`,
+			u.`addr_link_name`,
+			u.`signup_invited_phone`,
+			u.`signup_node_phone`,
+			u.`signup_user_level_type`,
+			u.`total_invest_money`,
+			u.`total_invest_income_money`,
+			u.`invest_income_money`,
+			u.`surplus_invest_money`,
+			u.`share_invest_last_time`,
+			u.`user_level_type`,
+			u.`google_secret`,
+			u.`blockchain_secret`,
+			u.`user_pre_balance`,
+			u.`user_node_bonus_level`,
+			ul.user_level_name userLevelTypeName,
+			bp.bonus_team_invited_points bonusTeamInvitedPoints,
+			bp.bonus_me_invited_points bonusMeInvitedPoints
+        from t_user u 
+        LEFT JOIN t_user_invest_level ul on u.user_level_type = ul.user_level_type
+        LEFT JOIN t_bonus_points bp on bp.user_id = u.user_id and bp.blood_type=1
+		WHERE 1=1
+		<if test="userName != null and userName.trim() != ''">
+			AND u.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="mobile != null and mobile.trim() != ''">
+			AND u.mobile = LIKE concat('%',#{mobile},'%')
+		</if>
+		<if test="state != null and state>=0">
+			AND u.state = #{state}
+		</if>
+		<if test="createUserId != null">
+			AND u.create_user_id = #{createUserId}
+		</if>
+		
+		<if test="userIds != null">
+			AND u.user_id in
+		<foreach item="userId" collection="userIds" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+		
+		</if>
+		
+		<if test="shareInvestLastTimeStart != null and shareInvestLastTimeStart != ''">
+			AND u.share_invest_last_time <![CDATA[ >= ]]> #{shareInvestLastTimeStart}
+		</if>
+		
+		<if test="shareInvestLastTimeEnd != null and shareInvestLastTimeEnd != ''">
+			AND u.share_invest_last_time <![CDATA[ <= ]]> #{shareInvestLastTimeEnd}
+		</if>
+		
+		
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by u.user_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) 
+		from t_user u 
+		WHERE 1=1
+        <if test="userName != null and userName.trim() != ''">
+			AND u.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="mobile != null and mobile.trim() != ''">
+			AND u.mobile = LIKE concat('%',#{mobile},'%')
+		</if>
+		<if test="state != null">
+			AND u.state = #{state}
+		</if>
+		<if test="createUserId != null">
+			AND u.create_user_id = #{createUserId}
+		</if>
+		<if test="shareInvestLastTimeStart != null and shareInvestLastTimeStart != ''">
+			AND u.share_invest_last_time <![CDATA[ >= ]]> #{shareInvestLastTimeStart}
+		</if>
+		<if test="shareInvestLastTimeEnd != null and shareInvestLastTimeEnd != ''">
+			AND u.share_invest_last_time <![CDATA[ <= ]]> #{shareInvestLastTimeEnd}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.UserEntity" useGeneratedKeys="true" keyProperty="userId">
+		insert into t_user(
+			`user_name`,
+			`real_name`,
+			`mobile`,
+			`email`,
+			`password`,
+			`role_id`,
+			`state`,
+			`photo`,
+			`from_no`,
+			`from_type`,
+			`sex`,
+			`birthday`,
+			`country`,
+			`province`,
+			`city`,
+			`address`,
+			`weixin_openid`,
+			`nickname`,
+			`register_ip`,
+			`avatar`,
+			`register_time`,
+			`last_login_time`,
+			`last_login_ip`,
+			`last_position`,
+			`auth_type_statu`,
+			`balance`,
+			`amount`,
+			`total_point`,
+			`point`,
+			`total_income`,
+			`waiting_income`,
+			`integral_score`,
+			`freeze_balance`,
+			`createtime`,
+			`updatetime`,
+			`pay_password`,
+			`paibag`,
+			`fund`,
+			`create_user_id`,
+			`addr_phone`,
+			`addr_link_name`,
+			`signup_invited_phone`,
+			`signup_node_phone`,
+			`signup_user_level_type`,
+			`total_invest_money`,
+			`total_invest_income_money`,
+			`invest_income_money`,
+			`surplus_invest_money`,
+			`share_invest_last_time`,
+			`user_level_type`,
+			`google_secret`,
+			`blockchain_secret`,
+			`user_pre_balance`,
+			`user_node_bonus_level`
+			)
+		values(
+			#{userName},
+			#{realName},
+			#{mobile},
+			#{email},
+			#{password},
+			#{roleId},
+			#{state},
+			#{photo},
+			#{fromNo},
+			#{fromType},
+			#{sex},
+			#{birthday},
+			#{country},
+			#{province},
+			#{city},
+			#{address},
+			#{weixinOpenid},
+			#{nickname},
+			#{registerIp},
+			#{avatar},
+			#{registerTime},
+			#{lastLoginTime},
+			#{lastLoginIp},
+			#{lastPosition},
+			#{authTypeStatu},
+			#{balance},
+			#{amount},
+			#{totalPoint},
+			#{point},
+			#{totalIncome},
+			#{waitingIncome},
+			#{integralScore},
+			#{freezeBalance},
+			#{createtime},
+			#{updatetime},
+			#{payPassword},
+			#{paibag},
+			#{fund},
+			#{createUserId},
+			#{addrPhone},
+			#{addrLinkName},
+			#{signupInvitedPhone},
+			#{signupNodePhone},
+			#{signupUserLevelType},
+			#{totalInvestMoney},
+			#{totalInvestIncomeMoney},
+			#{investIncomeMoney},
+			#{surplusInvestMoney},
+			#{shareInvestLastTime},
+			#{userLevelType},
+			#{googleSecret},
+			#{blockchainSecret},
+			#{userPreBalance},
+			#{userNodeBonusLevel})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.UserEntity">
+		update t_user 
+		<set>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="realName != null">`real_name` = #{realName}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="email != null">`email` = #{email}, </if>
+			<if test="password != null">`password` = #{password}, </if>
+			<if test="roleId != null">`role_id` = #{roleId}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="photo != null">`photo` = #{photo}, </if>
+			<if test="fromNo != null">`from_no` = #{fromNo}, </if>
+			<if test="fromType != null">`from_type` = #{fromType}, </if>
+			<if test="sex != null">`sex` = #{sex}, </if>
+			<if test="birthday != null">`birthday` = #{birthday}, </if>
+			<if test="country != null">`country` = #{country}, </if>
+			<if test="province != null">`province` = #{province}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="weixinOpenid != null">`weixin_openid` = #{weixinOpenid}, </if>
+			<if test="nickname != null">`nickname` = #{nickname}, </if>
+			<if test="registerIp != null">`register_ip` = #{registerIp}, </if>
+			<if test="avatar != null">`avatar` = #{avatar}, </if>
+			<if test="registerTime != null">`register_time` = #{registerTime}, </if>
+			<if test="lastLoginTime != null">`last_login_time` = #{lastLoginTime}, </if>
+			<if test="lastLoginIp != null">`last_login_ip` = #{lastLoginIp}, </if>
+			<if test="lastPosition != null">`last_position` = #{lastPosition}, </if>
+			<if test="authTypeStatu != null">`auth_type_statu` = #{authTypeStatu}, </if>
+			<if test="balance != null">`balance` = #{balance}, </if>
+			<if test="amount != null">`amount` = #{amount}, </if>
+			<if test="totalPoint != null">`total_point` = #{totalPoint}, </if>
+			<if test="point != null">`point` = #{point}, </if>
+			<if test="totalIncome != null">`total_income` = #{totalIncome}, </if>
+			<if test="waitingIncome != null">`waiting_income` = #{waitingIncome}, </if>
+			<if test="integralScore != null">`integral_score` = #{integralScore}, </if>
+			<if test="freezeBalance != null">`freeze_balance` = #{freezeBalance}, </if>
+			<if test="createtime != null">`createtime` = #{createtime}, </if>
+			<if test="updatetime != null">`updatetime` = #{updatetime}, </if>
+			<if test="payPassword != null">`pay_password` = #{payPassword}, </if>
+			<if test="paibag != null">`paibag` = #{paibag}, </if>
+			<if test="fund != null">`fund` = #{fund}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="addrPhone != null">`addr_phone` = #{addrPhone}, </if>
+			<if test="addrLinkName != null">`addr_link_name` = #{addrLinkName}, </if>
+			<if test="signupInvitedPhone != null">`signup_invited_phone` = #{signupInvitedPhone}, </if>
+			<if test="signupNodePhone != null">`signup_node_phone` = #{signupNodePhone}, </if>
+			<if test="signupUserLevelType != null">`signup_user_level_type` = #{signupUserLevelType},</if>
+			<if test="totalInvestMoney != null">`total_invest_money` = #{totalInvestMoney}, </if>
+			<if test="totalInvestIncomeMoney != null">`total_invest_income_money` = #{totalInvestIncomeMoney}, </if>
+			<if test="investIncomeMoney != null">`invest_income_money` = #{investIncomeMoney}, </if>
+			<if test="surplusInvestMoney != null">`surplus_invest_money` = #{surplusInvestMoney}, </if>
+			<if test="shareInvestLastTime != null">`share_invest_last_time` = #{shareInvestLastTime}, </if>
+			<if test="userLevelType != null">`user_level_type` = #{userLevelType}, </if>
+			<if test="googleSecret != null">`google_secret` = #{googleSecret}, </if>
+			<if test="blockchainSecret != null">`blockchain_secret` = #{blockchainSecret}, </if>
+			<if test="totalInverstOrderSum != null">`total_invest_order_sum` = #{totalInverstOrderSum}, </if>
+			<if test="userPreBalance != null">`user_pre_balance` = #{userPreBalance}, </if>
+			<if test="userNodeBonusLevel != null">`user_node_bonus_level` = #{userNodeBonusLevel}</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+	
+	<delete id="delete">
+		delete from t_user where user_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_user where user_id in 
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+	
+	<select id="queryTotalStat" resultType="map">
+		SELECT
+			IFNULL(sum(balance), 0) AS totalBalance,
+			IFNULL(sum(integral_score), 0) AS totalPoint,
+			IFNULL(sum(fund), 0) AS totalFund,
+			IFNULL(sum(surplus_invest_money), 0) AS totalSurplusInvestMoney,
+			IFNULL(sum(total_invest_money), 0) AS totalInvestMoney,
+			IFNULL(sum(invest_income_money), 0) AS totalInvestIncomeMoney,
+			IFNULL(sum(total_invest_income_money), 0) AS totalTotalInvestIncomeMoney,
+			count(if(user_level_type in (0),1,null)) as v0,  
+   			count(if(user_level_type=1,user_level_type,null)) as v1, 
+   			count(if(user_level_type=2,user_level_type,null)) as v2,  
+   			count(if(user_level_type=3,user_level_type,null)) as v3,  
+   			count(if(user_level_type=4,user_level_type,null)) as v4,  
+			count(*) as totalSum
+		FROM
+		 t_user;
+	</select>
+	
+	<select id="queryStatByDay" resultType="map">
+		SELECT 
+				count(if(user_level_type in (0),1,null)) as v0,  
+    			count(if(user_level_type=1,user_level_type,null)) as v1, 
+    			count(if(user_level_type=2,user_level_type,null)) as v2,  
+    			count(if(user_level_type=3,user_level_type,null)) as v3,  
+    			count(if(user_level_type=4,user_level_type,null)) as v4,  
+    			count(*) as allV  
+    			FROM t_user  
+    			where  
+    			DATE_FORMAT(register_time, '%Y-%m-%d') = DATE_FORMAT(#{registerTime}, '%Y-%m-%d')
+	</select>
+	<select id="queryGroupStat" parameterType="java.util.Map" resultType="java.util.HashMap">
+		SELECT 
+				date_format(payment_date,'%Y-%m-%d') as day,
+				count(if(user_level_type in (0),1,null)) as v0,  
+    			count(if(user_level_type=1,user_level_type,null)) as v1, 
+    			count(if(user_level_type=2,user_level_type,null)) as v2,  
+    			count(if(user_level_type=3,user_level_type,null)) as v3,  
+    			count(if(user_level_type=4,user_level_type,null)) as v4,  
+    			count(*) as allV  
+    			FROM t_user  
+    			WHERE
+				group by day order by day desc
+				<if test="offset != null and limit != null">
+					limit #{offset}, #{limit}
+				</if>
+	</select>
+<!--     			
+			SELECT 
+				count(if(user_level_type in (0),1,null)) as v0,  
+    			count(if(user_level_type=1,user_level_type,null)) as v1, 
+    			count(if(user_level_type=2,user_level_type,null)) as v2,  
+    			count(if(user_level_type=3,user_level_type,null)) as v3,  
+    			count(if(user_level_type=4,user_level_type,null)) as v4,  
+    			count(*)   
+    			FROM platform_duojifen.t_user  where  TO_DAYS(STR_TO_DATE('2019-07-03','%Y-%m-%d'))=TO_DAYS(register_time) ;
+-->
+	
+	
+	
+<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.platform.entity.SmsLogEntity" id="smslogMap">
+        <result property="id" column="id"/>
+        <result property="user_id" column="userId"/>
+        <result property="phone" column="phone"/>
+        <result property="log_date" column="logDate"/>
+        <result property="sms_code" column="smsCode"/>
+        <result property="send_status" column="sendStatus"/>
+        <result property="sms_text" column="smsText"/>
+    </resultMap>
+
+    <select id="querySmsCodeByUserId" resultMap="smslogMap">
+        select
+        a.id,
+        a.user_id,
+        a.phone,
+        a.log_date,
+        a.sms_code,
+        a.send_status,
+        a.sms_text
+        from t_sms_log a
+        left join t_sms_log b on a.user_id = b.user_id and b.log_date > a.log_date
+        where a.user_id = #{user_id} and b.id is null
+    </select>
+    
+    
+      <select id="querySmsCodeByPhone" resultMap="smslogMap">
+        select
+        a.id,
+        a.user_id,
+        a.phone,
+        a.log_date,
+        a.sms_code,
+        a.send_status,
+        a.sms_text
+        from t_sms_log a
+        left join t_sms_log b on a.phone = b.phone and b.log_date > a.log_date
+        where a.phone = #{phone} and b.id is null
+    </select>
+
+    <insert id="saveSmsCodeLog" parameterType="com.platform.entity.SmsLogEntity">
+        insert into t_sms_log(
+        `id`,
+        `user_id`,
+        `phone`,
+        `log_date`,
+        `sms_code`,
+        `send_status`,
+        `sms_text`)
+        values(
+        #{id},
+        #{userId},
+        #{phone},
+        #{logDate},
+        #{smsCode},
+        #{sendStatus},
+        #{smsText}
+        )
+    </insert>
+    
+    
+    
+</mapper>

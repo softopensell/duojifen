@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.PaymentInfoDao">
+
+
+    <resultMap type="com.platform.entity.PaymentInfoEntity" id="paymentInfoMap">
+        <result property="id" column="id"/>
+        <result property="account" column="account"/>
+        <result property="amount" column="amount"/>
+        <result property="bank" column="bank"/>
+        <result property="expire" column="expire"/>
+        <result property="fee" column="fee"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="paymentDate" column="payment_date"/>
+        <result property="paymentPluginId" column="payment_plugin_id"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="sn" column="sn"/>
+        <result property="status" column="status"/>
+        <result property="userId" column="user_id"/>
+        <result property="payer" column="payer"/>
+        <result property="orderType" column="order_type"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="orderDesc" column="order_desc"/>
+        <result property="paymentserialnumber" column="paymentSerialNumber"/>
+        <result property="userName" column="user_name"/>
+        <result property="logisticsName" column="logistics_name"/>
+        <result property="logisticsNumber" column="logistics_number"/>
+        <result property="logisticsType" column="logistics_type"/>
+        <result property="webApp" column="web_app"/>
+        <result property="companySn" column="company_sn"/>
+        <result property="memo" column="memo"/>
+        <result property="moneyTypeWallet" column="money_type_wallet"/>
+        <result property="paymentType" column="payment_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.PaymentInfoEntity">
+		select
+			`id`,
+			`account`,
+			`amount`,
+			`bank`,
+			`expire`,
+			`fee`,
+			`operator_id`,
+			`operator_name`,
+			`payment_date`,
+			`payment_plugin_id`,
+			`payment_method`,
+			`sn`,
+			`status`,
+			`user_id`,
+			`payer`,
+			`order_type`,
+			`order_no`,
+			`order_desc`,
+			`paymentSerialNumber`,
+			`user_name`,
+			`logistics_name`,
+			`logistics_number`,
+			`logistics_type`,
+			`web_app`,
+			`company_sn`,
+			`memo`,
+			`money_type_wallet`,
+			`payment_type`,
+			`create_time`,
+			`update_time`
+		from t_payment_info
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.PaymentInfoEntity">
+		select
+    		pi.`id`,
+    		pi.`account`,
+    		pi.`amount`,
+    		pi.`bank`,
+    		pi.`expire`,
+    		pi.`fee`,
+    		pi.`operator_id`,
+    		pi.`operator_name`,
+    		pi.`payment_date`,
+    		pi.`payment_plugin_id`,
+    		pi.`payment_method`,
+    		pi.`sn`,
+    		pi.`status`,
+    		pi.`user_id`,
+    		pi.`payer`,
+    		pi.`order_type`,
+    		pi.`order_no`,
+    		pi.`order_desc`,
+    		pi.`paymentSerialNumber`,
+    		pi.`user_name`,
+    		pi.`logistics_name`,
+    		pi.`logistics_number`,
+    		pi.`logistics_type`,
+    		pi.`web_app`,
+    		pi.`company_sn`,
+    		pi.`memo`,
+    		pi.`money_type_wallet`,
+    		pi.`payment_type`,
+    		pi.`create_time`,
+    		pi.`update_time`,
+    		u.mobile as userMobile
+		from t_payment_info pi left join t_user u on pi.user_id=u.user_id
+		WHERE 1=1
+		<if test="userName != null and userName.trim() != ''">
+			AND pi.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="userMobile != null and userMobile.trim() != ''">
+			AND u.mobile LIKE concat('%',#{userMobile},'%')
+		</if>
+		
+		<if test="sn != null and sn.trim() != ''">
+			AND pi.sn =#{sn}
+		</if>
+		
+		<if test="orderNo != null and orderNo.trim() != ''">
+			AND pi.order_no =#{orderNo}
+		</if>
+		
+		<if test="status != null and status >= 0">
+			AND pi.status =#{status}
+		</if>
+		<if test="orderType != null">
+			AND pi.order_type =#{orderType}
+		</if>
+		
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND pi.`payment_date` <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND pi.`payment_date` <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+		
+		<if test="payDate != null and payDate != ''">
+			AND DATE_FORMAT(pi.payment_date, '%Y-%m-%d') = DATE_FORMAT(#{payDate}, '%Y-%m-%d')
+		</if>
+		
+		<if test="moneyTypeWallet != null and moneyTypeWallet != ''">
+			AND pi.money_type_wallet = #{moneyTypeWallet}
+		</if>
+		<if test="paymentType != null ">
+			AND pi.payment_type = #{paymentType}
+		</if>
+		<if test="userId != null ">
+			AND pi.user_id = #{userId}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) 
+		from t_payment_info pi left join t_user u on pi.user_id=u.user_id
+		WHERE 1=1
+		<if test="userName != null and userName.trim() != ''">
+			AND pi.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="userMobile != null and userMobile.trim() != ''">
+			AND u.mobile LIKE concat('%',#{userMobile},'%')
+		</if>
+		<if test="sn != null and sn.trim() != ''">
+			AND pi.sn =#{sn}
+		</if>
+		<if test="orderNo != null and orderNo.trim() != ''">
+			AND pi.order_no =#{orderNo}
+		</if>
+		<if test="orderType != null">
+			AND pi.order_type =#{orderType}
+		</if>
+		
+		
+		<if test="status != null and status>=0">
+			AND pi.status =#{status}
+		</if>
+		
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND pi.`payment_date` <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND pi.`payment_date` <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+		
+		<if test="payDate != null and payDate != ''">
+			AND DATE_FORMAT(pi.payment_date, '%Y-%m-%d') = DATE_FORMAT(#{payDate}, '%Y-%m-%d')
+		</if>
+		
+		<if test="moneyTypeWallet != null and moneyTypeWallet != ''">
+			AND pi.money_type_wallet = #{moneyTypeWallet}
+		</if>
+		<if test="paymentType != null ">
+			AND pi.payment_type = #{paymentType}
+		</if>
+		<if test="userId != null ">
+			AND pi.user_id = #{userId}
+		</if>
+
+	</select>
+	 
+	 <select id="queryTotalByDate" resultType="map">
+	 	select IFNULL(sum(pi.amount),0) as totalIntegral,count(*) as totalSum 
+	 	from t_payment_info pi left join t_user u on pi.user_id=u.user_id
+	 	where 1=1
+	 	<if test="userName != null and userName.trim() != ''">
+			AND pi.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="userMobile != null and userMobile.trim() != ''">
+			AND u.mobile LIKE concat('%',#{userMobile},'%')
+		</if>
+		
+		<if test="orderNo != null and orderNo.trim() != ''">
+			AND pi.order_no =#{orderNo}
+		</if>
+		<if test="orderType != null">
+			AND pi.order_type =#{orderType}
+		</if>
+
+		<if test="moneyTypeWallet != null and moneyTypeWallet != ''">
+			AND pi.money_type_wallet = #{moneyTypeWallet}
+		</if>
+		<if test="status != null and status>=0">
+			AND pi.status =#{status}
+		</if>
+
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND pi.`payment_date` <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND pi.`payment_date` <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+		<if test="confirmTime != null and confirmTime != ''">
+			AND DATE_FORMAT(pi.payment_date, '%Y-%m-%d') = DATE_FORMAT(#{confirmTime}, '%Y-%m-%d')
+		</if>
+		
+		<if test="paymentType != null">
+			AND pi.payment_type = #{paymentType}
+		</if>
+		<if test="userId != null ">
+			AND pi.user_id = #{userId}
+		</if>
+		
+		
+	 </select>
+	 
+	<insert id="save" parameterType="com.platform.entity.PaymentInfoEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_payment_info(
+			`account`,
+			`amount`,
+			`bank`,
+			`expire`,
+			`fee`,
+			`operator_id`,
+			`operator_name`,
+			`payment_date`,
+			`payment_plugin_id`,
+			`payment_method`,
+			`sn`,
+			`status`,
+			`user_id`,
+			`payer`,
+			`order_type`,
+			`order_no`,
+			`order_desc`,
+			`paymentSerialNumber`,
+			`user_name`,
+			`logistics_name`,
+			`logistics_number`,
+			`logistics_type`,
+			`web_app`,
+			`company_sn`,
+			`memo`,
+			`money_type_wallet`,
+			`payment_type`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{account},
+			#{amount},
+			#{bank},
+			#{expire},
+			#{fee},
+			#{operatorId},
+			#{operatorName},
+			#{paymentDate},
+			#{paymentPluginId},
+			#{paymentMethod},
+			#{sn},
+			#{status},
+			#{userId},
+			#{payer},
+			#{orderType},
+			#{orderNo},
+			#{orderDesc},
+			#{paymentserialnumber},
+			#{userName},
+			#{logisticsName},
+			#{logisticsNumber},
+			#{logisticsType},
+			#{webApp},
+			#{companySn},
+			#{memo},
+			#{moneyTypeWallet},
+			#{paymentType},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.PaymentInfoEntity">
+		update t_payment_info 
+		<set>
+			<if test="account != null">`account` = #{account}, </if>
+			<if test="amount != null">`amount` = #{amount}, </if>
+			<if test="bank != null">`bank` = #{bank}, </if>
+			<if test="expire != null">`expire` = #{expire}, </if>
+			<if test="fee != null">`fee` = #{fee}, </if>
+			<if test="operatorId != null">`operator_id` = #{operatorId}, </if>
+			<if test="operatorName != null">`operator_name` = #{operatorName}, </if>
+			<if test="paymentDate != null">`payment_date` = #{paymentDate}, </if>
+			<if test="paymentPluginId != null">`payment_plugin_id` = #{paymentPluginId}, </if>
+			<if test="paymentMethod != null">`payment_method` = #{paymentMethod}, </if>
+			<if test="sn != null">`sn` = #{sn}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="payer != null">`payer` = #{payer}, </if>
+			<if test="orderType != null">`order_type` = #{orderType}, </if>
+			<if test="orderNo != null">`order_no` = #{orderNo}, </if>
+			<if test="orderDesc != null">`order_desc` = #{orderDesc}, </if>
+			<if test="paymentserialnumber != null">`paymentSerialNumber` = #{paymentserialnumber}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="logisticsName != null">`logistics_name` = #{logisticsName}, </if>
+			<if test="logisticsNumber != null">`logistics_number` = #{logisticsNumber}, </if>
+			<if test="logisticsType != null">`logistics_type` = #{logisticsType}, </if>
+			<if test="webApp != null">`web_app` = #{webApp}, </if>
+			<if test="companySn != null">`company_sn` = #{companySn}, </if>
+			<if test="memo != null">`memo` = #{memo}, </if>
+			<if test="moneyTypeWallet != null">`money_type_wallet` = #{moneyTypeWallet}, </if>
+			<if test="paymentType != null">`payment_type` = #{paymentType}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_payment_info where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_payment_info where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="findBySn" resultType="com.platform.entity.PaymentInfoVo">
+		select
+			*
+		from t_payment_info
+		where sn = #{sn}
+	</select>
+
+	<select id="queryTodayIncome" resultType="map">
+		SELECT
+			IFNULL(sum(amount), 0) AS todayTotalAmount
+		FROM
+			t_payment_info
+		WHERE
+			DATE_FORMAT(payment_date, '%Y-%m-%d') = DATE_FORMAT(#{createTime}, '%Y-%m-%d')
+		AND user_id = #{userId}
+		AND payment_type = #{paymentType}
+		<if test="status != null and status>=0">
+			AND status =#{status}
+		</if>
+		AND money_type_wallet IN 
+		<foreach item="mtype" collection="moneyTypeWallets" open="(" separator="," close=")">
+			#{mtype}
+		</foreach>
+	</select>
+	
+	
+	<select id="queryStatByDay" resultType="map">
+	SELECT 
+				sum(if(money_type_wallet=0,amount,0)) as walletType0,
+				count(distinct id, if(money_type_wallet =0,true,null)) as walletType0Sum,
+				
+				sum(if(money_type_wallet=1,amount,0)) as walletType1,
+				count(distinct id, if(money_type_wallet =1,true,null)) as walletType1Sum,
+				
+				sum(if(money_type_wallet=2,amount,0)) as walletType2,
+				count(distinct id, if(money_type_wallet =2,true,null)) as walletType2Sum,
+				sum(if(money_type_wallet=3,amount,0)) as walletType3,
+				count(distinct id, if(money_type_wallet =3,true,null)) as walletType3Sum,
+				sum(if(money_type_wallet=91,amount,0)) as walletType91,
+				count(distinct id, if(money_type_wallet =91,true,null)) as walletType91Sum,
+				sum(if(money_type_wallet=92,amount,0)) as walletType92,
+				count(distinct id, if(money_type_wallet =92,true,null)) as walletType92Sum,
+				
+				sum(if(money_type_wallet=43,amount,0)) as walletType43,
+				count(distinct id, if(money_type_wallet =43,true,null)) as walletType43Sum,
+				
+				sum(if(money_type_wallet=411,amount,0)) as walletType411,
+				count(distinct id, if(money_type_wallet =411,true,null)) as walletType411Sum,
+				
+				sum(if(money_type_wallet=421,amount,0)) as walletType421,
+				count(distinct id, if(money_type_wallet =421,true,null)) as walletType421Sum,
+				
+				sum(if(money_type_wallet=431,amount,0)) as walletType431,
+				count(distinct id, if(money_type_wallet =431,true,null)) as walletType431Sum,
+				
+				sum(if(money_type_wallet=4000,amount,0)) as walletType4000,
+				count(distinct id, if(money_type_wallet =4000,true,null)) as walletType4000Sum,
+				
+				sum(if(money_type_wallet=400,amount,0)) as walletType400,
+				count(distinct id, if(money_type_wallet =400,true,null)) as walletType400Sum,
+				
+				sum(if(money_type_wallet=5,amount,0)) as walletType5,
+				count(distinct id, if(money_type_wallet =5,true,null)) as walletType5Sum,
+				
+				sum(if(money_type_wallet=6,amount,0)) as walletType6,
+				count(distinct id, if(money_type_wallet =6,true,null)) as walletType6Sum,
+				
+				sum(if(money_type_wallet=61,amount,0)) as walletType61,
+				count(distinct id, if(money_type_wallet in (61),true,null)) as walletType61Sum,
+				
+				sum(if(money_type_wallet=62,amount,0)) as walletType62,
+				count(distinct id, if(money_type_wallet in (62),true,null)) as walletType62Sum,
+				
+				sum(if(money_type_wallet=64,amount,0)) as walletType64,
+				count(distinct id, if(money_type_wallet in (64),true,null)) as walletType64Sum,
+				
+				sum(if(money_type_wallet=10000,amount,0)) as walletType10000,
+				count(distinct id, if(money_type_wallet in (10000),true,null)) as walletType10000Sum,
+				sum(if(money_type_wallet=10010,amount,0)) as walletType10010,
+				count(distinct id, if(money_type_wallet in (10010),true,null)) as walletType10010Sum,
+				sum(if(money_type_wallet=10020,amount,0)) as walletType10020,
+				count(distinct id, if(money_type_wallet in (10020),true,null)) as walletType10020Sum,
+				
+				sum(if(money_type_wallet=10001,amount,0)) as walletType10001,
+				count(distinct id, if(money_type_wallet in (10001),true,null)) as walletType10001Sum,
+				sum(if(money_type_wallet=10011,amount,0)) as walletType10011,
+				count(distinct id, if(money_type_wallet in (10011),true,null)) as walletType10011Sum,
+				sum(if(money_type_wallet=10021,amount,0)) as walletType10021,
+				count(distinct id, if(money_type_wallet in (10021),true,null)) as walletType10021Sum
+		FROM 
+				t_payment_info 
+		WHERE
+			DATE_FORMAT(payment_date, '%Y-%m-%d') = DATE_FORMAT(#{createTime}, '%Y-%m-%d')
+			<choose>
+		            <when test="status != null and status>=0">
+		            AND    status =#{status}
+		            </when>
+					<otherwise>
+		             AND   status in (8,10)
+					</otherwise>
+		     </choose>
+		     
+			<if test="createTimeStart != null and createTimeStart != ''">
+				AND `create_time` <![CDATA[ >= ]]> #{createTimeStart}
+			</if>
+	</select>
+	
+	
+	<select id="queryStatByUserId" resultType="map">
+	SELECT 
+				sum(if(money_type_wallet=0,amount,0)) as walletType0,
+				count(distinct id, if(money_type_wallet =0,true,null)) as walletType0Sum,
+				
+				sum(if(money_type_wallet=1,amount,0)) as walletType1,
+				count(distinct id, if(money_type_wallet =1,true,null)) as walletType1Sum,
+				
+				sum(if(money_type_wallet=2,amount,0)) as walletType2,
+				count(distinct id, if(money_type_wallet =2,true,null)) as walletType2Sum,
+				sum(if(money_type_wallet=3,amount,0)) as walletType3,
+				count(distinct id, if(money_type_wallet =3,true,null)) as walletType3Sum,
+				sum(if(money_type_wallet=91,amount,0)) as walletType91,
+				count(distinct id, if(money_type_wallet =91,true,null)) as walletType91Sum,
+				sum(if(money_type_wallet=92,amount,0)) as walletType92,
+				count(distinct id, if(money_type_wallet =92,true,null)) as walletType92Sum,
+				
+				sum(if(money_type_wallet=43,amount,0)) as walletType43,
+				count(distinct id, if(money_type_wallet =43,true,null)) as walletType43Sum,
+				
+				sum(if(money_type_wallet=411,amount,0)) as walletType411,
+				count(distinct id, if(money_type_wallet =411,true,null)) as walletType411Sum,
+				
+				sum(if(money_type_wallet=421,amount,0)) as walletType421,
+				count(distinct id, if(money_type_wallet =421,true,null)) as walletType421Sum,
+				
+				sum(if(money_type_wallet=431,amount,0)) as walletType431,
+				count(distinct id, if(money_type_wallet =431,true,null)) as walletType431Sum,
+				
+				sum(if(money_type_wallet=4000,amount,0)) as walletType4000,
+				count(distinct id, if(money_type_wallet =4000,true,null)) as walletType4000Sum,
+				
+				sum(if(money_type_wallet=1020,amount,0)) as walletType1020,
+				count(distinct id, if(money_type_wallet =1020,true,null)) as walletType1020Sum,
+				
+				
+				sum(if(money_type_wallet=400,amount,0)) as walletType400,
+				count(distinct id, if(money_type_wallet =400,true,null)) as walletType400Sum,
+				
+				sum(if(money_type_wallet=5,amount,0)) as walletType5,
+				count(distinct id, if(money_type_wallet =5,true,null)) as walletType5Sum,
+				
+				sum(if(money_type_wallet=6,amount,0)) as walletType6,
+				count(distinct id, if(money_type_wallet =6,true,null)) as walletType6Sum,
+				
+				sum(if(money_type_wallet=61,amount,0)) as walletType61,
+				count(distinct id, if(money_type_wallet in (61),true,null)) as walletType61Sum,
+				
+				sum(if(money_type_wallet=62,amount,0)) as walletType62,
+				count(distinct id, if(money_type_wallet in (62),true,null)) as walletType62Sum,
+				
+				sum(if(money_type_wallet=64,amount,0)) as walletType64,
+				count(distinct id, if(money_type_wallet in (64),true,null)) as walletType64Sum,
+				
+				sum(if(money_type_wallet=10000,amount,0)) as walletType10000,
+				count(distinct id, if(money_type_wallet in (10000),true,null)) as walletType10000Sum,
+				sum(if(money_type_wallet=10010,amount,0)) as walletType10010,
+				count(distinct id, if(money_type_wallet in (10010),true,null)) as walletType10010Sum,
+				sum(if(money_type_wallet=10020,amount,0)) as walletType10020,
+				count(distinct id, if(money_type_wallet in (10020),true,null)) as walletType10020Sum,
+				
+				sum(if(money_type_wallet=10001,amount,0)) as walletType10001,
+				count(distinct id, if(money_type_wallet in (10001),true,null)) as walletType10001Sum,
+				sum(if(money_type_wallet=10011,amount,0)) as walletType10011,
+				count(distinct id, if(money_type_wallet in (10011),true,null)) as walletType10011Sum,
+				sum(if(money_type_wallet=10021,amount,0)) as walletType10021,
+				count(distinct id, if(money_type_wallet in (10021),true,null)) as walletType10021Sum
+		FROM 
+				t_payment_info 
+		WHERE
+			 user_id = #{userId}
+			<if test="createTimeStart != null and createTimeStart != ''">
+				AND `create_time` <![CDATA[ >= ]]> #{createTimeStart}
+			</if>
+			 <choose>
+		            <when test="status != null and status>=0">
+		             AND   status =#{status}
+		            </when>
+					<otherwise>
+		          AND    status in (8,10)
+			 </otherwise>
+		    </choose>
+	</select>
+	
+	
+	<select id="queryGroupStat" parameterType="java.util.Map" resultType="java.util.HashMap">
+	
+		
+		SELECT 
+				date_format(payment_date,'%Y-%m-%d') as day,
+				sum(if(money_type_wallet=0,amount,0)) as walletType0,
+				count(distinct id, if(money_type_wallet =0,true,null)) as walletType0Sum,
+				
+				sum(if(money_type_wallet=1,amount,0)) as walletType1,
+				count(distinct id, if(money_type_wallet =1,true,null)) as walletType1Sum,
+				
+				sum(if(money_type_wallet=2,amount,0)) as walletType2,
+				count(distinct id, if(money_type_wallet =2,true,null)) as walletType2Sum,
+				sum(if(money_type_wallet=3,amount,0)) as walletType3,
+				count(distinct id, if(money_type_wallet =3,true,null)) as walletType3Sum,
+				sum(if(money_type_wallet=91,amount,0)) as walletType91,
+				count(distinct id, if(money_type_wallet =91,true,null)) as walletType91Sum,
+				sum(if(money_type_wallet=92,amount,0)) as walletType92,
+				count(distinct id, if(money_type_wallet =92,true,null)) as walletType92Sum,
+				
+				sum(if(money_type_wallet=43,amount,0)) as walletType43,
+				count(distinct id, if(money_type_wallet =43,true,null)) as walletType43Sum,
+				
+				sum(if(money_type_wallet=411,amount,0)) as walletType411,
+				count(distinct id, if(money_type_wallet =411,true,null)) as walletType411Sum,
+				
+				sum(if(money_type_wallet=421,amount,0)) as walletType421,
+				count(distinct id, if(money_type_wallet =421,true,null)) as walletType421Sum,
+				
+				sum(if(money_type_wallet=431,amount,0)) as walletType431,
+				count(distinct id, if(money_type_wallet =431,true,null)) as walletType431Sum,
+				
+				sum(if(money_type_wallet=4000,amount,0)) as walletType4000,
+				count(distinct id, if(money_type_wallet =4000,true,null)) as walletType4000Sum,
+				
+				sum(if(money_type_wallet=400,amount,0)) as walletType400,
+				count(distinct id, if(money_type_wallet =400,true,null)) as walletType400Sum,
+				
+				sum(if(money_type_wallet=5,amount,0)) as walletType5,
+				count(distinct id, if(money_type_wallet =5,true,null)) as walletType5Sum,
+				
+				sum(if(money_type_wallet=6,amount,0)) as walletType6,
+				count(distinct id, if(money_type_wallet =6,true,null)) as walletType6Sum,
+				
+				sum(if(money_type_wallet=61,amount,0)) as walletType61,
+				count(distinct id, if(money_type_wallet in (61),true,null)) as walletType61Sum,
+				
+				sum(if(money_type_wallet=62,amount,0)) as walletType62,
+				count(distinct id, if(money_type_wallet in (62),true,null)) as walletType62Sum,
+				
+				sum(if(money_type_wallet=64,amount,0)) as walletType64,
+				count(distinct id, if(money_type_wallet in (64),true,null)) as walletType64Sum,
+				
+				
+				sum(if(money_type_wallet=10000,amount,0)) as walletType10000,
+				count(distinct id, if(money_type_wallet in (10000),true,null)) as walletType10000Sum,
+				sum(if(money_type_wallet=10010,amount,0)) as walletType10010,
+				count(distinct id, if(money_type_wallet in (10010),true,null)) as walletType10010Sum,
+				sum(if(money_type_wallet=10020,amount,0)) as walletType10020,
+				count(distinct id, if(money_type_wallet in (10020),true,null)) as walletType10020Sum,
+				
+				sum(if(money_type_wallet=10001,amount,0)) as walletType10001,
+				count(distinct id, if(money_type_wallet in (10001),true,null)) as walletType10001Sum,
+				sum(if(money_type_wallet=10011,amount,0)) as walletType10011,
+				count(distinct id, if(money_type_wallet in (10011),true,null)) as walletType10011Sum,
+				sum(if(money_type_wallet=10021,amount,0)) as walletType10021,
+				count(distinct id, if(money_type_wallet in (10021),true,null)) as walletType10021Sum
+				
+				
+				
+		FROM 
+				t_payment_info 
+		WHERE   1=1
+				<if test="createTimeStart != null and createTimeStart != ''">
+					AND `create_time` <![CDATA[ >= ]]> #{createTimeStart}
+				</if>
+		        
+				<choose>
+		            <when test="status != null and status>=0">
+		                status =#{status}
+		            </when>
+					<otherwise>
+		                status in (8,10)
+					</otherwise>
+		        </choose>
+				group by day order by day desc
+				<if test="offset != null and limit != null">
+					limit #{offset}, #{limit}
+				</if>
+	</select>
+	
+</mapper>

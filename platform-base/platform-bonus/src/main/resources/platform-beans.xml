@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+        
+        <!-- 奖励轮询的线程池 -->
+    <bean id="bonusConsumer" class="com.platform.mq.consumer.impl.BonusConsumer">
+       <property name="consumer_thread_number" value="3"/>
+        <!-- 线程池的大小 -->
+        <property name="interval" value="10"/>
+    </bean>
+    
+  <!--   
+  	<import resource="classpath*:applicationContext-quartz.xml"/> 
+	<import resource="classpath*:/com/platform/quartz/cron/applicationContext-quartz.xml"/>
+  -->
+</beans>

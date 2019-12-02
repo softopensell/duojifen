@@ -1,0 +1,50 @@
+package ${package}.api.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Map;
+
+import ${package}.api.dao.Api${className}Mapper;
+import ${package}.api.entity.${className}Vo;
+
+/**
+ * ${comments}Service
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Service
+public class Api${className}Service {
+    @Autowired
+    private Api${className}Mapper ${classname}Mapper;
+
+    public ${className}Vo queryObject(${pk.attrType} ${pk.attrname}) {
+        return ${classname}Mapper.queryObject(${pk.attrname});
+    }
+
+    public List<${className}Vo> queryList(Map<String, Object> map) {
+        return ${classname}Mapper.queryList(map);
+    }
+
+    public int queryTotal(Map<String, Object> map) {
+        return ${classname}Mapper.queryTotal(map);
+    }
+
+    public int save(${className}Vo ${classname}) {
+        return ${classname}Mapper.save(${classname});
+    }
+
+    public int update(${className}Vo ${classname}) {
+        return ${classname}Mapper.update(${classname});
+    }
+
+    public int delete(${pk.attrType} ${pk.attrname}) {
+        return ${classname}Mapper.delete(${pk.attrname});
+    }
+
+    public int deleteBatch(${pk.attrType}[] ${pk.attrname}s) {
+        return ${classname}Mapper.deleteBatch(${pk.attrname}s);
+    }
+}

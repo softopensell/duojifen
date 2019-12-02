@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.name" @on-enter="query" placeholder="名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("platformwithdrawshare:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("platformwithdrawshare:update"))
+                 <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("platformwithdrawshare:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+            </div>
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="!showList">
+        <p slot="title">{{title}}</p>
+		<i-form ref="formValidate" :model="platformWithdrawShare" :rules="ruleValidate" :label-width="180">
+             <Form-item label="会员账号" prop="fwName">
+                 <i-col span="6">
+                  <i-input type="text" v-model="curUser.userName" icon="eye" readonly="readonly"
+                         @on-click="selectUser" readonly="readonly" placeholder="选择设置会员账号" :value="curUser.userName"/>
+                </i-col>
+            </Form-item>
+            
+           <Row>
+            <i-col span="8">
+            <Form-item label="类别" prop="withdrawType">
+                <i-select v-model="platformWithdrawShare.withdrawType"   placeholder="类型">
+	                  <i-option :value="0">共识机制</i-option> 
+	                  <i-option :value="1">共识合伙</i-option> 
+	             </i-select>
+            </Form-item>
+            </i-col>
+             <i-col span="8">
+            <Form-item label="星级类型" prop="withdrawTypeStar">
+                 <i-select v-model="platformWithdrawShare.withdrawTypeStar"   placeholder="星级">
+	                  <i-option :value="1">一星</i-option> 
+	                  <i-option :value="2">二星</i-option> 
+	                  <i-option :value="3">三星</i-option> 
+	                  <i-option :value="4">四星</i-option> 
+	                  <i-option :value="5">五星</i-option> 
+	                  <i-option :value="6">一钻</i-option> 
+	                  <i-option :value="7">二钻</i-option> 
+	                  <i-option :value="8">三钻</i-option> 
+	                  <i-option :value="9">四钻</i-option> 
+	                  <i-option :value="10">五钻</i-option> 
+	                </i-select>
+            </Form-item>
+             </i-col>
+            </Row>
+            <Form-item>
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+</div>
+
+<script src="${rc.contextPath}/js/shop/platformwithdrawshare.js?_${date.systemTime}"></script>
+</body>
+</html>

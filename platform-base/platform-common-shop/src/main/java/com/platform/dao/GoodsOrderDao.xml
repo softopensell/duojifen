@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.GoodsOrderDao">
+
+    <resultMap type="com.platform.entity.GoodsOrderEntity" id="goodsOrderMap">
+        <result property="id" column="id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="orderType" column="order_type"/>
+        <result property="orderInvestStatu" column="order_invest_statu"/>
+        <result property="userId" column="user_id"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="expressPrice" column="express_price"/>
+        <result property="totalIntegralNum" column="total_integral_num"/>
+        <result property="totalIntegralPrice" column="total_integral_price"/>
+        <result property="totalPayPrice" column="total_pay_price"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="payType" column="pay_type"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="payNo" column="pay_no"/>
+        <result property="payTime" column="pay_time"/>
+        <result property="addressId" column="address_id"/>
+        <result property="provinceId" column="province_id"/>
+        <result property="cityId" column="city_id"/>
+        <result property="regionId" column="region_id"/>
+        <result property="address" column="address"/>
+        <result property="pcrdetail" column="pcrdetail"/>
+        <result property="telephone" column="telephone"/>
+        <result property="contactName" column="contact_name"/>
+        <result property="zipcode" column="zipcode"/>
+        <result property="sendOrderTimeType" column="send_order_time_type"/>
+        <result property="sendOrderTime" column="send_order_time"/>
+        <result property="sendStatu" column="send_statu"/>
+        <result property="logisticsName" column="logistics_name"/>
+        <result property="logisticsNumber" column="logistics_number"/>
+        <result property="logisticsStatu" column="logistics_statu"/>
+        <result property="logisticsReceiveName" column="logistics_receive_name"/>
+        <result property="logisticsReceiveTime" column="logistics_receive_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <select id="queryObjectByNo" resultType="com.platform.entity.GoodsOrderEntity">
+		select
+			*
+		from t_goods_order
+		where order_no = #{orderNo}
+	</select>
+    
+
+	<select id="queryObject" resultType="com.platform.entity.GoodsOrderEntity">
+		select
+			go.`id`,
+			go.`shop_id`,
+			go.`order_no`,
+			go.`order_type`,
+			go.`order_invest_statu`,
+			go.`user_id`,
+			go.`goods_count`,
+			go.`express_price`,
+			go.`total_integral_num`,
+			go.`total_integral_price`,
+			go.`total_pay_price`,
+			go.`total_price`,
+			go.`order_status`,
+			go.`pay_type`,
+			go.`pay_status`,
+			go.`pay_no`,
+			go.`pay_time`,
+			go.`address_id`,
+			go.`province_id`,
+			go.`city_id`,
+			go.`region_id`,
+			go.`address`,
+			go.`pcrdetail`,
+			go.`telephone`,
+			go.`contact_name`,
+			go.`zipcode`,
+			go.`send_order_time_type`,
+			go.`send_order_time`,
+			go.`send_statu`,
+			go.`logistics_name`,
+			go.`logistics_number`,
+			go.`logistics_statu`,
+			go.`logistics_receive_name`,
+			go.`logistics_receive_time`,
+			go.`create_time`,
+			go.`update_time`,
+			u.user_name as userName,
+			u.mobile as userMobile
+		from t_goods_order go,t_user u
+		where go.id = #{id} and go.user_id=u.user_id
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.GoodsOrderEntity">
+		select
+			go.`id`,
+			go.`shop_id`,
+			go.`order_no`,
+			go.`order_type`,
+			go.`order_invest_statu`,
+			go.`user_id`,
+			go.`goods_count`,
+			go.`express_price`,
+			go.`total_integral_num`,
+			go.`total_integral_price`,
+			go.`total_pay_price`,
+			go.`total_price`,
+			go.`order_status`,
+			go.`pay_type`,
+			go.`pay_status`,
+			go.`pay_no`,
+			go.`pay_time`,
+			go.`address_id`,
+			go.`province_id`,
+			go.`city_id`,
+			go.`region_id`,
+			go.`address`,
+			go.`pcrdetail`,
+			go.`telephone`,
+			go.`contact_name`,
+			go.`zipcode`,
+			go.`send_order_time_type`,
+			go.`send_order_time`,
+			go.`send_statu`,
+			go.`logistics_name`,
+			go.`logistics_number`,
+			go.`logistics_statu`,
+			go.`logistics_receive_name`,
+			go.`logistics_receive_time`,
+			go.`create_time`,
+			go.`update_time`,
+			u.user_name as userName,
+			u.mobile as userMobile
+		from t_goods_order go,t_user u
+		where 1=1 and go.user_id=u.user_id
+		<if test="orderNo != null and orderNo.trim() != ''">
+			AND go.order_no LIKE concat('%',#{orderNo},'%')
+		</if>
+		<if test="userName != null and userName.trim() != ''">
+			AND u.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="userMobile != null and userMobile.trim() != ''">
+			AND u.mobile LIKE concat('%',#{userMobile},'%')
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			AND go.order_status = #{orderStatus}
+		</if>
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND go.create_time <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND go.create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) 
+		from t_goods_order go,t_user u
+		where 1=1 and go.user_id=u.user_id
+        <if test="orderNo != null and orderNo.trim() != ''">
+			AND go.order_no LIKE concat('%',#{orderNo},'%')
+		</if>
+		<if test="userName != null and userName.trim() != ''">
+			AND u.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			AND go.order_status = #{orderStatus}
+		</if>
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND go.create_time <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND go.create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+	</select>
+	<select id="queryTotalPrice" resultType="map">
+		select IFNULL(sum(o.total_price),0) as totalPrice ,
+		IFNULL(sum(o.total_integral_price),0) as totalIntegralPrice,
+		IFNULL(sum(o.total_pay_price),0) as totalPayPrice
+		from t_goods_order o,t_user u
+		where 1=1 and o.user_id=u.user_id
+        <if test="orderNo != null and orderNo.trim() != ''">
+			AND o.order_no LIKE concat('%',#{orderNo},'%')
+		</if>
+		<if test="userName != null and userName.trim() != ''">
+			AND u.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="userMobile != null and userMobile.trim() != ''">
+			AND u.mobile LIKE concat('%',#{userMobile},'%')
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			AND o.order_status = #{orderStatus}
+		</if>
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND o.create_time <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND o.create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+	</select>
+	 <select id="queryTotalByStatus" resultType="int">
+	 	select count(*) as orderCount from t_goods_order o where 1=1 
+			AND o.order_status = #{orderStatus} 
+	 </select>
+	 <select id="queryTotalByDate" resultType="map">
+	 	select count(*) as orderCount,IFNULL(sum(o.total_price),0) as totalPrice,IFNULL(sum(o.total_pay_price),0) as totalPayPrice from t_goods_order o where 1=1 
+		<if test="confirmTime != null and confirmTime != ''">
+			AND DATE_FORMAT(o.create_time,'%Y-%m-%d') like  concat('%',#{confirmTime},'%')
+		</if>
+		<if test="orderStatus != null and orderStatus!=''">
+			AND o.order_status = #{orderStatus}
+		</if>
+		<if test="payStatus != null and payStatus!=''">
+			AND o.pay_status = #{payStatus}
+		</if>
+	 </select>
+	<insert id="save" parameterType="com.platform.entity.GoodsOrderEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_goods_order(
+			`shop_id`,
+			`order_no`,
+			`order_type`,
+			`order_invest_statu`,
+			`user_id`,
+			`goods_count`,
+			`express_price`,
+			`total_integral_num`,
+			`total_integral_price`,
+			`total_pay_price`,
+			`total_price`,
+			`order_status`,
+			`pay_type`,
+			`pay_status`,
+			`pay_no`,
+			`pay_time`,
+			`address_id`,
+			`province_id`,
+			`city_id`,
+			`region_id`,
+			`address`,
+			`pcrdetail`,
+			`telephone`,
+			`contact_name`,
+			`zipcode`,
+			`send_order_time_type`,
+			`send_order_time`,
+			`send_statu`,
+			`logistics_name`,
+			`logistics_number`,
+			`logistics_statu`,
+			`logistics_receive_name`,
+			`logistics_receive_time`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{shopId},
+			#{orderNo},
+			#{orderType},
+			#{orderInvestStatu},
+			#{userId},
+			#{goodsCount},
+			#{expressPrice},
+			#{totalIntegralNum},
+			#{totalIntegralPrice},
+			#{totalPayPrice},
+			#{totalPrice},
+			#{orderStatus},
+			#{payType},
+			#{payStatus},
+			#{payNo},
+			#{payTime},
+			#{addressId},
+			#{provinceId},
+			#{cityId},
+			#{regionId},
+			#{address},
+			#{pcrdetail},
+			#{telephone},
+			#{contactName},
+			#{zipcode},
+			#{sendOrderTimeType},
+			#{sendOrderTime},
+			#{sendStatu},
+			#{logisticsName},
+			#{logisticsNumber},
+			#{logisticsStatu},
+			#{logisticsReceiveName},
+			#{logisticsReceiveTime},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.GoodsOrderEntity">
+		update t_goods_order 
+		<set>
+			<if test="shopId != null">`shop_id` = #{shopId}, </if>
+			<if test="orderNo != null">`order_no` = #{orderNo}, </if>
+			<if test="orderType != null">`order_type` = #{orderType}, </if>
+			<if test="orderInvestStatu != null">`order_invest_statu` = #{orderInvestStatu}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="goodsCount != null">`goods_count` = #{goodsCount}, </if>
+			<if test="expressPrice != null">`express_price` = #{expressPrice}, </if>
+			<if test="totalIntegralNum != null">`total_integral_num` = #{totalIntegralNum}, </if>
+			<if test="totalIntegralPrice != null">`total_integral_price` = #{totalIntegralPrice}, </if>
+			<if test="totalPayPrice != null">`total_pay_price` = #{totalPayPrice}, </if>
+			<if test="totalPrice != null">`total_price` = #{totalPrice}, </if>
+			<if test="orderStatus != null">`order_status` = #{orderStatus}, </if>
+			<if test="payType != null">`pay_type` = #{payType}, </if>
+			<if test="payStatus != null">`pay_status` = #{payStatus}, </if>
+			<if test="payNo != null">`pay_no` = #{payNo}, </if>
+			<if test="payTime != null">`pay_time` = #{payTime}, </if>
+			<if test="addressId != null">`address_id` = #{addressId}, </if>
+			<if test="provinceId != null">`province_id` = #{provinceId}, </if>
+			<if test="cityId != null">`city_id` = #{cityId}, </if>
+			<if test="regionId != null">`region_id` = #{regionId}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="pcrdetail != null">`pcrdetail` = #{pcrdetail}, </if>
+			<if test="telephone != null">`telephone` = #{telephone}, </if>
+			<if test="contactName != null">`contact_name` = #{contactName}, </if>
+			<if test="zipcode != null">`zipcode` = #{zipcode}, </if>
+			<if test="sendOrderTimeType != null">`send_order_time_type` = #{sendOrderTimeType}, </if>
+			<if test="sendOrderTime != null">`send_order_time` = #{sendOrderTime}, </if>
+			<if test="sendStatu != null">`send_statu` = #{sendStatu}, </if>
+			<if test="logisticsName != null">`logistics_name` = #{logisticsName}, </if>
+			<if test="logisticsNumber != null">`logistics_number` = #{logisticsNumber}, </if>
+			<if test="logisticsStatu != null">`logistics_statu` = #{logisticsStatu}, </if>
+			<if test="logisticsReceiveName != null">`logistics_receive_name` = #{logisticsReceiveName}, </if>
+			<if test="logisticsReceiveTime != null">`logistics_receive_time` = #{logisticsReceiveTime}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_goods_order where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_goods_order where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		;
+		delete from t_goods_order_detail where order_no in (select o.order_no from t_goods_order o where o.id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		);
+	</delete>
+
+</mapper>

@@ -1,0 +1,14 @@
+package ${package}.api.dao;
+
+import ${package}.api.entity.${className}Vo;
+
+/**
+ * ${comments}Dao
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+public interface Api${className}Mapper extends BaseDao<${className}Vo> {
+
+}

@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.PaymentOutDao">
+
+    <resultMap type="com.platform.entity.PaymentOutEntity" id="paymentOutMap">
+        <result property="id" column="id"/>
+        <result property="outTradeNo" column="out_trade_no"/>
+        <result property="method" column="method"/>
+        <result property="payerType" column="payer_type"/>
+        <result property="payer" column="payer"/>
+        <result property="receiptAccountType" column="receipt_account_type"/>
+        <result property="receiptAccount" column="receipt_account"/>
+        <result property="receiptAccountRealName" column="receipt_account_real_name"/>
+        <result property="amountType" column="amount_type"/>
+        <result property="amount" column="amount"/>
+        <result property="fee" column="fee"/>
+        <result property="amountPrePayDate" column="amount_pre_pay_date"/>
+        <result property="currBalance" column="curr_balance"/>
+        <result property="showPayTitle" column="show_pay_title"/>
+        <result property="showBodyDesc" column="show_body_desc"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="isPayMember" column="is_pay_member"/>
+        <result property="userApplyReason" column="user_apply_reason"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="operatorName" column="operator_name"/>
+        <result property="paymentDate" column="payment_date"/>
+        <result property="auditStatu" column="audit_statu"/>
+        <result property="status" column="status"/>
+        <result property="snTradeNo" column="sn_trade_no"/>
+        <result property="snTradeNoDesc" column="sn_trade_no_desc"/>
+        <result property="webApp" column="web_app"/>
+        <result property="companySn" column="company_sn"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.PaymentOutEntity">
+		select
+			`id`,
+			`out_trade_no`,
+			`method`,
+			`payer_type`,
+			`payer`,
+			`receipt_account_type`,
+			`receipt_account`,
+			`receipt_account_real_name`,
+			`amount_type`,
+			`amount`,
+			`fee`,
+			`amount_pre_pay_date`,
+			`curr_balance`,
+			`show_pay_title`,
+			`show_body_desc`,
+			`user_id`,
+			`user_name`,
+			`is_pay_member`,
+			`user_apply_reason`,
+			`operator_id`,
+			`operator_name`,
+			`payment_date`,
+			`audit_statu`,
+			`status`,
+			`sn_trade_no`,
+			`sn_trade_no_desc`,
+			`web_app`,
+			`company_sn`,
+			`create_time`,
+			`update_time`
+		from t_payment_out
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.PaymentOutEntity">
+		select
+    		`id`,
+    		`out_trade_no`,
+    		`method`,
+    		`payer_type`,
+    		`payer`,
+    		`receipt_account_type`,
+    		`receipt_account`,
+    		`receipt_account_real_name`,
+    		`amount_type`,
+    		`amount`,
+    		`fee`,
+    		`amount_pre_pay_date`,
+    		`curr_balance`,
+    		`show_pay_title`,
+    		`show_body_desc`,
+    		`user_id`,
+    		`user_name`,
+    		`is_pay_member`,
+    		`user_apply_reason`,
+    		`operator_id`,
+    		`operator_name`,
+    		`payment_date`,
+    		`audit_statu`,
+    		`status`,
+    		`sn_trade_no`,
+    		`sn_trade_no_desc`,
+    		`web_app`,
+    		`company_sn`,
+    		`create_time`,
+    		`update_time`
+		from t_payment_out
+		WHERE 1=1
+		<if test="userName != null and userName.trim() != ''">
+			AND user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="outTradeNo != null and outTradeNo.trim() != ''">
+			AND out_trade_no LIKE concat('%',#{outTradeNo},'%')
+		</if>
+		<if test="status != null and status>0">
+			AND status =  #{status}
+		</if>
+		<if test="userId != null and userId>0 ">
+			AND user_id =  #{userId}
+		</if>
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND create_time <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_payment_out
+		WHERE 1=1
+        <if test="userName != null and userName.trim() != ''">
+			AND user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="outTradeNo != null and outTradeNo.trim() != ''">
+			AND out_trade_no LIKE concat('%',#{outTradeNo},'%')
+		</if>
+		
+		<if test="status != null and status>0">
+			AND status =  #{status}
+		</if>
+		<if test="userId != null and userId>0 ">
+			AND user_id =  #{userId}
+		</if>
+		
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND create_time <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.PaymentOutEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_payment_out(
+			`out_trade_no`,
+			`method`,
+			`payer_type`,
+			`payer`,
+			`receipt_account_type`,
+			`receipt_account`,
+			`receipt_account_real_name`,
+			`amount_type`,
+			`amount`,
+			`fee`,
+			`amount_pre_pay_date`,
+			`curr_balance`,
+			`show_pay_title`,
+			`show_body_desc`,
+			`user_id`,
+			`user_name`,
+			`is_pay_member`,
+			`user_apply_reason`,
+			`operator_id`,
+			`operator_name`,
+			`payment_date`,
+			`audit_statu`,
+			`status`,
+			`sn_trade_no`,
+			`sn_trade_no_desc`,
+			`web_app`,
+			`company_sn`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{outTradeNo},
+			#{method},
+			#{payerType},
+			#{payer},
+			#{receiptAccountType},
+			#{receiptAccount},
+			#{receiptAccountRealName},
+			#{amountType},
+			#{amount},
+			#{fee},
+			#{amountPrePayDate},
+			#{currBalance},
+			#{showPayTitle},
+			#{showBodyDesc},
+			#{userId},
+			#{userName},
+			#{isPayMember},
+			#{userApplyReason},
+			#{operatorId},
+			#{operatorName},
+			#{paymentDate},
+			#{auditStatu},
+			#{status},
+			#{snTradeNo},
+			#{snTradeNoDesc},
+			#{webApp},
+			#{companySn},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.PaymentOutEntity">
+		update t_payment_out 
+		<set>
+			<if test="outTradeNo != null">`out_trade_no` = #{outTradeNo}, </if>
+			<if test="method != null">`method` = #{method}, </if>
+			<if test="payerType != null">`payer_type` = #{payerType}, </if>
+			<if test="payer != null">`payer` = #{payer}, </if>
+			<if test="receiptAccountType != null">`receipt_account_type` = #{receiptAccountType}, </if>
+			<if test="receiptAccount != null">`receipt_account` = #{receiptAccount}, </if>
+			<if test="receiptAccountRealName != null">`receipt_account_real_name` = #{receiptAccountRealName}, </if>
+			<if test="amountType != null">`amount_type` = #{amountType}, </if>
+			<if test="amount != null">`amount` = #{amount}, </if>
+			<if test="fee != null">`fee` = #{fee}, </if>
+			<if test="amountPrePayDate != null">`amount_pre_pay_date` = #{amountPrePayDate}, </if>
+			<if test="currBalance != null">`curr_balance` = #{currBalance}, </if>
+			<if test="showPayTitle != null">`show_pay_title` = #{showPayTitle}, </if>
+			<if test="showBodyDesc != null">`show_body_desc` = #{showBodyDesc}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="userName != null">`user_name` = #{userName}, </if>
+			<if test="isPayMember != null">`is_pay_member` = #{isPayMember}, </if>
+			<if test="userApplyReason != null">`user_apply_reason` = #{userApplyReason}, </if>
+			<if test="operatorId != null">`operator_id` = #{operatorId}, </if>
+			<if test="operatorName != null">`operator_name` = #{operatorName}, </if>
+			<if test="paymentDate != null">`payment_date` = #{paymentDate}, </if>
+			<if test="auditStatu != null">`audit_statu` = #{auditStatu}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="snTradeNo != null">`sn_trade_no` = #{snTradeNo}, </if>
+			<if test="snTradeNoDesc != null">`sn_trade_no_desc` = #{snTradeNoDesc}, </if>
+			<if test="webApp != null">`web_app` = #{webApp}, </if>
+			<if test="companySn != null">`company_sn` = #{companySn}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_payment_out where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_payment_out where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	
+	<select id="queryStat" resultType="map">
+	  SELECT 
+				sum(if(status=1,amount,0)) as status1,
+				sum(if(status=1,fee,0)) as status1fee,
+				count(distinct id, if(status =0,true,null)) as status1Sum,
+				sum(if(status=2,amount,0)) as status2,
+				sum(if(status=2,fee,0)) as status2fee,
+				count(distinct id, if(status =2,true,null)) as status2Sum,
+				sum(if(status=3,amount,0)) as status3,
+				sum(if(status=3,fee,0)) as status3fee,
+				count(distinct id, if(status =3,true,null)) as status3Sum,
+				sum(if(status=4,amount,0)) as status4,
+				sum(if(status=4,fee,0)) as status4fee,
+				count(distinct id, if(status =4,true,null)) as status4Sum,
+				sum(if(status=999,amount,0)) as status999,
+				sum(if(status=999,fee,0)) as status999fee,
+				count(distinct id, if(status =999,true,null)) as status999Sum
+		FROM 
+				t_payment_out 
+		WHERE 1=1
+			<if test="userId != null and userId>0 ">
+				AND user_id =  #{userId}
+			</if>
+			<if test="status != null and status>0">
+				AND status =  #{status}
+			</if>
+			<if test="confirmTimeStart != null and confirmTimeStart != ''">
+				AND create_time <![CDATA[ >= ]]> #{confirmTimeStart}
+			</if>
+			<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+				AND create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
+			</if>
+	</select>
+	
+
+</mapper>

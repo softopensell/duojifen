@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.shopName" @on-enter="query" placeholder="名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+            </div>
+            <div class="buttons-group">
+                #if($shiro.hasPermission("shop:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("shop:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("shop:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+            </div>
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="!showList&&!showDetail">
+        <p slot="title">{{title}}</p>
+		<i-form ref="formValidate" :model="shop" :rules="ruleValidate" :label-width="120">
+            <Form-item label="商家类别 " prop="shopType">
+                <Radio-group v-model="shop.shopType" >
+                    <Radio v-for="st in shopTypes" :label="st.value">
+                        <span>{{st.name}}</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+            <Form-item label="商店名称" prop="shopName">
+                <i-input v-model="shop.shopName" placeholder="商店名称"/>
+            </Form-item>
+            <Row>
+                 <i-col span="16">
+                     <Form-item label="商店LOGO" prop="shopLogo">
+                         <i-input v-model="shop.shopLogo" placeholder="商店LOGO" readonly/>
+                     </Form-item>
+                 </i-col>
+                 <i-col span="3">
+                     <Form-item :label-width="1">
+                         <Upload style="width: 300px;" action="../sys/oss/upload" :format="['jpg','jpeg','png']"
+                                 max-size="2048"
+                                 :on-success="handleSuccessShopLogo" :on-format-error="handleFormatError"
+                                 :show-upload-list="false"
+                                 :on-exceeded-size="handleMaxSize">
+                             <i-button icon="ios-cloud-upload-outline">上传图片</i-button>
+                         </Upload>
+                     </Form-item>
+                 </i-col>
+                 <i-col span="3">
+                     <Form-item :label-width="1">
+                         <i-button icon="eye" @click="eyeImageShopLogo">预览图片</i-button>
+                     </Form-item>
+                 </i-col>
+             </Row>
+           
+            <Form-item label="商店描述" prop="shopDesc">
+                <i-input type="textarea" v-model="shop.shopDesc" placeholder="商店描述"/>
+            </Form-item>
+            <Form-item label="联系人" prop="shopContactName">
+                <i-input v-model="shop.shopContactName" placeholder="联系人"/>
+            </Form-item>
+            <Form-item label="联系方式" prop="shopContactPhone">
+                <i-input v-model="shop.shopContactPhone" placeholder="联系方式"/>
+            </Form-item>
+            <Row>
+			   <i-col span="10">
+		            <Form-item label="省-市-区县" prop="province-city-area">
+		                <i-select v-model="shop.provinceId" filterable @on-change="changeProvince" label-in-value size="small" style="width:100px" placeholder="省" clearable  ref="areaProvince" >
+		                   <i-option v-for="province in provinces" :value="province.id" :key="province.id">{{province.name}}
+		                   </i-option>
+		                </i-select>
+		                <i-select v-model="shop.cityId" filterable @on-change="changeCity" label-in-value label-in-value size="small" style="width:100px" placeholder="市" clearable  ref="areaCity"  >
+		                   <i-option v-for="city in citys" :value="city.id" :key="city.id">{{city.name}}
+		                   </i-option>
+		                </i-select>
+		                <i-select v-model="shop.regionId" filterable label-in-value size="small" style="width:100px" placeholder="区县" clearable  ref="areaDistrict" >
+		                   <i-option v-for="area in areas" :value="area.id" :key="area.id">{{area.name}}
+		                   </i-option>
+		                </i-select>
+		            </Form-item>
+            	</i-col>
+	         </Row>
+            <Form-item label="地址" prop="address">
+                <i-input type="textarea" v-model="shop.address" placeholder="地址"/>
+            </Form-item>
+            <Form-item label="注意备注" prop="remark">
+                <i-input type="textarea" v-model="shop.remark" placeholder="注意备注"/>
+            </Form-item>
+            <Form-item label="店铺状态" prop="statu">
+                <Radio-group v-model="shop.statu" >
+                    <Radio v-for="sts in shopStatuss" :label="sts.value">
+                        <span>{{sts.name}}</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+            <Form-item>
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+	<Card v-show="!showList&&showDetail">
+        <p slot="title">{{title}}</p>
+		<i-form ref="formValidate" :model="shop" :rules="ruleValidate" :label-width="120">
+            <Form-item label="商家类别 " prop="shopType">
+                <Radio-group v-model="shop.shopType" >
+                    <Radio v-for="st in shopTypes" :label="st.value" disabled>
+                        <span>{{st.name}}</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+            <Form-item label="商店名称" prop="shopName">
+                <i-input v-model="shop.shopName" placeholder="商店名称" readonly/>
+            </Form-item>
+            <Row>
+                 <i-col span="16">
+                     <Form-item label="商店LOGO" prop="shopLogo">
+                         <i-input v-model="shop.shopLogo" placeholder="商店LOGO" readonly/>
+                     </Form-item>
+                 </i-col>
+                 
+                 <i-col span="3">
+                     <Form-item :label-width="1">
+                         <i-button icon="eye" @click="eyeImageShopLogo">预览图片</i-button>
+                     </Form-item>
+                 </i-col>
+             </Row>
+            <Form-item label="商店描述" prop="shopDesc">
+                <i-input type="textarea" v-model="shop.shopDesc" placeholder="商店描述" readonly/>
+            </Form-item>
+            <Form-item label="联系人" prop="shopContactName">
+                <i-input v-model="shop.shopContactName" placeholder="联系人" readonly/>
+            </Form-item>
+            <Form-item label="联系方式" prop="shopContactPhone">
+                <i-input v-model="shop.shopContactPhone" placeholder="联系方式" readonly/>
+            </Form-item>
+            
+            <Row>
+			   <i-col span="10">
+		            <Form-item label="省-市-区县" prop="province-city-area">
+		                <i-select v-model="shop.provinceId" filterable @on-change="changeProvince" label-in-value size="small" style="width:100px" placeholder="省" clearable  ref="areaProvince" disabled>
+		                   <i-option v-for="province in provinces" :value="province.id" :key="province.id">{{province.name}}
+		                   </i-option>
+		                </i-select>
+		                <i-select v-model="shop.cityId" filterable @on-change="changeCity" label-in-value label-in-value size="small" style="width:100px" placeholder="市" clearable  ref="areaCity"  disabled>
+		                   <i-option v-for="city in citys" :value="city.id" :key="city.id">{{city.name}}
+		                   </i-option>
+		                </i-select>
+		                <i-select v-model="shop.regionId" filterable label-in-value size="small" style="width:100px" placeholder="区县" clearable  ref="areaDistrict" disabled>
+		                   <i-option v-for="area in areas" :value="area.id" :key="area.id">{{area.name}}
+		                   </i-option>
+		                </i-select>
+		            </Form-item>
+            	</i-col>
+	         </Row>
+            <Form-item label="地址" prop="address">
+                <i-input type="textarea" v-model="shop.address" placeholder="地址" readonly/>
+            </Form-item>
+            <Form-item label="注意备注" prop="remark">
+                <i-input type="textarea" v-model="shop.remark" placeholder="注意备注" readonly/>
+            </Form-item>
+            <Form-item label="店铺状态" prop="statu">
+                <Radio-group v-model="shop.statu" >
+                    <Radio v-for="sts in shopStatuss" :label="sts.value" disabled>
+                        <span>{{sts.name}}</span>
+                    </Radio>
+                </Radio-group>
+            </Form-item>
+            <Form-item label="创建用户" prop="createUserId">
+                <i-input v-model="shop.createUserName" placeholder="创建用户" readonly/>
+            </Form-item>
+            <Form-item label="商品数量" prop="goodsSum">
+                <i-input v-model="shop.goodsSum" placeholder="商品数量" readonly/>
+            </Form-item>
+            <Form-item label="订单数量" prop="orderSum">
+                <i-input v-model="shop.orderSum" placeholder="订单数量" readonly/>
+            </Form-item>
+            <Form-item label="公司编码" prop="companySn">
+                <i-input v-model="shop.companySn" placeholder="公司编码" readonly/>
+            </Form-item>
+            <Form-item label="创建时间" prop="createTime">
+                <i-input v-model="shop.createTime" placeholder="创建时间" readonly/>
+            </Form-item>
+            <Form-item label="修改时间" prop="updateTime">
+                <i-input v-model="shop.updateTime" placeholder="修改时间" readonly/>
+            </Form-item>
+            <Form-item label="审核状态" prop="auditStatu">
+                <i-input v-model="shop.auditStatu" placeholder="审核状态" readonly/>
+            </Form-item>
+            <Form-item label="审核人" prop="auditUserId">
+                <i-input v-model="shop.auditUserName" placeholder="修改时间" readonly/>
+            </Form-item>
+            <Form-item label="审核时间" prop="auditTime">
+                <i-input v-model="shop.auditTime" placeholder="修改时间" readonly/>
+            </Form-item>
+            <Form-item label="审核意见" prop="auditOpinion">
+                <i-input type="textarea" v-model="shop.auditOpinion" placeholder="修改时间" readonly/>
+            </Form-item>
+            <Form-item>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+	<!-- 选择用户-->
+	 <div id="userLayer" style="display: none;padding:10px;">
+			<div class="search-group">
+	               <i-col span="5">
+	                   <i-input v-model="uq.userName" @on-enter="uquery" placeholder="客户帐号"/>
+	               </i-col>
+	               <i-button @click="uquery">查询</i-button>
+	               <i-button @click="ureloadSearch">重置</i-button>
+           </div>
+           <div style="margin-top: 5px">
+	    	<table id="userjqGrid"></table>
+		    <div id="userjqGridPager"></div>
+           </div>
+	</div>
+	<div id="auditLayer" style="display: none;padding:10px;">
+		<Card>
+	        <Row>
+	        	<i-col span="24">
+	        			<b>店铺名称</b>：{{shop.shopName}}
+	        	</i-col>
+	        </Row>
+	        <Row>
+	        	<i-col span="24">
+	        			<b>审核意见</b>：<i-input type="textarea" style="width: 240px;" v-model="shop.auditOpinion" placeholder="审核意见"/>
+	        	</i-col>
+	        </Row>
+	     </Card>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/js/shop/shop.js?_${date.systemTime}"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>设置平台支付密码</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <Card style="margin-top:10px;" dis-hover>
+        <p slot="title">修改平台支付密码</p>
+		<i-form ref="formValidate" :label-width="180">
+		 	<Row>
+            <i-col span="16">
+            <Form-item label="平台支付密码" >
+                <i-input v-model="payPassword" placeholder="输入平台支付密" type="password"/>
+            </Form-item>
+            </i-col>
+            </Row>
+            <Form-item>
+                <i-button type="primary" @click="modPassWord">提交</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+</div>
+ <script src="${rc.contextPath}/js/shop/xqspay.js?_${date.systemTime}"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+package com.alipay.api.response;
+
+import com.alipay.api.AlipayResponse;
+import com.alipay.api.internal.mapping.ApiField;
+
+/**
+ * ALIPAY API: alipay.marketing.campaign.discount.budget.append response.
+ * 
+ * @author auto create
+ * @since 1.0, 2016-06-08 12:53:50
+ */
+public class AlipayMarketingCampaignDiscountBudgetAppendResponse extends AlipayResponse {
+
+	private static final long serialVersionUID = 7896835658489292586L;
+
+	/** 
+	 * 预算ID
+	 */
+	@ApiField("budget_id")
+	private String budgetId;
+
+	public void setBudgetId(String budgetId) {
+		this.budgetId = budgetId;
+	}
+	public String getBudgetId( ) {
+		return this.budgetId;
+	}
+
+}

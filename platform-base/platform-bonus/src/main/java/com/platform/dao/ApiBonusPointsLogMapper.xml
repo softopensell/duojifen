@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiBonusPointsLogMapper">
+
+    <resultMap type="com.platform.entity.BonusPointsLogVo" id="bonusPointsLogMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="pointAmonut" column="point_amonut"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="orderId" column="order_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.BonusPointsLogVo">
+		select
+			`id`,
+			`user_id`,
+			`point_amonut`,
+			`order_no`,
+			`order_id`,
+			`create_time`
+		from t_bonus_points_log
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.BonusPointsLogVo">
+		select
+    		`id`,
+    		`user_id`,
+    		`point_amonut`,
+    		`order_no`,
+    		`order_id`,
+    		`create_time`
+		from t_bonus_points_log
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_bonus_points_log
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.BonusPointsLogVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_bonus_points_log(
+			`user_id`,
+			`point_amonut`,
+			`order_no`,
+			`order_id`,
+			`create_time`)
+		values(
+			#{userId},
+			#{pointAmonut},
+			#{orderNo},
+			#{orderId},
+			#{createTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.BonusPointsLogVo">
+		update t_bonus_points_log 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="pointAmonut != null">`point_amonut` = #{pointAmonut}, </if>
+			<if test="orderNo != null">`order_no` = #{orderNo}, </if>
+			<if test="orderId != null">`order_id` = #{orderId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_bonus_points_log where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_bonus_points_log where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

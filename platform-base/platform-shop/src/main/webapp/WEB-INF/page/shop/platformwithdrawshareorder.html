@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+        <Row :gutter="16">
+            <div class="search-group">
+                <i-col span="4">
+                    <i-input v-model="q.name" @on-enter="query" placeholder="名称"/>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+            </div>
+            
+           <!--  
+           <div class="buttons-group">
+                #if($shiro.hasPermission("platformwithdrawshareorder:save"))
+                <i-button type="info" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</i-button>
+                #end
+                #if($shiro.hasPermission("platformwithdrawshareorder:update"))
+                <i-button type="warning" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button>
+                #end
+                #if($shiro.hasPermission("platformwithdrawshareorder:delete"))
+                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                #end
+            </div> 
+            -->
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+
+    <Card v-show="!showList">
+        <p slot="title">{{title}}</p>
+		<i-form ref="formValidate" :model="platformWithdrawShareOrder" :rules="ruleValidate" :label-width="80">
+            <Form-item label="序号" prop="orderDateNo">
+                <i-input v-model="platformWithdrawShareOrder.orderDateNo" placeholder="序号"/>
+            </Form-item>
+            <Form-item label="本次奖励总额" prop="totalPayMoney">
+                <i-input v-model="platformWithdrawShareOrder.totalPayMoney" placeholder="本次奖励总额"/>
+            </Form-item>
+            <Form-item label="开始统计时间" prop="shareStartDate">
+                <i-input v-model="platformWithdrawShareOrder.shareStartDate" placeholder="开始统计时间"/>
+            </Form-item>
+            <Form-item label="开始统计时间" prop="shareEndDate">
+                <i-input v-model="platformWithdrawShareOrder.shareEndDate" placeholder="开始统计时间"/>
+            </Form-item>
+            <Form-item label="级别分成 系统" prop="shareUserDaySys">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDaySys" placeholder="级别分成 系统"/>
+            </Form-item>
+            <Form-item label="级别分成一星" prop="shareUserDayV1">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV1" placeholder="级别分成一星"/>
+            </Form-item>
+            <Form-item label="级别分成二星" prop="shareUserDayV2">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV2" placeholder="级别分成二星"/>
+            </Form-item>
+            <Form-item label="级别分成三星" prop="shareUserDayV3">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV3" placeholder="级别分成三星"/>
+            </Form-item>
+            <Form-item label="级别分成四星" prop="shareUserDayV4">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV4" placeholder="级别分成四星"/>
+            </Form-item>
+            <Form-item label="级别分成五星" prop="shareUserDayV5">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV5" placeholder="级别分成五星"/>
+            </Form-item>
+            <Form-item label="级别分成一钻" prop="shareUserDayV6">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV6" placeholder="级别分成一钻"/>
+            </Form-item>
+            <Form-item label="级别分成二钻" prop="shareUserDayV7">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV7" placeholder="级别分成二钻"/>
+            </Form-item>
+            <Form-item label="级别分成三钻" prop="shareUserDayV8">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV8" placeholder="级别分成三钻"/>
+            </Form-item>
+            <Form-item label="级别分成四钻" prop="shareUserDayV9">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV9" placeholder="级别分成四钻"/>
+            </Form-item>
+            <Form-item label="级别分成五钻" prop="shareUserDayV10">
+                <i-input v-model="platformWithdrawShareOrder.shareUserDayV10" placeholder="级别分成五钻"/>
+            </Form-item>
+            <Form-item label="状态，0 OK 1 删除" prop="state">
+                <i-input v-model="platformWithdrawShareOrder.state" placeholder="状态，0 OK 1 删除"/>
+            </Form-item>
+            <Form-item label="添加，不允许更改" prop="createTime">
+                <i-input v-model="platformWithdrawShareOrder.createTime" placeholder="添加，不允许更改"/>
+            </Form-item>
+            <Form-item label="更新时间" prop="updateTime">
+                <i-input v-model="platformWithdrawShareOrder.updateTime" placeholder="更新时间"/>
+            </Form-item>
+            <Form-item>
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form>
+	</Card>
+</div>
+
+<script src="${rc.contextPath}/js/shop/platformwithdrawshareorder.js?_${date.systemTime}"></script>
+</body>
+</html>

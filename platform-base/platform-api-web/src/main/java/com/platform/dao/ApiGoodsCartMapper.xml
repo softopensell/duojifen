@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiGoodsCartMapper">
+
+    <resultMap type="com.platform.entity.GoodsCartVo" id="goodsCartMap">
+        <result property="id" column="id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsImgUrl" column="goods_img_url"/>
+        <result property="goodsListImgUrl" column="goods_list_img_url"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="retailGoodsPrice" column="retail_goods_price"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="checked" column="checked"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.GoodsCartVo">
+		select
+			`id`,
+			`shop_id`,
+			`user_id`,
+			`goods_id`,
+			`goods_name`,
+			`goods_img_url`,
+			`goods_list_img_url`,
+			`goods_price`,
+			`retail_goods_price`,
+			`total_price`,
+			`goods_count`,
+			`checked`,
+			`create_time`,
+			`update_time`
+		from t_goods_cart
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.GoodsCartVo">
+		select a.*,
+        b.img_list_url as goodsListImgUrl,
+        b.retail_price as retailGoodsPrice
+        from t_goods_cart a
+        left join t_goods b on a.goods_id = b.id
+		
+		WHERE 1=1
+		<if test="user_id != null">
+            AND a.user_id = #{user_id}
+        </if>
+        <if test="goods_id != null">
+            AND a.goods_id = #{goods_id}
+        </if>
+        <if test="checked != null">
+            AND a.checked = #{checked}
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_goods_cart
+		WHERE 1=1
+        <if test="user_id != null">
+            AND a.user_id = #{user_id}
+        </if>
+        <if test="goods_id != null">
+            AND a.goods_id = #{goods_id}
+        </if>
+        <if test="product_id != product_id">
+            AND a.product_id = #{product_id}
+        </if>
+        <if test="checked != null">
+            AND a.checked = #{checked}
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.GoodsCartVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_goods_cart(
+			`shop_id`,
+			`user_id`,
+			`goods_id`,
+			`goods_name`,
+			`goods_img_url`,
+			`goods_list_img_url`,
+			`goods_price`,
+			`retail_goods_price`,
+			`total_price`,
+			`goods_count`,
+			`checked`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{shopId},
+			#{userId},
+			#{goodsId},
+			#{goodsName},
+			#{goodsImgUrl},
+			#{goodsListImgUrl},
+			#{goodsPrice},
+			#{retailGoodsPrice},
+			#{totalPrice},
+			#{goodsCount},
+			#{checked},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.GoodsCartVo">
+		update t_goods_cart 
+		<set>
+			<if test="shopId != null">`shop_id` = #{shopId}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="goodsId != null">`goods_id` = #{goodsId}, </if>
+			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
+			<if test="goodsImgUrl != null">`goods_img_url` = #{goodsImgUrl}, </if>
+			<if test="goodsListImgUrl != null">`goods_list_img_url` = #{goodsListImgUrl}, </if>
+			<if test="goodsPrice != null">`goods_price` = #{goodsPrice}, </if>
+			<if test="retailGoodsPrice != null">`retail_goods_price` = #{retailGoodsPrice}, </if>
+			<if test="totalPrice != null">`total_price` = #{totalPrice}, </if>
+			<if test="goodsCount != null">`goods_count` = #{goodsCount}, </if>
+			<if test="checked != null">`checked` = #{checked}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	 <update id="updateCheck">
+        update t_goods_cart
+        set `checked` = #{isChecked}
+        where goods_id in
+        <foreach item="product_id" collection="productIds" open="(" separator="," close=")">
+            #{product_id}
+        </foreach>
+        and user_id = #{userId}
+    </update>
+	<delete id="delete">
+		delete from t_goods_cart where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_goods_cart where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	 <delete id="deleteByProductIds">
+        delete from t_goods_cart where product_id in
+        <foreach item="id" collection="productIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByUserAndProductIds">
+        delete from t_goods_cart where product_id in
+        <foreach item="id" collection="productIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+          and user_id = #{user_id}
+    </delete>
+
+    <delete id="deleteByCart">
+        delete from t_goods_cart
+        where  user_id = #{user_id} and    checked = #{checked}
+    </delete>
+
+</mapper>

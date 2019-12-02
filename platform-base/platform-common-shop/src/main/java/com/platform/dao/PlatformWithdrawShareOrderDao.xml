@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.PlatformWithdrawShareOrderDao">
+
+    <resultMap type="com.platform.entity.PlatformWithdrawShareOrderEntity" id="platformWithdrawShareOrderMap">
+        <result property="id" column="id"/>
+        <result property="orderDateNo" column="order_date_no"/>
+        <result property="totalPayMoney" column="total_pay_money"/>
+        <result property="shareStartDate" column="share_start_date"/>
+        <result property="shareEndDate" column="share_end_date"/>
+        <result property="shareUserDaySys" column="share_user_day_sys"/>
+        <result property="shareUserDayV1" column="share_user_day_v1"/>
+        <result property="shareUserDayV2" column="share_user_day_v2"/>
+        <result property="shareUserDayV3" column="share_user_day_v3"/>
+        <result property="shareUserDayV4" column="share_user_day_v4"/>
+        <result property="shareUserDayV5" column="share_user_day_v5"/>
+        <result property="shareUserDayV6" column="share_user_day_v6"/>
+        <result property="shareUserDayV7" column="share_user_day_v7"/>
+        <result property="shareUserDayV8" column="share_user_day_v8"/>
+        <result property="shareUserDayV9" column="share_user_day_v9"/>
+        <result property="shareUserDayV10" column="share_user_day_v10"/>
+        <result property="state" column="state"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.PlatformWithdrawShareOrderEntity">
+		select
+			`id`,
+			`order_date_no`,
+			`total_pay_money`,
+			`share_start_date`,
+			`share_end_date`,
+			`share_user_day_sys`,
+			`share_user_day_v1`,
+			`share_user_day_v2`,
+			`share_user_day_v3`,
+			`share_user_day_v4`,
+			`share_user_day_v5`,
+			`share_user_day_v6`,
+			`share_user_day_v7`,
+			`share_user_day_v8`,
+			`share_user_day_v9`,
+			`share_user_day_v10`,
+			`state`,
+			`create_time`,
+			`update_time`
+		from platform_withdraw_share_order
+		where id = #{id}
+	</select>
+	<select id="queryByDateNo" resultType="com.platform.entity.PlatformWithdrawShareOrderEntity">
+		select
+			`id`,
+			`order_date_no`,
+			`total_pay_money`,
+			`share_start_date`,
+			`share_end_date`,
+			`share_user_day_sys`,
+			`share_user_day_v1`,
+			`share_user_day_v2`,
+			`share_user_day_v3`,
+			`share_user_day_v4`,
+			`share_user_day_v5`,
+			`share_user_day_v6`,
+			`share_user_day_v7`,
+			`share_user_day_v8`,
+			`share_user_day_v9`,
+			`share_user_day_v10`,
+			`state`,
+			`create_time`,
+			`update_time`
+		from platform_withdraw_share_order
+		where order_date_no = #{orderDateNo} AND state =  0
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.PlatformWithdrawShareOrderEntity">
+		select
+    		`id`,
+    		`order_date_no`,
+    		`total_pay_money`,
+    		`share_start_date`,
+    		`share_end_date`,
+    		`share_user_day_sys`,
+    		`share_user_day_v1`,
+    		`share_user_day_v2`,
+    		`share_user_day_v3`,
+    		`share_user_day_v4`,
+    		`share_user_day_v5`,
+    		`share_user_day_v6`,
+    		`share_user_day_v7`,
+    		`share_user_day_v8`,
+    		`share_user_day_v9`,
+    		`share_user_day_v10`,
+    		`state`,
+    		`create_time`,
+    		`update_time`
+		from platform_withdraw_share_order
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+		AND state =  0
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from platform_withdraw_share_order
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+        AND state =  0
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.PlatformWithdrawShareOrderEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into platform_withdraw_share_order(
+			`order_date_no`,
+			`total_pay_money`,
+			`share_start_date`,
+			`share_end_date`,
+			`share_user_day_sys`,
+			`share_user_day_v1`,
+			`share_user_day_v2`,
+			`share_user_day_v3`,
+			`share_user_day_v4`,
+			`share_user_day_v5`,
+			`share_user_day_v6`,
+			`share_user_day_v7`,
+			`share_user_day_v8`,
+			`share_user_day_v9`,
+			`share_user_day_v10`,
+			`state`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{orderDateNo},
+			#{totalPayMoney},
+			#{shareStartDate},
+			#{shareEndDate},
+			#{shareUserDaySys},
+			#{shareUserDayV1},
+			#{shareUserDayV2},
+			#{shareUserDayV3},
+			#{shareUserDayV4},
+			#{shareUserDayV5},
+			#{shareUserDayV6},
+			#{shareUserDayV7},
+			#{shareUserDayV8},
+			#{shareUserDayV9},
+			#{shareUserDayV10},
+			#{state},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.PlatformWithdrawShareOrderEntity">
+		update platform_withdraw_share_order 
+		<set>
+			<if test="orderDateNo != null">`order_date_no` = #{orderDateNo}, </if>
+			<if test="totalPayMoney != null">`total_pay_money` = #{totalPayMoney}, </if>
+			<if test="shareStartDate != null">`share_start_date` = #{shareStartDate}, </if>
+			<if test="shareEndDate != null">`share_end_date` = #{shareEndDate}, </if>
+			<if test="shareUserDaySys != null">`share_user_day_sys` = #{shareUserDaySys}, </if>
+			<if test="shareUserDayV1 != null">`share_user_day_v1` = #{shareUserDayV1}, </if>
+			<if test="shareUserDayV2 != null">`share_user_day_v2` = #{shareUserDayV2}, </if>
+			<if test="shareUserDayV3 != null">`share_user_day_v3` = #{shareUserDayV3}, </if>
+			<if test="shareUserDayV4 != null">`share_user_day_v4` = #{shareUserDayV4}, </if>
+			<if test="shareUserDayV5 != null">`share_user_day_v5` = #{shareUserDayV5}, </if>
+			<if test="shareUserDayV6 != null">`share_user_day_v6` = #{shareUserDayV6}, </if>
+			<if test="shareUserDayV7 != null">`share_user_day_v7` = #{shareUserDayV7}, </if>
+			<if test="shareUserDayV8 != null">`share_user_day_v8` = #{shareUserDayV8}, </if>
+			<if test="shareUserDayV9 != null">`share_user_day_v9` = #{shareUserDayV9}, </if>
+			<if test="shareUserDayV10 != null">`share_user_day_v10` = #{shareUserDayV10}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from platform_withdraw_share_order where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from platform_withdraw_share_order where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

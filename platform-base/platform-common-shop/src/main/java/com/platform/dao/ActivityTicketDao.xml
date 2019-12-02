@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ActivityTicketDao">
+
+    <resultMap type="com.platform.entity.ActivityTicketEntity" id="activityTicketMap">
+        <result property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="ticketKind" column="ticket_kind"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="ticketName" column="ticket_name"/>
+        <result property="ticketLogo" column="ticket_logo"/>
+        <result property="description" column="description"/>
+        <result property="ticketPrice" column="ticket_price"/>
+        <result property="ticketOrgPrice" column="ticket_org_price"/>
+        <result property="maxSum" column="max_sum"/>
+        <result property="sellSum" column="sell_sum"/>
+        <result property="statu" column="statu"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="endTime" column="end_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.ActivityTicketEntity">
+		select
+			`id`,
+			`member_id`,
+			`ticket_kind`,
+			`item_no`,
+			`ticket_name`,
+			`ticket_logo`,
+			`description`,
+			`ticket_price`,
+			`ticket_org_price`,
+			`max_sum`,
+			`sell_sum`,
+			`statu`,
+			`create_time`,
+			`update_time`,
+			`end_time`
+		from activity_ticket
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.ActivityTicketEntity">
+		select
+    		`id`,
+    		`member_id`,
+    		`ticket_kind`,
+    		`item_no`,
+    		`ticket_name`,
+    		`ticket_logo`,
+    		`description`,
+    		`ticket_price`,
+    		`ticket_org_price`,
+    		`max_sum`,
+    		`sell_sum`,
+    		`statu`,
+    		`create_time`,
+    		`update_time`,
+    		`end_time`
+		from activity_ticket
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from activity_ticket
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.ActivityTicketEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into activity_ticket(
+			`member_id`,
+			`ticket_kind`,
+			`item_no`,
+			`ticket_name`,
+			`ticket_logo`,
+			`description`,
+			`ticket_price`,
+			`ticket_org_price`,
+			`max_sum`,
+			`sell_sum`,
+			`statu`,
+			`create_time`,
+			`update_time`,
+			`end_time`)
+		values(
+			#{memberId},
+			#{ticketKind},
+			#{itemNo},
+			#{ticketName},
+			#{ticketLogo},
+			#{description},
+			#{ticketPrice},
+			#{ticketOrgPrice},
+			#{maxSum},
+			#{sellSum},
+			#{statu},
+			#{createTime},
+			#{updateTime},
+			#{endTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.ActivityTicketEntity">
+		update activity_ticket 
+		<set>
+			<if test="memberId != null">`member_id` = #{memberId}, </if>
+			<if test="ticketKind != null">`ticket_kind` = #{ticketKind}, </if>
+			<if test="itemNo != null">`item_no` = #{itemNo}, </if>
+			<if test="ticketName != null">`ticket_name` = #{ticketName}, </if>
+			<if test="ticketLogo != null">`ticket_logo` = #{ticketLogo}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="ticketPrice != null">`ticket_price` = #{ticketPrice}, </if>
+			<if test="ticketOrgPrice != null">`ticket_org_price` = #{ticketOrgPrice}, </if>
+			<if test="maxSum != null">`max_sum` = #{maxSum}, </if>
+			<if test="sellSum != null">`sell_sum` = #{sellSum}, </if>
+			<if test="statu != null">`statu` = #{statu}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="endTime != null">`end_time` = #{endTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from activity_ticket where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from activity_ticket where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

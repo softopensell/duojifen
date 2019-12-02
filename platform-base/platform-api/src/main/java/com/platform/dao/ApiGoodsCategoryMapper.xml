@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiGoodsCategoryMapper">
+
+    <resultMap type="com.platform.entity.GoodsCategoryVo" id="goodsCategoryMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="frontDesc" column="front_desc"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="searchKey" column="search_key"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="level" column="level"/>
+        <result property="statu" column="statu"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="isShow" column="is_show"/>
+        <result property="bannerImg" column="banner_img"/>
+        <result property="iconImg" column="icon_img"/>
+        <result property="imgLinkUrl" column="img_link_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.GoodsCategoryVo">
+		select
+			`id`,
+			`name`,
+			`code`,
+			`front_desc`,
+			`parent_id`,
+			`search_key`,
+			`sort_order`,
+			`level`,
+			`statu`,
+			`shop_id`,
+			`is_show`,
+			`banner_img`,
+			`icon_img`,
+			`img_link_url`,
+			`create_time`,
+			`update_time`
+		from t_goods_category
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.GoodsCategoryVo">
+		select
+    		`id`,
+    		`name`,
+    		`code`,
+    		`front_desc`,
+    		`parent_id`,
+    		`search_key`,
+    		`sort_order`,
+    		`level`,
+    		`statu`,
+    		`shop_id`,
+    		`is_show`,
+    		`banner_img`,
+    		`icon_img`,
+    		`img_link_url`,
+    		`create_time`,
+    		`update_time`
+		from t_goods_category
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_goods_category
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.GoodsCategoryVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_goods_category(
+			`name`,
+			`code`,
+			`front_desc`,
+			`parent_id`,
+			`search_key`,
+			`sort_order`,
+			`level`,
+			`statu`,
+			`shop_id`,
+			`is_show`,
+			`banner_img`,
+			`icon_img`,
+			`img_link_url`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{name},
+			#{code},
+			#{frontDesc},
+			#{parentId},
+			#{searchKey},
+			#{sortOrder},
+			#{level},
+			#{statu},
+			#{shopId},
+			#{isShow},
+			#{bannerImg},
+			#{iconImg},
+			#{imgLinkUrl},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.GoodsCategoryVo">
+		update t_goods_category 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="frontDesc != null">`front_desc` = #{frontDesc}, </if>
+			<if test="parentId != null">`parent_id` = #{parentId}, </if>
+			<if test="searchKey != null">`search_key` = #{searchKey}, </if>
+			<if test="sortOrder != null">`sort_order` = #{sortOrder}, </if>
+			<if test="level != null">`level` = #{level}, </if>
+			<if test="statu != null">`statu` = #{statu}, </if>
+			<if test="shopId != null">`shop_id` = #{shopId}, </if>
+			<if test="isShow != null">`is_show` = #{isShow}, </if>
+			<if test="bannerImg != null">`banner_img` = #{bannerImg}, </if>
+			<if test="iconImg != null">`icon_img` = #{iconImg}, </if>
+			<if test="imgLinkUrl != null">`img_link_url` = #{imgLinkUrl}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_goods_category where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_goods_category where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

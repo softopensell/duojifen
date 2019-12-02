@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>充值统计</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<Row :gutter="16">
+			<i-col span="5">
+ 				平台充值总数：<font color='red' size=5>￥{{initTotal.allTotal}}</font>
+            </i-col>
+            <i-col span="5">
+ 				平台当日充值：<font color='red' size=5>￥{{initTotal.nowTotal}}</font>
+            </i-col>
+            <i-col span="6">
+ 				最后统计时间：<font size=5>{{initTotal.nowDate}}</font>
+            </i-col>
+		</Row>
+		<br>
+		
+		<Row :gutter="16">
+			<i-col span="5">
+ 				当前查询总额：<font color='red' size=5>￥{{queryStat.totalIntegral}}</font>
+            </i-col>
+            <i-col span="5">
+ 				查询条数：<font color='red' size=5>{{queryStat.totalSum}}条</font>
+            </i-col>
+		</Row>
+		<br>
+        <Row :gutter="16">
+            <div class="search-group">
+              <i-col span="4">
+                    <i-select v-model="q.moneyTypeWallet" @on-change="query" filterable  placeholder="充值分类">
+	                  <i-option :value="6">钱包充值</i-option> 
+	                  <i-option :value="61">积分充值</i-option> 
+	                </i-select>
+                </i-col>
+                <i-col span="3">
+                    <i-input v-model="q.userName" @on-enter="query" placeholder="用户名"/>
+                </i-col>
+                
+                <i-col span="3">
+                    <i-input v-model="q.userMobile" @on-enter="query" placeholder="手机号码"/>
+                </i-col>
+                <i-col span="3">
+                    <i-select v-model="q.status" @on-change="query" filterable  placeholder="提现状态">
+	                  <i-option :value="0">申请中</i-option> 
+	                  <i-option :value="8">成功</i-option> 
+	                  <i-option :value="10">成功</i-option> 
+	                  <i-option :value="11">已取消</i-option> 
+	                </i-select>
+                </i-col>
+                <i-col span="5">
+                	<Date-picker type="daterange" format="yyyy-MM-dd" placeholder="充值时间" v-model="q.queryDate"></Date-picker>
+                </i-col>
+                <i-button @click="query">查询</i-button>
+                <i-button @click="reloadSearch">重置</i-button>
+                <i-button type="info" @click="exportRecharge"><i class="fa ios-cloud-downlond"></i>&nbsp;导出</i-button>
+            </div>
+            <div class="buttons-group">
+            </div>
+        </Row>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    
+    <Modal
+        title="充值"
+        v-model="rechargeMoneyModal"
+        @on-ok="toRechargeMoneyTap"
+        >
+       <i-form :label-width="180">
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="充值金额" prop="money">
+	            	<Input-number :min="0" :step="1" v-model="money" placeholder="充值金额"/>
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+        </i-form>
+    </Modal>
+    
+    
+    
+</div>
+
+<script src="${rc.contextPath}/js/shop/rechargecount.js?_${date.systemTime}"></script>
+</body>
+</html>

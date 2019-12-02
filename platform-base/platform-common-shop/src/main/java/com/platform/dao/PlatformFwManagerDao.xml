@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.PlatformFwManagerDao">
+
+    <resultMap type="com.platform.entity.PlatformFwManagerEntity" id="platformFwManagerMap">
+        <result property="id" column="id"/>
+        <result property="fwName" column="fw_name"/>
+        <result property="fwUserId" column="fw_user_id"/>
+        <result property="fwUserName" column="fw_user_name"/>
+        <result property="fwCurYj" column="fw_cur_yj"/>
+        <result property="fwCurDate" column="fw_cur_date"/>
+        <result property="fwTotalResetTime" column="fw_total_reset_time"/>
+        <result property="fwTotalYj" column="fw_total_yj"/>
+        <result property="fwTotalPayMoney" column="fw_total_pay_money"/>
+        <result property="state" column="state"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.PlatformFwManagerEntity">
+		select
+			`id`,
+			`fw_name`,
+			`fw_user_id`,
+			`fw_user_name`,
+			`fw_cur_yj`,
+			`fw_cur_date`,
+			`fw_total_reset_time`,
+			`fw_total_yj`,
+			`fw_total_pay_money`,
+			`state`,
+			`create_time`,
+			`update_time`
+		from platform_fw_manager
+		where id = #{id}
+	</select>
+	<select id="queryByUserId" resultType="com.platform.entity.PlatformFwManagerEntity">
+		select
+			`id`,
+			`fw_name`,
+			`fw_user_id`,
+			`fw_user_name`,
+			`fw_cur_yj`,
+			`fw_cur_date`,
+			`fw_total_reset_time`,
+			`fw_total_yj`,
+			`fw_total_pay_money`,
+			`state`,
+			`create_time`,
+			`update_time`
+		from platform_fw_manager
+		where fw_user_id = #{userId}
+		AND state =  0
+		order by id desc
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.PlatformFwManagerEntity">
+		select
+    		`id`,
+    		`fw_name`,
+    		`fw_user_id`,
+    		`fw_user_name`,
+    		`fw_cur_yj`,
+    		`fw_cur_date`,
+    		`fw_total_reset_time`,
+    		`fw_total_yj`,
+    		`fw_total_pay_money`,
+    		`state`,
+    		`create_time`,
+    		`update_time`
+		from platform_fw_manager
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+		AND state =  0
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from platform_fw_manager
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+        AND state =  0
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.PlatformFwManagerEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into platform_fw_manager(
+			`fw_name`,
+			`fw_user_id`,
+			`fw_user_name`,
+			`fw_cur_yj`,
+			`fw_cur_date`,
+			`fw_total_reset_time`,
+			`fw_total_yj`,
+			`fw_total_pay_money`,
+			`state`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{fwName},
+			#{fwUserId},
+			#{fwUserName},
+			#{fwCurYj},
+			#{fwCurDate},
+			#{fwTotalResetTime},
+			#{fwTotalYj},
+			#{fwTotalPayMoney},
+			#{state},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.PlatformFwManagerEntity">
+		update platform_fw_manager 
+		<set>
+			<if test="fwName != null">`fw_name` = #{fwName}, </if>
+			<if test="fwUserId != null">`fw_user_id` = #{fwUserId}, </if>
+			<if test="fwUserName != null">`fw_user_name` = #{fwUserName}, </if>
+			<if test="fwCurYj != null">`fw_cur_yj` = #{fwCurYj}, </if>
+			<if test="fwCurDate != null">`fw_cur_date` = #{fwCurDate}, </if>
+			<if test="fwTotalResetTime != null">`fw_total_reset_time` = #{fwTotalResetTime}, </if>
+			<if test="fwTotalYj != null">`fw_total_yj` = #{fwTotalYj}, </if>
+			<if test="fwTotalPayMoney != null">`fw_total_pay_money` = #{fwTotalPayMoney}, </if>
+			<if test="state != null">`state` = #{state}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from platform_fw_manager where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from platform_fw_manager where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

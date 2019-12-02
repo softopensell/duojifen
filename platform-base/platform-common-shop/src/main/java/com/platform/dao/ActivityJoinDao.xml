@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ActivityJoinDao">
+
+    <resultMap type="com.platform.entity.ActivityJoinEntity" id="activityJoinMap">
+        <result property="id" column="id"/>
+        <result property="itemNo" column="item_no"/>
+        <result property="statu" column="statu"/>
+        <result property="joinType" column="join_type"/>
+        <result property="joinInviteNumber" column="join_invite_number"/>
+        <result property="joinInviteName" column="join_invite_name"/>
+        <result property="joinInviteLogo" column="join_invite_logo"/>
+        <result property="joinInviteTitle" column="join_invite_title"/>
+        <result property="joinInviteContenttype" column="join_invite_contentType"/>
+        <result property="joinInviteDesc" column="join_invite_desc"/>
+        <result property="joinInviteImage" column="join_invite_image"/>
+        <result property="joinInviteWriteName" column="join_invite_write_name"/>
+        <result property="joinInviteWriteDate" column="join_invite_write_date"/>
+        <result property="joinInviteReadStatu" column="join_invite_read_statu"/>
+        <result property="joinMemberId" column="join_member_id"/>
+        <result property="joinAuditStatu" column="join_audit_statu"/>
+        <result property="joinAuditRefuse" column="join_audit_refuse"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.ActivityJoinEntity">
+		select
+			`id`,
+			`item_no`,
+			`statu`,
+			`join_type`,
+			`join_invite_number`,
+			`join_invite_name`,
+			`join_invite_logo`,
+			`join_invite_title`,
+			`join_invite_contentType`,
+			`join_invite_desc`,
+			`join_invite_image`,
+			`join_invite_write_name`,
+			`join_invite_write_date`,
+			`join_invite_read_statu`,
+			`join_member_id`,
+			`join_audit_statu`,
+			`join_audit_refuse`,
+			`create_time`,
+			`update_time`
+		from activity_join
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.ActivityJoinEntity">
+		select
+    		`id`,
+    		`item_no`,
+    		`statu`,
+    		`join_type`,
+    		`join_invite_number`,
+    		`join_invite_name`,
+    		`join_invite_logo`,
+    		`join_invite_title`,
+    		`join_invite_contentType`,
+    		`join_invite_desc`,
+    		`join_invite_image`,
+    		`join_invite_write_name`,
+    		`join_invite_write_date`,
+    		`join_invite_read_statu`,
+    		`join_member_id`,
+    		`join_audit_statu`,
+    		`join_audit_refuse`,
+    		`create_time`,
+    		`update_time`
+		from activity_join
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from activity_join
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.ActivityJoinEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into activity_join(
+			`item_no`,
+			`statu`,
+			`join_type`,
+			`join_invite_number`,
+			`join_invite_name`,
+			`join_invite_logo`,
+			`join_invite_title`,
+			`join_invite_contentType`,
+			`join_invite_desc`,
+			`join_invite_image`,
+			`join_invite_write_name`,
+			`join_invite_write_date`,
+			`join_invite_read_statu`,
+			`join_member_id`,
+			`join_audit_statu`,
+			`join_audit_refuse`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{itemNo},
+			#{statu},
+			#{joinType},
+			#{joinInviteNumber},
+			#{joinInviteName},
+			#{joinInviteLogo},
+			#{joinInviteTitle},
+			#{joinInviteContenttype},
+			#{joinInviteDesc},
+			#{joinInviteImage},
+			#{joinInviteWriteName},
+			#{joinInviteWriteDate},
+			#{joinInviteReadStatu},
+			#{joinMemberId},
+			#{joinAuditStatu},
+			#{joinAuditRefuse},
+			#{createTime},
+			#{updateTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.ActivityJoinEntity">
+		update activity_join 
+		<set>
+			<if test="itemNo != null">`item_no` = #{itemNo}, </if>
+			<if test="statu != null">`statu` = #{statu}, </if>
+			<if test="joinType != null">`join_type` = #{joinType}, </if>
+			<if test="joinInviteNumber != null">`join_invite_number` = #{joinInviteNumber}, </if>
+			<if test="joinInviteName != null">`join_invite_name` = #{joinInviteName}, </if>
+			<if test="joinInviteLogo != null">`join_invite_logo` = #{joinInviteLogo}, </if>
+			<if test="joinInviteTitle != null">`join_invite_title` = #{joinInviteTitle}, </if>
+			<if test="joinInviteContenttype != null">`join_invite_contentType` = #{joinInviteContenttype}, </if>
+			<if test="joinInviteDesc != null">`join_invite_desc` = #{joinInviteDesc}, </if>
+			<if test="joinInviteImage != null">`join_invite_image` = #{joinInviteImage}, </if>
+			<if test="joinInviteWriteName != null">`join_invite_write_name` = #{joinInviteWriteName}, </if>
+			<if test="joinInviteWriteDate != null">`join_invite_write_date` = #{joinInviteWriteDate}, </if>
+			<if test="joinInviteReadStatu != null">`join_invite_read_statu` = #{joinInviteReadStatu}, </if>
+			<if test="joinMemberId != null">`join_member_id` = #{joinMemberId}, </if>
+			<if test="joinAuditStatu != null">`join_audit_statu` = #{joinAuditStatu}, </if>
+			<if test="joinAuditRefuse != null">`join_audit_refuse` = #{joinAuditRefuse}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from activity_join where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from activity_join where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

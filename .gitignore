@@ -1,0 +1,8 @@
+/target/
+.idea
+target
+.settings
+**/.gitgnore
+**/.metadata
+**/.DS_Store
+/bin/

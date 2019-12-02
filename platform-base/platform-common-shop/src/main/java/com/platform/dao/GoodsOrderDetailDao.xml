@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.GoodsOrderDetailDao">
+
+    <resultMap type="com.platform.entity.GoodsOrderDetailEntity" id="goodsOrderDetailMap">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="goodsSn" column="goods_sn"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsImgUrl" column="goods_img_url"/>
+        <result property="goodsListImgUrl" column="goods_list_img_url"/>
+        <result property="specification" column="specification"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="price" column="price"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="goodTags" column="good_tags"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.GoodsOrderDetailEntity">
+		select
+			`id`,
+			`order_id`,
+			`order_no`,
+			`shop_id`,
+			`user_id`,
+			`goods_id`,
+			`goods_sn`,
+			`goods_name`,
+			`goods_img_url`,
+			`goods_list_img_url`,
+			`specification`,
+			`goods_count`,
+			`good_tags`,
+			`price`,
+			`total_price`,
+			`create_time`,
+			`update_time`
+		from t_goods_order_detail
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.GoodsOrderDetailEntity">
+		select
+    		`id`,
+    		`order_id`,
+    		`order_no`,
+    		`shop_id`,
+    		`user_id`,
+    		`goods_id`,
+    		`goods_sn`,
+    		`goods_name`,
+    		`goods_img_url`,
+    		`goods_list_img_url`,
+    		`specification`,
+    		`goods_count`,
+    		`good_tags`,
+    		`price`,
+    		`total_price`,
+    		`create_time`,
+			`update_time`
+		from t_goods_order_detail
+		WHERE 1=1
+		<if test="orderNo != null and orderNo.trim() != ''">
+			AND order_no = #{orderNo}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_goods_order_detail
+		WHERE 1=1
+        <if test="orderNo != null and orderNo.trim() != ''">
+			AND order_no = #{orderNo}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.GoodsOrderDetailEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_goods_order_detail(
+			`order_id`,
+			`order_no`,
+			`shop_id`,
+			`user_id`,
+			`goods_id`,
+			`goods_sn`,
+			`goods_name`,
+			`goods_img_url`,
+			`goods_list_img_url`,
+			`specification`,
+			`goods_count`,
+			`good_tags`,
+			`price`,
+			`total_price`,
+			`create_time`,
+			`update_time`)
+		values(
+			#{orderId},
+			#{orderNo},
+			#{shopId},
+			#{userId},
+			#{goodsId},
+			#{goodsSn},
+			#{goodsName},
+			#{goodsImgUrl},
+			#{goodsListImgUrl},
+			#{specification},
+			#{goodsCount},
+			#{goodTags},
+			#{price},
+			#{totalPrice},
+			#{createTime},
+			#{updateTime}
+			)
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.GoodsOrderDetailEntity">
+		update t_goods_order_detail 
+		<set>
+			<if test="orderId != null">`order_id` = #{orderId}, </if>
+			<if test="orderNo != null">`order_no` = #{orderNo}, </if>
+			<if test="shopId != null">`shop_id` = #{shopId}, </if>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="goodsId != null">`goods_id` = #{goodsId}, </if>
+			<if test="goodsSn != null">`goods_sn` = #{goodsSn}, </if>
+			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
+			<if test="goodsImgUrl != null">`goods_img_url` = #{goodsImgUrl}, </if>
+			<if test="goodsListImgUrl != null">`goods_list_img_url` = #{goodsListImgUrl}, </if>
+			<if test="specification != null">`specification` = #{specification}, </if>
+			<if test="goodsCount != null">`goods_count` = #{goodsCount}, </if>
+			<if test="goodTags != null">`good_tags` = #{goodTags}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="totalPrice != null">`total_price` = #{totalPrice}</if>
+			<if test="createTime != null">`create_time` = #{createTime}</if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_goods_order_detail where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_goods_order_detail where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

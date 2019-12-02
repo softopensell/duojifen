@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.api.dao.ApiBonusInvestOrderMapper">
+
+    <resultMap type="com.platform.api.entity.BonusInvestOrderVo" id="bonusInvestOrderMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="investOrderNo" column="invest_order_no"/>
+        <result property="consumedOrderNo" column="consumed_order_no"/>
+        <result property="consumedMoney" column="consumed_money"/>
+        <result property="maxMoney" column="max_money"/>
+        <result property="buyMoney" column="buy_money"/>
+        <result property="payType" column="pay_type"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="statu" column="statu"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="totalIncomMoney" column="total_incom_money"/>
+        <result property="incomeMoney" column="income_money"/>
+        <result property="surplusMoney" column="surplus_money"/>
+        <result property="shareLastTime" column="share_last_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.api.entity.BonusInvestOrderVo">
+		select
+			`id`,
+			`user_id`,
+			`invest_order_no`,
+			`consumed_order_no`,
+			`consumed_money`,
+			`max_money`,
+			`buy_money`,
+			`pay_type`,
+			`pay_status`,
+			`statu`,
+			`create_time`,
+			`update_time`,
+			`total_incom_money`,
+			`income_money`,
+			`surplus_money`,
+			`share_last_time`
+		from t_bonus_invest_order
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.api.entity.BonusInvestOrderVo">
+		select
+    		go.`id`,
+    		go.`user_id`,
+    		go.`invest_order_no`,
+    		go.`consumed_order_no`,
+    		go.`consumed_money`,
+    		go.`max_money`,
+    		go.`buy_money`,
+    		go.`pay_type`,
+    		go.`pay_status`,
+    		go.`statu`,
+    		go.`create_time`,
+    		go.`update_time`,
+    		go.`total_incom_money`,
+    		go.`income_money`,
+    		go.`surplus_money`,
+    		go.`share_last_time`,
+    		u.user_name as userName
+		from t_bonus_invest_order go,t_user u
+		where 1=1 and go.user_id=u.user_id
+		<if test="name != null and name.trim() != ''">
+			AND go.name LIKE concat('%',#{name},'%')
+		</if>
+		<if test="investOrderNo != null and investOrderNo.trim() != ''">
+			AND go.invest_order_no =#{investOrderNo}
+		</if>
+		<if test="consumedOrderNo != null and consumedOrderNo.trim() != ''">
+			AND go.consumed_order_no =#{consumedOrderNo}
+		</if>
+		<if test="userId != null ">
+			AND go.user_id =#{userId}
+		</if>
+		<if test="statu != null ">
+			AND go.statu =#{statu}
+		</if>
+		<if test="payStatus != null">
+			AND go.pay_status =#{payStatus}
+		</if>
+		
+		<if test="shareLastTimeStart != null and shareLastTimeStart != ''">
+			AND go.share_last_time <![CDATA[ >= ]]> #{shareLastTimeStart}
+		</if>
+		<if test="shareLastTimeEnd != null and shareLastTimeEnd != ''">
+			AND go.share_last_time <![CDATA[ <= ]]> #{shareLastTimeEnd}
+		</if>
+		
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+		
+		
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_bonus_invest_order
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+       <if test="userId != null ">
+			AND user_id =#{userId}
+		</if>
+		<if test="statu != null ">
+			AND statu =#{statu}
+		</if>
+		<if test="payStatus != null">
+			AND pay_status =#{payStatus}
+		</if>
+		
+		<if test="investOrderNo != null and investOrderNo.trim() != ''">
+			AND go.invest_order_no =#{investOrderNo}
+		</if>
+		<if test="consumedOrderNo != null and consumedOrderNo.trim() != ''">
+			AND go.consumed_order_no =#{consumedOrderNo}
+		</if>
+		
+		<if test="shareLastTimeStart != null and shareLastTimeStart != ''">
+			AND go.share_last_time <![CDATA[ >= ]]> #{shareLastTimeStart}
+		</if>
+		<if test="shareLastTimeEnd != null and shareLastTimeEnd != ''">
+			AND go.share_last_time <![CDATA[ <= ]]> #{shareLastTimeEnd}
+		</if>
+		
+		
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.api.entity.BonusInvestOrderVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_bonus_invest_order(
+			`user_id`,
+			`invest_order_no`,
+			`consumed_order_no`,
+			`consumed_money`,
+			`max_money`,
+			`buy_money`,
+			`pay_type`,
+			`pay_status`,
+			`statu`,
+			`create_time`,
+			`update_time`,
+			`total_incom_money`,
+			`income_money`,
+			`surplus_money`,
+			`share_last_time`)
+		values(
+			#{userId},
+			#{investOrderNo},
+			#{consumedOrderNo},
+			#{consumedMoney},
+			#{maxMoney},
+			#{buyMoney},
+			#{payType},
+			#{payStatus},
+			#{statu},
+			#{createTime},
+			#{updateTime},
+			#{totalIncomMoney},
+			#{incomeMoney},
+			#{surplusMoney},
+			#{shareLastTime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.api.entity.BonusInvestOrderVo">
+		update t_bonus_invest_order 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="investOrderNo != null">`invest_order_no` = #{investOrderNo}, </if>
+			<if test="consumedOrderNo != null">`consumed_order_no` = #{consumedOrderNo}, </if>
+			<if test="consumedMoney != null">`consumed_money` = #{consumedMoney}, </if>
+			<if test="maxMoney != null">`max_money` = #{maxMoney}, </if>
+			<if test="buyMoney != null">`buy_money` = #{buyMoney}, </if>
+			<if test="payType != null">`pay_type` = #{payType}, </if>
+			<if test="payStatus != null">`pay_status` = #{payStatus}, </if>
+			<if test="statu != null">`statu` = #{statu}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="totalIncomMoney != null">`total_incom_money` = #{totalIncomMoney}, </if>
+			<if test="incomeMoney != null">`income_money` = #{incomeMoney}, </if>
+			<if test="surplusMoney != null">`surplus_money` = #{surplusMoney}, </if>
+			<if test="shareLastTime != null">`share_last_time` = #{shareLastTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_bonus_invest_order where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_bonus_invest_order where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

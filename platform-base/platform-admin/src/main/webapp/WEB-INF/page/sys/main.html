@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>欢迎页</title>
+    #parse("sys/header.html")
+	
+	<!-- <script src='https://gitee.com/fuyang_lipengjun/platform/widget_preview'></script> -->
+	<style>
+.pro_name a {
+	color: #4183c4;
+}
+
+.osc_git_title {
+	background-color: #fff;
+}
+
+.osc_git_box {
+	background-color: #fff;
+}
+
+.osc_git_box {
+	border-color: #E3E9ED;
+	margin: 20px;
+}
+
+.osc_git_info {
+	color: #666;
+}
+
+.osc_git_main a {
+	color: #9B9B9B;
+}
+
+#inn {
+	float: right;
+}
+</style>
+</head>
+<body>
+<div  id="rrapp"  v-cloak  class="wrapper wrapper-content  animated fadeInRight">
+    <div class="ibox ">
+        <div class="ibox-title">
+            <h1>欢迎 {{mainData.loginUser}}</h1>
+            <div id="inn"></div>
+        </div>
+        <div class="ibox-content">
+             <div class="signin-info">
+					<Card>
+						<p slot="title">欢迎使用积分兑换系统</p>
+						 <Row>
+						   积分兑换系统
+						 </Row>
+					</Card>
+            </div> 
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+$(function(){
+	vm.initData();
+})
+var vm = new Vue({
+    el: '#rrapp',
+    data: {
+        mainData:{
+        	loginUser:"",
+        	countData:{
+        		orderCount:0,
+        		totalPrice:0,
+        		totalPayPrice:0,
+        		status_1:0,
+        		status_2:0,
+        		status_3:0
+        	}
+       	}
+    },
+    methods: {
+        initData: function () {
+             Ajax.request({
+                url: "../goodsorder/queryMainInitData",
+                params:{orderStatuss:"1,2,3"},
+                async: true,
+                successCallback: function (r) {
+                   vm.mainData.countData = r.result;
+                   console.log(vm.mainData);
+                }
+            });
+            Ajax.request({
+                url: "../sys/main/initData",
+                async: true,
+                successCallback: function (r) {
+                    vm.mainData.loginUser = r.result.loginUser;
+                }
+            });
+        }
+    }
+});
+function time1(){
+    var inn=document.getElementById('inn');
+
+    var date = new Date();
+
+    var month = date.getMonth()+1;
+    var year=date.getFullYear();
+    var day=date.getDate();
+    var week = date.getDay();
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    var week1;
+    switch(week)
+    {
+        case 0: week1='星期日'; break;
+        case 1: week1='星期一'; break;
+        case 2: week1='星期二'; break;
+        case 3: week1='星期三'; break;
+        case 4: week1='星期四'; break;
+        case 5: week1='星期五'; break;
+        case 6: week1='星期六'; break;
+    }
+    hour=check(hour);
+    min=check(min);
+    sec=check(sec);
+    inn.innerHTML=year+'年'+month+'月'+day+'日'+' '+hour+':'+min+':'+sec+'  '+week1;
+    var innn=inn.innerHTML;
+    setTimeout(time1,1000);
+}
+function check(i){
+    var num;
+    i<10?num="0"+i:num=i;
+    return num;
+}
+time1();
+$('.J_menuItem').on('click', function(){
+	menuItem($(this).attr('href'),$(this).data('index'),$(this).attr('title'));
+});
+
+
+</script>

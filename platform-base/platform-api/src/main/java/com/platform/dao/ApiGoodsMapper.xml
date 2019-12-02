@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.ApiGoodsMapper">
+
+    <resultMap type="com.platform.entity.GoodsVo" id="goodsMap">
+        <result property="id" column="id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="goodsSn" column="goods_sn"/>
+        <result property="name" column="name"/>
+        <result property="marketPrice" column="market_price"/>
+        <result property="retailPrice" column="retail_price"/>
+        <result property="expressPrice" column="express_price"/>
+        <result property="introduce" column="introduce"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="imgListUrl" column="img_list_url"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="isNew" column="is_new"/>
+        <result property="hotSale" column="hot_sale"/>
+        <result property="hits" column="hits"/>
+        <result property="goodsDetail" column="goods_detail"/>
+        <result property="images" column="images"/>
+        <result property="sellcount" column="sellcount"/>
+        <result property="stock" column="stock"/>
+        <result property="searchKey" column="search_key"/>
+        <result property="notice" column="notice"/>
+        <result property="promise" column="promise"/>
+        <result property="score" column="score"/>
+        <result property="sellType" column="sell_type"/>
+        <result property="commentSum" column="comment_sum"/>
+        <result property="collectSum" column="collect_sum"/>
+        <result property="expiryDate" column="expiry_date"/>
+        <result property="goodsType" column="goods_type"/>
+        <result property="auditStatus" column="audit_status"/>
+        <result property="sellStatus" column="sell_status"/>
+        <result property="author" column="author"/>
+        <result property="material" column="material"/>
+        <result property="serviceDesc" column="service_desc"/>
+        <result property="specification" column="specification"/>
+        <result property="goodsFrom" column="goods_from"/>
+        <result property="goodsFromNumber" column="goods_from_number"/>
+        <result property="createtime" column="createtime"/>
+        <result property="updatetime" column="updatetime"/>
+        
+        <result property="goodSizeTag" column="good_size_tag"/>
+        <result property="goodColorTag" column="good_color_tag"/>
+        <result property="goodOtherTag" column="good_other_tag"/>
+        
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.GoodsVo">
+		select
+			`id`,
+			`shop_id`,
+			`category_id`,
+			`category_name`,
+			`goods_sn`,
+			`name`,
+			`market_price`,
+			`retail_price`,
+			`express_price`,
+			`introduce`,
+			`img_url`,
+			`img_list_url`,
+			`create_user_id`,
+			`is_new`,
+			`hot_sale`,
+			`hits`,
+			`goods_detail`,
+			`images`,
+			`sellcount`,
+			`stock`,
+			`search_key`,
+			`notice`,
+			`promise`,
+			`score`,
+			`sell_type`,
+			`comment_sum`,
+			`collect_sum`,
+			`expiry_date`,
+			`goods_type`,
+			`audit_status`,
+			`sell_status`,
+			`author`,
+			`material`,
+			`service_desc`,
+			`specification`,
+			`goods_from`,
+			`goods_from_number`,
+			`createtime`,
+			`updatetime`,
+			`good_size_tag`,
+			`good_color_tag`,
+			`good_other_tag`
+		from t_goods
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.GoodsVo">
+		select
+    	 <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+            *
+        </if>
+		from t_goods
+		WHERE 1=1
+		 <if test="shop_id != null and shop_id != ''">
+            and shop_id = #{shop_id}
+        </if>
+		 <if test="is_new != null and is_new != ''">
+            and is_new = #{is_new}
+        </if>
+        <if test="hot_sale != null and hot_sale != ''">
+            and hot_sale = #{hot_sale}
+        </if>
+        <if test="name != null and name != ''">
+            and 'name' like concat('%',#{search_key},'%')
+        </if>
+          <if test="category_id != null and category_id != ''">
+            and category_id = #{category_id}
+        </if>
+        <if test="search_key != null">
+            and search_key like concat('%',#{search_key},'%')
+        </if>
+        
+        <if test="sell_status != null and sell_status != ''">
+            and sell_status = #{sell_status}
+        </if>
+        <if test="categoryIds != null">
+            and category_id in
+            <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="goods_ids != null">
+            and id in
+            <foreach item="item" collection="goods_ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_goods
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.GoodsVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_goods(
+			`shop_id`,
+			`category_id`,
+			`category_name`,
+			`goods_sn`,
+			`name`,
+			`market_price`,
+			`retail_price`,
+			`express_price`,
+			`introduce`,
+			`img_url`,
+			`img_list_url`,
+			`create_user_id`,
+			`is_new`,
+			`hot_sale`,
+			`hits`,
+			`goods_detail`,
+			`images`,
+			`sellcount`,
+			`stock`,
+			`search_key`,
+			`notice`,
+			`promise`,
+			`score`,
+			`sell_type`,
+			`comment_sum`,
+			`collect_sum`,
+			`expiry_date`,
+			`goods_type`,
+			`audit_status`,
+			`sell_status`,
+			`author`,
+			`material`,
+			`service_desc`,
+			`specification`,
+			`goods_from`,
+			`goods_from_number`,
+			`createtime`,
+			`updatetime`)
+		values(
+			#{shopId},
+			#{categoryId},
+			#{categoryName},
+			#{goodsSn},
+			#{name},
+			#{marketPrice},
+			#{retailPrice},
+			#{expressPrice},
+			#{introduce},
+			#{imgUrl},
+			#{imgListUrl},
+			#{createUserId},
+			#{isNew},
+			#{hotSale},
+			#{hits},
+			#{goodsDetail},
+			#{images},
+			#{sellcount},
+			#{stock},
+			#{searchKey},
+			#{notice},
+			#{promise},
+			#{score},
+			#{sellType},
+			#{commentSum},
+			#{collectSum},
+			#{expiryDate},
+			#{goodsType},
+			#{auditStatus},
+			#{sellStatus},
+			#{author},
+			#{material},
+			#{serviceDesc},
+			#{specification},
+			#{goodsFrom},
+			#{goodsFromNumber},
+			#{createtime},
+			#{updatetime})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.GoodsVo">
+		update t_goods 
+		<set>
+			<if test="shopId != null">`shop_id` = #{shopId}, </if>
+			<if test="categoryId != null">`category_id` = #{categoryId}, </if>
+			<if test="categoryName != null">`category_name` = #{categoryName}, </if>
+			<if test="goodsSn != null">`goods_sn` = #{goodsSn}, </if>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="marketPrice != null">`market_price` = #{marketPrice}, </if>
+			<if test="retailPrice != null">`retail_price` = #{retailPrice}, </if>
+			<if test="expressPrice != null">`express_price` = #{expressPrice}, </if>
+			<if test="introduce != null">`introduce` = #{introduce}, </if>
+			<if test="imgUrl != null">`img_url` = #{imgUrl}, </if>
+			<if test="imgListUrl != null">`img_list_url` = #{imgListUrl}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="isNew != null">`is_new` = #{isNew}, </if>
+			<if test="hotSale != null">`hot_sale` = #{hotSale}, </if>
+			<if test="hits != null">`hits` = #{hits}, </if>
+			<if test="goodsDetail != null">`goods_detail` = #{goodsDetail}, </if>
+			<if test="images != null">`images` = #{images}, </if>
+			<if test="sellcount != null">`sellcount` = #{sellcount}, </if>
+			<if test="stock != null">`stock` = #{stock}, </if>
+			<if test="searchKey != null">`search_key` = #{searchKey}, </if>
+			<if test="notice != null">`notice` = #{notice}, </if>
+			<if test="promise != null">`promise` = #{promise}, </if>
+			<if test="score != null">`score` = #{score}, </if>
+			<if test="sellType != null">`sell_type` = #{sellType}, </if>
+			<if test="commentSum != null">`comment_sum` = #{commentSum}, </if>
+			<if test="collectSum != null">`collect_sum` = #{collectSum}, </if>
+			<if test="expiryDate != null">`expiry_date` = #{expiryDate}, </if>
+			<if test="goodsType != null">`goods_type` = #{goodsType}, </if>
+			<if test="auditStatus != null">`audit_status` = #{auditStatus}, </if>
+			<if test="sellStatus != null">`sell_status` = #{sellStatus}, </if>
+			<if test="author != null">`author` = #{author}, </if>
+			<if test="material != null">`material` = #{material}, </if>
+			<if test="serviceDesc != null">`service_desc` = #{serviceDesc}, </if>
+			<if test="specification != null">`specification` = #{specification}, </if>
+			<if test="goodsFrom != null">`goods_from` = #{goodsFrom}, </if>
+			<if test="goodsFromNumber != null">`goods_from_number` = #{goodsFromNumber}, </if>
+			<if test="createtime != null">`createtime` = #{createtime}, </if>
+			<if test="updatetime != null">`updatetime` = #{updatetime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_goods where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_goods where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	
+	<select id="queryHotGoodsList" resultMap="goodsMap">
+	
+	select
+    	 <if test="fields != null and fields != ''">
+            ${fields}
+        </if>
+        <if test="fields == null or fields == ''">
+           a.shop_id, a.category_id, a.category_name,a.id, a.name, a.goods_sn,a.img_list_url, a.market_price, a.retail_price, a.introduce
+        </if> 
+        from t_goods a 
+        where 1 = 1 
+        <if test="shop_id != null and shop_id != ''">
+            and a.shop_id = #{shop_id}
+        </if>
+		 <if test="is_new != null and is_new != ''">
+            and a.is_new = #{is_new}
+        </if>
+        <if test="hot_sale != null and hot_sale != ''">
+            and a.hot_sale = #{hot_sale}
+        </if>       
+          <if test="category_id != null and category_id != ''">
+            and a.category_id = #{category_id}
+        </if>
+        <if test="search_key != null">
+            and a.search_key like concat('%',#{search_key},'%')
+        </if>
+        
+        <if test="sell_status != null and sell_status != ''">
+            and a.sell_status = #{sell_status}
+        </if>
+        <if test="categoryIds != null">
+            and a.category_id in
+            <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="goods_ids != null">
+            and a.id in
+            <foreach item="item" collection="goods_ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryCatalogProductList" resultMap="goodsMap">
+        select a.shop_id, a.category_id, a.category_name,a.id, a.name, a.goods_sn,a.img_list_url, a.market_price, a.retail_price, a.introduce
+        from t_goods a 
+        where 1 = 1 
+        <if test="shop_id != null and shop_id != ''">
+            and a.shop_id = #{shop_id}
+        </if>
+		 <if test="is_new != null and is_new != ''">
+            and a.is_new = #{is_new}
+        </if>
+        <if test="hot_sale != null and hot_sale != ''">
+            and a.hot_sale = #{hot_sale}
+        </if>       
+          <if test="category_id != null and category_id != ''">
+            and a.category_id = #{category_id}
+        </if>
+        <if test="search_key != null">
+            and a.search_key like concat('%',#{search_key},'%')
+        </if>
+        
+        <if test="sell_status != null and sell_status != ''">
+            and a.sell_status = #{sell_status}
+        </if>
+        <if test="categoryIds != null">
+            and a.category_id in
+            <foreach item="item" collection="categoryIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="goods_ids != null">
+            and a.id in
+            <foreach item="item" collection="goods_ids" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by a.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+</mapper>

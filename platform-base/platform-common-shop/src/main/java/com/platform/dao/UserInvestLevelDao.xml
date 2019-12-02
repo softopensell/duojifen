@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.UserInvestLevelDao">
+
+    <resultMap type="com.platform.entity.UserInvestLevelEntity" id="userInvestLevelMap">
+        <result property="id" column="id"/>
+        <result property="userLevelType" column="user_level_type"/>
+        <result property="userLevelName" column="user_level_name"/>
+        <result property="userLevelMoneyValue" column="user_level_money_value"/>
+        <result property="userLevelNodeLevel" column="user_level_node_level"/>
+        <result property="statu" column="statu"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="goodsSn" column="goods_sn"/>
+        <result property="userLevelConsumedMin" column="user_level_consumed_min"/>
+        <result property="userLevelConsumedMax" column="user_level_consumed_max"/>
+        <result property="userLevelTime" column="user_level_time"/>
+    </resultMap>
+    
+
+	<select id="queryObject" resultType="com.platform.entity.UserInvestLevelEntity">
+		select
+			`id`,
+			`user_level_type`,
+			`user_level_name`,
+			`user_level_money_value`,
+			`user_level_node_level`,
+			`statu`,
+			`create_time`,
+			`update_time`,
+			`user_level_consumed_min`,
+			`user_level_consumed_max`,
+			`user_level_time`,
+			`goods_sn`
+		from t_user_invest_level
+		where id = #{id}
+	</select>
+	<select id="queryByLevelType" resultType="com.platform.entity.UserInvestLevelEntity">
+		select
+			`id`,
+			`user_level_type`,
+			`user_level_name`,
+			`user_level_money_value`,
+			`user_level_node_level`,
+			`statu`,
+			`create_time`,
+			`update_time`,
+			`user_level_consumed_min`,
+			`user_level_consumed_max`,
+			`user_level_time`,
+			`goods_sn`
+		from t_user_invest_level 
+		where user_level_type = #{userLevelType} and statu=0
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.UserInvestLevelEntity">
+		select
+    		`id`,
+    		`user_level_type`,
+    		`user_level_name`,
+    		`user_level_money_value`,
+    		`user_level_node_level`,
+    		`statu`,
+    		`create_time`,
+    		`update_time`,
+    		`user_level_consumed_min`,
+			`user_level_consumed_max`,
+			`user_level_time`,
+    		`goods_sn`
+		from t_user_invest_level
+		WHERE 1=1 and statu=0
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_user_invest_level
+		WHERE 1=1  and statu=0
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.UserInvestLevelEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_user_invest_level(
+			`user_level_type`,
+			`user_level_name`,
+			`user_level_money_value`,
+			`user_level_node_level`,
+			`statu`,
+			`create_time`,
+			`update_time`,
+			`user_level_consumed_min`,
+			`user_level_consumed_max`,
+			`user_level_time`,
+			`goods_sn`)
+		values(
+			#{userLevelType},
+			#{userLevelName},
+			#{userLevelMoneyValue},
+			#{userLevelNodeLevel},
+			#{statu},
+			#{createTime},
+			#{updateTime},
+			#{userLevelConsumedMin},
+			#{userLevelConsumedMax},
+			#{userLevelTime},
+			#{goodsSn})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.UserInvestLevelEntity">
+		update t_user_invest_level 
+		<set>
+			<if test="userLevelType != null">`user_level_type` = #{userLevelType}, </if>
+			<if test="userLevelName != null">`user_level_name` = #{userLevelName}, </if>
+			<if test="userLevelMoneyValue != null">`user_level_money_value` = #{userLevelMoneyValue}, </if>
+			<if test="userLevelNodeLevel != null">`user_level_node_level` = #{userLevelNodeLevel}, </if>
+			<if test="statu != null">`statu` = #{statu}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="userLevelConsumedMax != null">`user_level_consumed_max` = #{userLevelConsumedMax}, </if>
+			<if test="userLevelConsumedMin != null">`user_level_consumed_min` = #{userLevelConsumedMin}, </if>
+			<if test="userLevelTime != null">`user_level_time` = #{userLevelTime}, </if>
+			<if test="goodsSn != null">`goods_sn` = #{goodsSn}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_user_invest_level where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_user_invest_level where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

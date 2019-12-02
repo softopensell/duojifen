@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.platform.dao.UserAuditDao">
+
+    <resultMap type="com.platform.entity.UserAuditEntity" id="userAuditMap">
+        <result property="id" column="id"/>
+        <result property="applyUserId" column="apply_user_id"/>
+        <result property="applyType" column="apply_type"/>
+        <result property="applyLevel" column="apply_level"/>
+        <result property="applyTime" column="apply_time"/>
+        <result property="nowLevel" column="now_level"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="auditUserId" column="audit_user_id"/>
+        <result property="auditTime" column="audit_time"/>
+        <result property="auditStatus" column="audit_status"/>
+        <result property="auditOpinion" column="audit_opinion"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.platform.entity.UserAuditEntity">
+		select
+			`id`,
+			`apply_user_id`,
+			`apply_type`,
+			`apply_level`,
+			`apply_time`,
+			`now_level`,
+			`pay_amount`,
+			`audit_user_id`,
+			`audit_time`,
+			`audit_status`,
+			`audit_opinion`
+		from t_user_audit
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.platform.entity.UserAuditEntity">
+		select
+    		ua.`id`,
+    		ua.`apply_user_id`,
+    		ua.`apply_type`,
+    		ua.`apply_level`,
+    		ua.`apply_time`,
+    		ua.`now_level`,
+    		ua.`pay_amount`,
+    		ua.`audit_user_id`,
+    		ua.`audit_time`,
+    		ua.`audit_status`,
+    		ua.`audit_opinion`,
+    		u.user_name as applyUserName
+		from t_user_audit ua left join t_user u on ua.apply_user_id=u.user_id
+		WHERE 1=1  
+		<if test="applyUserName != null and applyUserName.trim() != ''">
+			AND u.user_name LIKE concat('%',#{applyUserName},'%')
+		</if>
+		<if test="auditStatus != null and auditStatus != ''">
+			AND ua.`audit_status` = #{auditStatus}
+		</if>
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND ua.`apply_time` <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND ua.`apply_time` <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) 
+		from t_user_audit ua left join t_user u on ua.apply_user_id=u.user_id
+		WHERE 1=1  
+		<if test="applyUserName != null and applyUserName.trim() != ''">
+			AND u.user_name LIKE concat('%',#{applyUserName},'%')
+		</if>
+		<if test="auditStatus != null and auditStatus != ''">
+			AND ua.`audit_status` = #{auditStatus}
+		</if>
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND ua.`apply_time` <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND ua.`apply_time` <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.platform.entity.UserAuditEntity">
+		insert into t_user_audit(
+			`id`,
+			`apply_user_id`,
+			`apply_type`,
+			`apply_level`,
+			`apply_time`,
+			`now_level`,
+			`pay_amount`,
+			`audit_user_id`,
+			`audit_time`,
+			`audit_status`,
+			`audit_opinion`)
+		values(
+			#{id},
+			#{applyUserId},
+			#{applyType},
+			#{applyLevel},
+			#{applyTime},
+			#{nowLevel},
+			#{payAmount},
+			#{auditUserId},
+			#{auditTime},
+			#{auditStatus},
+			#{auditOpinion})
+	</insert>
+	 
+	<update id="update" parameterType="com.platform.entity.UserAuditEntity">
+		update t_user_audit 
+		<set>
+			<if test="applyUserId != null">`apply_user_id` = #{applyUserId}, </if>
+			<if test="applyType != null">`apply_type` = #{applyType}, </if>
+			<if test="applyLevel != null">`apply_level` = #{applyLevel}, </if>
+			<if test="applyTime != null">`apply_time` = #{applyTime}, </if>
+			<if test="nowLevel != null">`now_level` = #{nowLevel}, </if>
+			<if test="payAmount != null">`pay_amount` = #{payAmount}, </if>
+			<if test="auditUserId != null">`audit_user_id` = #{auditUserId}, </if>
+			<if test="auditTime != null">`audit_time` = #{auditTime}, </if>
+			<if test="auditStatus != null">`audit_status` = #{auditStatus}, </if>
+			<if test="auditOpinion != null">`audit_opinion` = #{auditOpinion}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_user_audit where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_user_audit where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
