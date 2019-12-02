@@ -1,12 +1,15 @@
 package com.platform.controller;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +30,12 @@ import com.platform.service.UserService;
 import com.platform.util.ShopConstant;
 import com.platform.utils.DateUtils;
 import com.platform.utils.JsonUtil;
+import com.platform.utils.MapRemoveNullUtil;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
+import com.platform.utils.StringUtils;
+import com.platform.utils.excel.ExcelExport;
 
 /**
  * Controller
@@ -144,4 +150,65 @@ public class PlatformStatController {
         return R.ok().put("result", resultMap);
     }
     
+    
+    /**
+     * 查看列表
+     */
+    @RequestMapping("/exportUsers")
+    @RequiresPermissions("user:list")
+    public R exportUsers(@RequestParam Map<String, Object> params, HttpServletResponse response) {
+        //查询列表数据
+        Query query = new Query(params);
+        query.remove("offset");
+ 		query.remove("page");
+ 		query.remove("limit");
+ 		//取出所有条件
+ 		MapRemoveNullUtil.removeNullEntry(query);
+        List<PlatformStatEntity> platformStatList = platformStatService.queryList(query);
+        ExcelExport ee = new ExcelExport("会员列表_"+DateUtils.formatYYYYMMDD(new Date()));
+        String[] header = new String[]{"USERID","会员账号", "昵称","级别","电话","推荐会员","父接点","团队资产","USDT余额","积分",
+        		"总兑换金额","总资产","已收益","剩余资产","基金","上次奖励时间","状态","注册时间","服务中心"};
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (platformStatList != null && platformStatList.size() != 0) {
+            for (PlatformStatEntity user : platformStatList) {
+                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                map.put("userId", user.getUserId());
+                map.put("userName", user.getUserName());
+                map.put("nickname", user.getNickname());
+                map.put("userLevelTypeName", user.getUserLevelTypeName());
+                map.put("mobile", user.getMobile());
+                map.put("signupInvitedPhone", user.getSignupInvitedPhone());
+                map.put("signupNodePhone", user.getSignupNodePhone());
+                map.put("bonusTeamInvitedPoints", user.getBonusMeInvitedPoints());
+                map.put("balance", ""+user.getBalance());
+                map.put("integralScore", user.getIntegralScore());
+                map.put("totalInvestMoney", user.getTotalInvestMoney());
+                map.put("totalInvestIncomeMoney", user.getTotalInvestIncomeMoney());
+                map.put("investIncomeMoney", user.getInvestIncomeMoney());
+                map.put("surplusInvestMoney", user.getSurplusInvestMoney());
+                map.put("fund", user.getFund());
+                map.put("shareInvestLastTime", DateUtils.format(user.getShareInvestLastTime(), "yyyy-MM-dd HH:mm"));
+               
+                if(user.getState()==0){
+                	map.put("state", "注册中");
+                }else if (user.getState()==1){
+                	map.put("state", "有效");
+                }else if (user.getState()==2){
+                	map.put("state", "失败");
+                }else if (user.getState()==3){
+                	map.put("state", "停止分红（失效）");
+                }else {
+                	map.put("state", "-");
+                }
+                map.put("registerTime", DateUtils.format(user.getRegisterTime(), "yyyy-MM-dd HH:mm"));
+            	map.put("userCenter", "");
+              
+                list.add(map);
+            }
+        }
+        ee.addSheetByMap("会员列表", list, header);
+        ee.export(response);
+        return R.ok();
+    }
+
 }

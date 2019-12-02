@@ -457,11 +457,22 @@ public class PaymentPluginFacadeImpl  implements PaymentPluginFacade {
 	    	
 	    	
 	    	LOG.info("--------statBalance--------- "+JsonUtil.getJsonByObj(statBalance)+"--------userBalance--------- "+JsonUtil.getJsonByObj(userEntity.getBalance()));
-		    if(statBalance.intValue()<0) {
+		   
+	    	if(userEntity.getBalance().intValue()<0) {
 		    	PlatformMonitorStadetailEntity platformMonitorStadetailEntity=new PlatformMonitorStadetailEntity();
 		    	platformMonitorStadetailEntity.setCreateTime(new Date());
 		    	platformMonitorStadetailEntity.setMonitorContent("统计余额为负，转账，或者支持存在问题！统计余额："+statBalance.intValue()+",用户余额："+userEntity.getBalance().intValue());
-		    	
+		    	platformMonitorStadetailEntity.setMonitorDateNumber(poolDateNumber);
+		    	platformMonitorStadetailEntity.setMonitorMemberId(userId);
+		    	platformMonitorStadetailEntity.setMonitorMemberName(userEntity.getUserName());
+		    	platformMonitorStadetailEntity.setMonitorType(0);
+		    	platformMonitorStadetailService.save(platformMonitorStadetailEntity);
+		    	errorSum++;
+		    }
+	    	if(statBalance.intValue()<0) {
+		    	PlatformMonitorStadetailEntity platformMonitorStadetailEntity=new PlatformMonitorStadetailEntity();
+		    	platformMonitorStadetailEntity.setCreateTime(new Date());
+		    	platformMonitorStadetailEntity.setMonitorContent("统计余额为负，转账，或者支持存在问题！统计余额："+statBalance.intValue()+",用户余额："+userEntity.getBalance().intValue());
 		    	platformMonitorStadetailEntity.setMonitorDateNumber(poolDateNumber);
 		    	platformMonitorStadetailEntity.setMonitorMemberId(userId);
 		    	platformMonitorStadetailEntity.setMonitorMemberName(userEntity.getUserName());
@@ -470,7 +481,9 @@ public class PaymentPluginFacadeImpl  implements PaymentPluginFacade {
 		    	errorSum++;
 		    }
 		    
-		    if(userEntity.getBalance().intValue()!=statBalance.intValue()) {
+		    int allStatBalance=userEntity.getUserPreBalance().intValue()+statBalance.intValue();
+		    
+		    if(userEntity.getBalance().intValue()>=allStatBalance+10||userEntity.getBalance().intValue()<=allStatBalance-10) {
 		    	PlatformMonitorStadetailEntity platformMonitorStadetailEntity=new PlatformMonitorStadetailEntity();
 		    	platformMonitorStadetailEntity.setCreateTime(new Date());
 		    	platformMonitorStadetailEntity.setMonitorContent("统计余额和用户余额不等，用户余额："+userEntity.getBalance().intValue()+",统计余额："+statBalance.intValue());

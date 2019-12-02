@@ -3,7 +3,9 @@ package com.platform.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +30,8 @@ import com.platform.codegen.qrcode.SimpleQrcodeGenerator;
 import com.platform.constants.BonusConstant;
 import com.platform.constants.PluginConstant;
 import com.platform.entity.BonusPointsVo;
+import com.platform.entity.PaymentInfoEntity;
+import com.platform.entity.PlatformFwManagerEntity;
 import com.platform.entity.SysConfigEntity;
 import com.platform.entity.UserEntity;
 import com.platform.entity.UserInvestLevelEntity;
@@ -40,13 +44,16 @@ import com.platform.service.UserInvestLevelService;
 import com.platform.service.UserService;
 import com.platform.util.ShopConstant;
 import com.platform.util.constants.OrderConstant;
+import com.platform.utils.DateUtils;
 import com.platform.utils.JsonUtil;
+import com.platform.utils.MapRemoveNullUtil;
 import com.platform.utils.MoneyFormatUtils;
 import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
 import com.platform.utils.StringUtils;
 import com.platform.utils.auth.GoogleAuthenticator;
+import com.platform.utils.excel.ExcelExport;
 
 /**
  * Controller
@@ -423,6 +430,13 @@ public class UserController extends AbstractController{
     	return djfBonusFacade.addNodesToNodeBySubNodeUserId(userId, parentNodeUserId, parentInvitedUserId);
     }
     
+    @SysLog("查询用户服务中心")
+    @RequestMapping("/tofindUserCenter")
+    public R tofindUserCenter(Integer userId) {//1528 1527  1321
+    	//查询附近服务中心
+    	PlatformFwManagerEntity fwManagerEntity=djfBonusFacade.getLastFwUserId(userId);
+    	return R.ok().put("fwManagerEntity",fwManagerEntity);
+    }
     @SysLog("断开用户节点关系基本")
     @RequestMapping("/toBrokeNode")
     @RequiresPermissions("user:update")
@@ -558,9 +572,6 @@ public class UserController extends AbstractController{
     	return R.ok();
     }
     
-    
-    
-    
 //    @SysLog("转账")
 //    @RequestMapping("/toMoveMoney")
 //    @RequiresPermissions("user:update")
@@ -639,6 +650,76 @@ public class UserController extends AbstractController{
     	}
     	return R.ok().put("sysConfigEntity", sysConfigEntity);
     }
+    
+    
+    
+    /**
+     * 查看列表
+     */
+    @RequestMapping("/exportUsers")
+    @RequiresPermissions("user:list")
+    public R exportUsers(@RequestParam Map<String, Object> params, HttpServletResponse response) {
+        //查询列表数据
+        Query query = new Query(params);
+        logger.info("--------query-----"+JsonUtil.getJsonByObj(query));
+        if(query.containsKey("state")) {
+        	String state=(String) query.get("state");
+        	if(!StringUtils.isEmpty(state)) {
+        	}else {
+        		query.remove("state");
+        	}
+        }
+        query.remove("offset");
+ 		query.remove("page");
+ 		query.remove("limit");
+ 		//取出所有条件
+ 		MapRemoveNullUtil.removeNullEntry(query);
+        List<UserEntity> userList = userService.queryList(query);
+        ExcelExport ee = new ExcelExport("会员列表_"+DateUtils.formatYYYYMMDD(new Date()));
+        String[] header = new String[]{"USERID","会员账号", "昵称","级别","电话","推荐会员","父接点","团队资产","USDT余额","积分",
+        		"总兑换金额","总资产","已收益","剩余资产","基金","上次奖励时间","状态","注册时间"};
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (userList != null && userList.size() != 0) {
+            for (UserEntity user : userList) {
+                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                map.put("userId", user.getUserId());
+                map.put("userName", user.getUserName());
+                map.put("nickname", user.getNickname());
+                map.put("userLevelTypeName", user.getUserLevelTypeName());
+                map.put("mobile", user.getMobile());
+                map.put("signupInvitedPhone", user.getSignupInvitedPhone());
+                map.put("signupNodePhone", user.getSignupNodePhone());
+                map.put("bonusTeamInvitedPoints", user.getBonusMeInvitedPoints());
+                map.put("balance", ""+user.getBalance());
+                map.put("integralScore", user.getIntegralScore());
+                map.put("totalInvestMoney", user.getTotalInvestMoney());
+                map.put("totalInvestIncomeMoney", user.getTotalInvestIncomeMoney());
+                map.put("investIncomeMoney", user.getInvestIncomeMoney());
+                map.put("surplusInvestMoney", user.getSurplusInvestMoney());
+                map.put("fund", user.getFund());
+                map.put("shareInvestLastTime", DateUtils.format(user.getShareInvestLastTime(), "yyyy-MM-dd HH:mm"));
+               
+                if(user.getState()==0){
+                	map.put("state", "注册中");
+                }else if (user.getState()==1){
+                	map.put("state", "有效");
+                }else if (user.getState()==2){
+                	map.put("state", "失败");
+                }else if (user.getState()==3){
+                	map.put("state", "停止分红（失效）");
+                }else {
+                	map.put("state", "-");
+                }
+                map.put("registerTime", DateUtils.format(user.getRegisterTime(), "yyyy-MM-dd HH:mm"));
+              
+                list.add(map);
+            }
+        }
+        ee.addSheetByMap("会员列表", list, header);
+        ee.export(response);
+        return R.ok();
+    }
+
 
     public static void main(String[] args) {
     	System.out.println(DigestUtils.sha256Hex("888888"));
