@@ -166,7 +166,7 @@ public class PlatformStatController {
  		MapRemoveNullUtil.removeNullEntry(query);
         List<PlatformStatEntity> platformStatList = platformStatService.queryList(query);
         ExcelExport ee = new ExcelExport("统计列表_"+DateUtils.formatYYYYMMDD(new Date()));
-        String[] header = new String[]{"会员总数","未激活", "V1","V2","V3","V4","日新增","日未激活", "日新增V1","日新增V2","日新增V3","日新增V4",
+        String[] header = new String[]{"编号","会员总数","未激活", "V1","V2","V3","V4","日新增","日未激活", "日新增V1","日新增V2","日新增V3","日新增V4",
         		"累计资产","余额总量","总积分","剩余资产","总基金",
         		"今日分成比例","今日资产收益","今日分享收益","今日社区收益","今日星星收益","今日基金收益",
         		"今日余额支付数量","今日余额支付总额","今日积分支付数量" ,"今日积分支付总额" ,"今日积分兑换总额"
