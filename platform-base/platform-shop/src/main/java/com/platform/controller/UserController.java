@@ -659,6 +659,9 @@ public class UserController extends AbstractController{
     @RequestMapping("/exportUsers")
     @RequiresPermissions("user:list")
     public R exportUsers(@RequestParam Map<String, Object> params, HttpServletResponse response) {
+    	if (!isAdmin()) {
+			return R.error("不是平台管理员");
+        }
         //查询列表数据
         Query query = new Query(params);
         logger.info("--------query-----"+JsonUtil.getJsonByObj(query));
