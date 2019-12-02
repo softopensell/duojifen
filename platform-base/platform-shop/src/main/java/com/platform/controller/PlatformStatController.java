@@ -154,9 +154,9 @@ public class PlatformStatController {
     /**
      * 查看列表
      */
-    @RequestMapping("/exportUsers")
-    @RequiresPermissions("user:list")
-    public R exportUsers(@RequestParam Map<String, Object> params, HttpServletResponse response) {
+    @RequestMapping("/exportStat")
+    @RequiresPermissions("platformstat:list")
+    public R exportStat(@RequestParam Map<String, Object> params, HttpServletResponse response) {
         //查询列表数据
         Query query = new Query(params);
         query.remove("offset");
@@ -165,48 +165,69 @@ public class PlatformStatController {
  		//取出所有条件
  		MapRemoveNullUtil.removeNullEntry(query);
         List<PlatformStatEntity> platformStatList = platformStatService.queryList(query);
-        ExcelExport ee = new ExcelExport("会员列表_"+DateUtils.formatYYYYMMDD(new Date()));
-        String[] header = new String[]{"USERID","会员账号", "昵称","级别","电话","推荐会员","父接点","团队资产","USDT余额","积分",
-        		"总兑换金额","总资产","已收益","剩余资产","基金","上次奖励时间","状态","注册时间","服务中心"};
+        ExcelExport ee = new ExcelExport("统计列表_"+DateUtils.formatYYYYMMDD(new Date()));
+        String[] header = new String[]{"会员总数","未激活", "V1","V2","V3","V4","日新增","日未激活", "日新增V1","日新增V2","日新增V3","日新增V4",
+        		"累计资产","余额总量","总积分","剩余资产","总基金",
+        		"今日分成比例","今日资产收益","今日分享收益","今日社区收益","今日星星收益","今日基金收益",
+        		"今日余额支付数量","今日余额支付总额","今日积分支付数量" ,"今日积分支付总额" ,"今日积分兑换总额"
+        		,"余额转出数量" ,"余额转出总额" ,"余额转入数量" ,"余额转入总额"
+        		,"充值数量" ,"充值金额" ,"提现数量" ,"提现金额"
+        		};
         List<Map<String, Object>> list = new ArrayList<>();
         if (platformStatList != null && platformStatList.size() != 0) {
-            for (PlatformStatEntity user : platformStatList) {
-                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-                map.put("userId", user.getUserId());
-                map.put("userName", user.getUserName());
-                map.put("nickname", user.getNickname());
-                map.put("userLevelTypeName", user.getUserLevelTypeName());
-                map.put("mobile", user.getMobile());
-                map.put("signupInvitedPhone", user.getSignupInvitedPhone());
-                map.put("signupNodePhone", user.getSignupNodePhone());
-                map.put("bonusTeamInvitedPoints", user.getBonusMeInvitedPoints());
-                map.put("balance", ""+user.getBalance());
-                map.put("integralScore", user.getIntegralScore());
-                map.put("totalInvestMoney", user.getTotalInvestMoney());
-                map.put("totalInvestIncomeMoney", user.getTotalInvestIncomeMoney());
-                map.put("investIncomeMoney", user.getInvestIncomeMoney());
-                map.put("surplusInvestMoney", user.getSurplusInvestMoney());
-                map.put("fund", user.getFund());
-                map.put("shareInvestLastTime", DateUtils.format(user.getShareInvestLastTime(), "yyyy-MM-dd HH:mm"));
-               
-                if(user.getState()==0){
-                	map.put("state", "注册中");
-                }else if (user.getState()==1){
-                	map.put("state", "有效");
-                }else if (user.getState()==2){
-                	map.put("state", "失败");
-                }else if (user.getState()==3){
-                	map.put("state", "停止分红（失效）");
-                }else {
-                	map.put("state", "-");
-                }
-                map.put("registerTime", DateUtils.format(user.getRegisterTime(), "yyyy-MM-dd HH:mm"));
-            	map.put("userCenter", "");
+            for (PlatformStatEntity stat : platformStatList) {
+            	LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                
+            	map.put("statDateNumber",stat.getStatDateNumber());
+            	map.put("statUserTotalSum",stat.getStatUserTotalSum());
+                map.put("statUserV0Sum",stat.getStatUserV0Sum());
+                map.put("statUserV1Sum",stat.getStatUserV1Sum());
+                map.put("statUserV2Sum",stat.getStatUserV2Sum());
+                map.put("statUserV3Sum",stat.getStatUserV3Sum());
+                map.put("statUserV4Sum",stat.getStatUserV4Sum());
+                
+                
+                map.put("statUserDayAddSum",stat.getStatUserDayAddSum());
+                map.put("statUserDayAddV0Sum",stat.getStatUserDayAddV0Sum());
+                map.put("statUserDayAddV1Sum",stat.getStatUserDayAddV1Sum());
+                map.put("statUserDayAddV2Sum",stat.getStatUserDayAddV2Sum());
+                map.put("statUserDayAddV3Sum",stat.getStatUserDayAddV3Sum());
+                map.put("statUserDayAddV4Sum",stat.getStatUserDayAddV4Sum());
+                
+                
+                map.put("statUserTotalCz", stat.getStatUserTotalCz());
+                map.put("statUserTotalZc", stat.getStatUserTotalZc());
+                map.put("statUserTotalJf", stat.getStatUserTotalJf());
+                map.put("statUserTotalSyZc", stat.getStatUserTotalSyZc());
+                map.put("statUserTotalFund", stat.getStatUserTotalFund());
+                
+                map.put("statDayRate", stat.getStatDayRate());
+                map.put("statDayMoneyQy", stat.getStatDayMoneyQy());
+                map.put("statDayMoneyFw", stat.getStatDayMoneyFw());
+                map.put("statDayMoneySq", stat.getStatDayMoneySq());
+                map.put("statDayMoneyXx", stat.getStatDayMoneyXx());
+                map.put("statDayMoneyFund", stat.getStatDayMoneyFund());
+                
+                map.put("statDayPayBalanceSum", stat.getStatDayPayBalanceSum());
+                map.put("statDayPayBalance", stat.getStatDayPayBalance());
+                map.put("statDayPayJfSum", stat.getStatDayPayJfSum());
+                map.put("statDayPayJf", stat.getStatDayPayJf());
+                map.put("statDayJfDh", stat.getStatDayJfDh());
+                
+                map.put("statDayBalanceZzOutSum", stat.getStatDayBalanceZzOutSum());
+                map.put("statDayBalanceZzOut", stat.getStatDayBalanceZzOut());
+                map.put("statDayBalanceZzInSum", stat.getStatDayBalanceZzInSum());
+                map.put("statDayBalanceZzIn", stat.getStatDayBalanceZzIn());
+                
+                map.put("statDayMoneyRechargeSum", stat.getStatDayMoneyRechargeSum());
+                map.put("statDayMoneyRecharge", stat.getStatDayMoneyRecharge());
+                map.put("statDayMoneyTxSum", stat.getStatDayMoneyTxSum());
+                map.put("statDayMoneyTx", stat.getStatDayMoneyTx());
               
                 list.add(map);
             }
         }
-        ee.addSheetByMap("会员列表", list, header);
+        ee.addSheetByMap("统计列表", list, header);
         ee.export(response);
         return R.ok();
     }

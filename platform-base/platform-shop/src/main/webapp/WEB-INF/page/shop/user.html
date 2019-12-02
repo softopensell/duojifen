@@ -49,14 +49,14 @@
                 #end
                 
                #if($shiro.hasPermission("user:delete"))
-                <i-button type="error" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
+                <i-button type="success" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</i-button>
                 #end 
                 
                <!--  <i-button type="error" @click="toShowMoveMoneyTap"><i class="fa fa-time"></i>&nbsp;转账</i-button> -->
                 <!-- #if($shiro.hasPermission("paymentinfo:list"))
                 <i-button type="info" @click="toIntegralList"><i class="fa fa-eur"></i>&nbsp;转积分记录</i-button>
                 #end  --> 
-                
+                 <i-button type="info" @click="exportUsers"><i class="fa ios-cloud-downlond"></i>&nbsp;导出</i-button>
             </div>
         </Row>
 	    <table id="jqGrid"></table>
@@ -395,6 +395,57 @@
 	        	</i-col>
 	        </Row>
 	        
+        </i-form>
+    </Modal>
+    
+    
+    <Modal
+        title="服务中心"
+        v-model="userCenterShowModal"
+        >
+       <i-form :label-width="180">
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="服务中心名称">
+	        	  {{fwManagerEntity.fwName}}
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="会员用户">
+	        	  {{fwManagerEntity.fwUserName}}（{{fwManagerEntity.fwUserId}}）
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="当前业绩">
+	        	  {{fwManagerEntity.fwCurYj}}
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="重置次数">
+	        	  {{fwManagerEntity.fwTotalResetTime}}
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="累计业绩">
+	        	  {{fwManagerEntity.fwTotalYj}}
+	            </Form-item>
+	        	</i-col>
+	        </Row>
+	         <Row>
+	        	<i-col span="24">
+	        	<Form-item label="累计奖励">
+	        	  {{fwManagerEntity.fwTotalPayMoney}}
+	            </Form-item>
+	        	</i-col>
+	        </Row>
         </i-form>
     </Modal>
     

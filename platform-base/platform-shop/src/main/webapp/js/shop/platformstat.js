@@ -181,6 +181,10 @@ let vm = new Vue({
         },
         handleReset: function (name) {
             handleResetForm(this, name);
-        }
+        },
+        exportStat:function(){
+           var postData={};
+        	exportFile('#rrapp', '../platformstat/exportStat',postData);
+        },
 	}
 });

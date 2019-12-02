@@ -45,7 +45,8 @@ $(function () {
             	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showRecommondTree(\'' + row.userId +'\')">推荐树</button><br/>';
             	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showNodeTree(\'' + row.userId +'\')">节点树</button>';
             	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showUserStat(\'' + row.userId +'\')">查看对账</button><br/>';
-            	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showModNode(\'' + row.userId +'\')">更新节点</button><br/>';
+            	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showModNode(\'' + row.userId +'\')">更新节点</button>';
+            	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showUserCenter(\'' + row.userId +'\')">服务中心</button><br/>';
             	 return operationStr;
             }}],
             height:"100%",
@@ -243,8 +244,8 @@ let vm = new Vue({
         money:0,
         modShareLastTimeModal:false,
         
-        
-        
+        userCenterShowModal:false,
+        fwManagerEntity:{},
         bonusPointsVo: {
         	userName: "根节点",
         	invitedUserId: 0,
@@ -1016,9 +1017,6 @@ let vm = new Vue({
        },
        changeNodeTap:function(){
     	   let that=this;
-    	   console.log("--------curUserId--------",that.curUserId);
-    	   console.log("--------recommondUserVo--------",that.recommondUserVo);
-    	   console.log("--------nodeUserVo--------",that.nodeUserVo);
     	   var userId=that.curUserId;
     	   var parentNodeUserId=vm.nodeUserVo.userId;
     	   var parentInvitedUserId=vm.recommondUserVo.userId;
@@ -1042,7 +1040,6 @@ let vm = new Vue({
     	   vm.showMoveMoneyModal=true;
        },
        toMoveMoneyTap:function(){
-    	   
     	    var userId=vm.movePayUserId;
     	    var moveToUserId=vm.moveToUserId;
 	       	var money=vm.moveMoney;
@@ -1053,7 +1050,7 @@ let vm = new Vue({
 	               	toUserId:moveToUserId,
 	               	money:money,
 	                },
-//				    contentType: "application/json",
+//				   contentType: "application/json",
 	               successCallback: function (r) {
 	               	vm.rechargeMoneyModal=false;
 	                   alert('操作成功', function (index) {
@@ -1061,10 +1058,29 @@ let vm = new Vue({
 	                   });
 	               }
 			});
-       }
+       },
+       exportUsers:function(){
+          var postData={
+       		   userName: vm.q.userName,
+      		    mobile:vm.q.mobile,
+                	};
+       	exportFile('#rrapp', '../user/exportUsers',postData);
+       },
        
+       showUserCenter:function(userId){
+    	   vm.fwManagerEntity={};
+    	   Ajax.request({
+			    url: '../user/tofindUserCenter',
+              params: {
+              	userId:userId,
+               },
+              successCallback: function (r) {
+              	vm.userCenterShowModal=true;
+                vm.fwManagerEntity=r.fwManagerEntity;
+              }
+		});
+      }
 	},
-
     created: function () {
         let that = this;
         console.log("--------provinceId--------",that.provinceId);
