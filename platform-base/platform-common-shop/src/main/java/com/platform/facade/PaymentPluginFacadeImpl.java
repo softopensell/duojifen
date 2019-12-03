@@ -59,8 +59,6 @@ public class PaymentPluginFacadeImpl  implements PaymentPluginFacade {
 	
 	@Autowired
 	private UserService userService;
-	
-	
 	 
 	@Autowired
 	private IdWorkCache idWorkCache;
@@ -414,19 +412,32 @@ public class PaymentPluginFacadeImpl  implements PaymentPluginFacade {
 			if(payTotalMap.containsKey("walletType10021"))  walletType10020=new BigDecimal(payTotalMap.get("walletType10021").toString());
 			
 			
-			BigDecimal allInMoney=walletType1020.add(walletType6).add(walletType3).add(walletType43).add(walletType411).add(walletType421).add(walletType431).add(walletType64);
+			BigDecimal allInMoney=new BigDecimal(0);
+			allInMoney=allInMoney.add(walletType1020);
+			allInMoney=allInMoney.add(walletType6);
+			allInMoney=allInMoney.add(walletType3);
+			allInMoney=allInMoney.add(walletType43);
+			allInMoney=allInMoney.add(walletType411);
+			allInMoney=allInMoney.add(walletType421);
+			allInMoney=allInMoney.add(walletType431);
+			allInMoney=allInMoney.add(walletType64);
 			allInMoney=allInMoney.add(walletType10000);
 			
-			BigDecimal allOutMoney=walletType62.add(walletType5).add(walletType2).add(walletType0);
-			allOutMoney=allOutMoney.add(walletType10001);
+			BigDecimal allOutMoney=new BigDecimal(0);
+			allOutMoney=allOutMoney.add(walletType62);
+			allOutMoney=allOutMoney.add(walletType5);
+			allOutMoney=allOutMoney.add(walletType2);
+			allOutMoney=allOutMoney.add(walletType0);
 			allOutMoney=allOutMoney.add(walletType1);
+			allOutMoney=allOutMoney.add(walletType10001);
 			
 			LOG.info("--------payTotalMap--------- "+JsonUtil.getJsonByObj(payTotalMap));
 	    	
 	    	
-	    	
 			Map<String, Object> params=new HashMap<>();
 	    	params.put("userId", userEntity.getUserId());
+	    	params.put("confirmTimeStart", ShopConstant.DJF_TJ_DATE);
+	    	
 	    	Map<String,Object> payoutTotalMap=paymentOutService.queryStat(params);
 	    	LOG.info("--------payoutTotalMap--------- "+JsonUtil.getJsonByObj(payoutTotalMap));
 			 
@@ -458,7 +469,7 @@ public class PaymentPluginFacadeImpl  implements PaymentPluginFacade {
 	    	
 	    	LOG.info("--------statBalance--------- "+JsonUtil.getJsonByObj(statBalance)+"--------userBalance--------- "+JsonUtil.getJsonByObj(userEntity.getBalance()));
 		   
-	    	if(userEntity.getBalance().intValue()<0) {
+	    	if(userEntity.getBalance().intValue()<10) {
 		    	PlatformMonitorStadetailEntity platformMonitorStadetailEntity=new PlatformMonitorStadetailEntity();
 		    	platformMonitorStadetailEntity.setCreateTime(new Date());
 		    	platformMonitorStadetailEntity.setMonitorContent("统计余额为负，转账，或者支持存在问题！统计余额："+statBalance.intValue()+",用户余额："+userEntity.getBalance().intValue());
