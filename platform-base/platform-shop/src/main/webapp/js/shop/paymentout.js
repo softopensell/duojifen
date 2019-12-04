@@ -336,5 +336,21 @@ let vm = new Vue({
                  	};
         	exportFile('#rrapp', '../paymentout/export',postData);
         },
+        exportDealPaymentOut: function () {
+        	var confirmTimeStart='';
+        	var confirmTimeEnd='';
+        	if(vm.q.queryDate&&vm.q.queryDate.length==2&&vm.q.queryDate[0]&&vm.q.queryDate[1]){
+        		confirmTimeStart=vm.q.queryDate[0].dateFormat('yyyy-MM-dd 00:00:00');
+        		confirmTimeEnd=vm.q.queryDate[1].dateFormat('yyyy-MM-dd 23:59:59');
+        	}
+        	var postData={
+        			'status': vm.q.status,
+        			'outTradeNo':vm.q.outTradeNo,
+        			'userName':vm.q.userName,
+        			'confirmTimeStart':confirmTimeStart,
+        			'confirmTimeEnd':confirmTimeEnd
+        	};
+        	exportFile('#rrapp', '../paymentout/exportDealOrder',postData);
+        },
 	}
 });

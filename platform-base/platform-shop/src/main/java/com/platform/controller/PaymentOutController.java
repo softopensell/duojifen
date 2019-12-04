@@ -419,6 +419,96 @@ public class PaymentOutController extends AbstractController{
         ee.export(response);
         return R.ok();
     }
-    
+    /**
+     * 导出会员
+     */
+    @RequestMapping("/exportDealOrder")
+    public R exportDealOrder(@RequestParam Map<String, Object> params, HttpServletResponse response) {
+
+    	logger.info("------params--------"+JsonUtil.getJsonByObj(params));
+    	Query query = new Query(params);
+    	 MapRemoveNullUtil.removeNullEntry(query);
+    	logger.info("------query--------"+JsonUtil.getJsonByObj(query));
+ 		query.remove("offset");
+ 		query.remove("page");
+ 		query.remove("limit");
+ 		//取出所有条件
+ 		 MapRemoveNullUtil.removeNullEntry(query);
+ 		List<PaymentOutEntity> paymentOutList = paymentOutService.queryList(query);
+        ExcelExport ee = new ExcelExport("提现列表_"+DateUtils.formatYYYYMMDD(new Date()));
+        String[] header = new String[]{"交易单号","会员账号", "申请日期","提币地址","提币数量","手续费",
+        		"实际到账","提币状态"};
+        List<Map<String, Object>> list = new ArrayList<>();
+        HashMap<String,LinkedHashMap<String, Object>> dealMap=new HashMap<String, LinkedHashMap<String,Object>>();
+        if (paymentOutList != null && paymentOutList.size() != 0) {
+            for (PaymentOutEntity paymentOutEntity : paymentOutList) {
+            	String accountKey=paymentOutEntity.getReceiptAccount()+"_"+paymentOutEntity.getStatus();
+            	if(dealMap.containsKey(accountKey)) {
+            		LinkedHashMap<String, Object> map =dealMap.get(accountKey);
+            		String orderNostr=map.get("orderNo")+"_"+paymentOutEntity.getOutTradeNo();
+            		String createTimeStr=map.get("createTime")+"_"+DateUtils.format(paymentOutEntity.getCreateTime(), "yyyy-MM-dd HH:mm");
+            		BigDecimal allamount=((BigDecimal) map.get("allamount")).add(paymentOutEntity.getAmount()).add(paymentOutEntity.getFee());
+            		BigDecimal free=((BigDecimal) map.get("free")).add(paymentOutEntity.getFee());
+            		BigDecimal amount=((BigDecimal) map.get("amount")).add(paymentOutEntity.getFee());
+	        		 map.put("orderNo", orderNostr);
+	                 map.put("createTime", createTimeStr);
+	                 map.put("allamount", allamount);
+	                 map.put("free",free);
+	                 map.put("amount",amount);
+            	}else {
+            		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                    map.put("orderNo", paymentOutEntity.getOutTradeNo());
+                    map.put("userName", paymentOutEntity.getUserName());
+                    map.put("createTime", DateUtils.format(paymentOutEntity.getCreateTime(), "yyyy-MM-dd HH:mm"));
+                    map.put("receiptAccount", paymentOutEntity.getReceiptAccount());
+                    map.put("allamount", paymentOutEntity.getAmount().add(paymentOutEntity.getFee()));
+                    map.put("free", paymentOutEntity.getFee());
+                    map.put("amount", paymentOutEntity.getAmount());
+                    if(paymentOutEntity.getStatus()==0){
+                    	map.put("statusName", "-");
+                    }else if (paymentOutEntity.getStatus()==1){
+                    	map.put("statusName", "待处理");
+                    }else if (paymentOutEntity.getStatus()==2){
+                    	map.put("statusName", "已处理");
+                    }else if (paymentOutEntity.getStatus()==3){
+                    	map.put("statusName", "已取消");
+                    }else {
+                    	map.put("statusName", "-");
+                    }
+                    dealMap.put(accountKey, map);
+            	}
+            }
+        }
+        if (paymentOutList != null && paymentOutList.size() != 0) {
+            for (PaymentOutEntity paymentOutEntity : paymentOutList) {
+                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                map.put("orderNo", paymentOutEntity.getOutTradeNo());
+                map.put("userName", paymentOutEntity.getUserName());
+                map.put("createTime", DateUtils.format(paymentOutEntity.getCreateTime(), "yyyy-MM-dd HH:mm"));
+                map.put("receiptAccount", paymentOutEntity.getReceiptAccount());
+                map.put("allamount", paymentOutEntity.getAmount().add(paymentOutEntity.getFee()));
+                map.put("free", paymentOutEntity.getFee());
+                map.put("amount", paymentOutEntity.getAmount());
+                if(paymentOutEntity.getStatus()==0){
+                	map.put("statusName", "-");
+                }else if (paymentOutEntity.getStatus()==1){
+                	map.put("statusName", "待处理");
+                }else if (paymentOutEntity.getStatus()==2){
+                	map.put("statusName", "已处理");
+                }else if (paymentOutEntity.getStatus()==3){
+                	map.put("statusName", "已取消");
+                }else {
+                	map.put("statusName", "-");
+                }
+                list.add(map);
+            }
+        }
+        
+        
+        
+        ee.addSheetByMap("提列表", list, header);
+        ee.export(response);
+        return R.ok();
+    }
     
 }
