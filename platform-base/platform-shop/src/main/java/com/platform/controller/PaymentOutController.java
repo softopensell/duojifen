@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -435,7 +437,7 @@ public class PaymentOutController extends AbstractController{
  		//取出所有条件
  		 MapRemoveNullUtil.removeNullEntry(query);
  		List<PaymentOutEntity> paymentOutList = paymentOutService.queryList(query);
-        ExcelExport ee = new ExcelExport("提现列表_"+DateUtils.formatYYYYMMDD(new Date()));
+        ExcelExport ee = new ExcelExport("合并提现列表_"+DateUtils.formatYYYYMMDD(new Date()));
         String[] header = new String[]{"交易单号","会员账号", "申请日期","提币地址","提币数量","手续费",
         		"实际到账","提币状态"};
         List<Map<String, Object>> list = new ArrayList<>();
@@ -479,33 +481,12 @@ public class PaymentOutController extends AbstractController{
             	}
             }
         }
-        if (paymentOutList != null && paymentOutList.size() != 0) {
-            for (PaymentOutEntity paymentOutEntity : paymentOutList) {
-                LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-                map.put("orderNo", paymentOutEntity.getOutTradeNo());
-                map.put("userName", paymentOutEntity.getUserName());
-                map.put("createTime", DateUtils.format(paymentOutEntity.getCreateTime(), "yyyy-MM-dd HH:mm"));
-                map.put("receiptAccount", paymentOutEntity.getReceiptAccount());
-                map.put("allamount", paymentOutEntity.getAmount().add(paymentOutEntity.getFee()));
-                map.put("free", paymentOutEntity.getFee());
-                map.put("amount", paymentOutEntity.getAmount());
-                if(paymentOutEntity.getStatus()==0){
-                	map.put("statusName", "-");
-                }else if (paymentOutEntity.getStatus()==1){
-                	map.put("statusName", "待处理");
-                }else if (paymentOutEntity.getStatus()==2){
-                	map.put("statusName", "已处理");
-                }else if (paymentOutEntity.getStatus()==3){
-                	map.put("statusName", "已取消");
-                }else {
-                	map.put("statusName", "-");
-                }
-                list.add(map);
-            }
+        Iterator<Entry<String, LinkedHashMap<String, Object>>> its = dealMap.entrySet().iterator();
+        while(its.hasNext()){
+        	Entry<String, LinkedHashMap<String, Object>> entry = its.next();
+        	LinkedHashMap<String, Object> map =entry.getValue();
+        	list.add(map);
         }
-        
-        
-        
         ee.addSheetByMap("提列表", list, header);
         ee.export(response);
         return R.ok();
