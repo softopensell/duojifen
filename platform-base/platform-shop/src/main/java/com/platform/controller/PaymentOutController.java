@@ -219,7 +219,6 @@ public class PaymentOutController extends AbstractController{
 			paymentOut.setPaymentDate(new Date());
 			paymentOut.setUpdateTime(new Date());
 			PaymentInfoEntity paymentInfoEntity=paymentInfoService.findByOrderNoAndOrderType(paymentOut.getOutTradeNo(),OrderConstant.ORDER_TYPE_TX);
-			
 			if(paymentInfoEntity==null||!paymentInfoEntity.getOrderNo().equals(paymentOut.getOutTradeNo())) {
 				return R.error("支付流水未查到");
 			}

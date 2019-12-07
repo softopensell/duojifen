@@ -1023,6 +1023,17 @@ public class ApiUserCenterController extends ApiBaseAction {
 			 sysOssService.update(ossEntity);
 		 }
     	 
+    	 //判读是否已经存在提取数量情况
+         Map<String,Object> map = new HashMap<String,Object>();
+         map.put("status",TradeStatus.WAIT_BUYER_PAY.code);
+         map.put("userId", loginUser.getUserId());
+         map.put("moneyTypeWallet", PluginConstant.PAYMENT_MONEY_TYPE_WALLET_IN_RECHARGE);
+         map.put("paymentType", PluginConstant.PAYMENT_TYPE_IN);
+         
+         int tempSum=paymentInfoService.queryTotal(map);
+         if(tempSum>0){
+ 			return toResponsFail("你有充值申请尚未处理！");
+ 		}
     	 
     	 int wallet_in_type=PluginConstant.PAYMENT_MONEY_TYPE_WALLET_IN_RECHARGE;
     	 if(rechargeType!=null) {
