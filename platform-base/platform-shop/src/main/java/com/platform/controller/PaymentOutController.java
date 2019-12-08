@@ -450,7 +450,7 @@ public class PaymentOutController extends AbstractController{
             		String createTimeStr=map.get("createTime")+"_"+DateUtils.format(paymentOutEntity.getCreateTime(), "yyyy-MM-dd HH:mm");
             		BigDecimal allamount=((BigDecimal) map.get("allamount")).add(paymentOutEntity.getAmount()).add(paymentOutEntity.getFee());
             		BigDecimal free=((BigDecimal) map.get("free")).add(paymentOutEntity.getFee());
-            		BigDecimal amount=((BigDecimal) map.get("amount")).add(paymentOutEntity.getFee());
+            		BigDecimal amount=((BigDecimal) map.get("amount")).add(paymentOutEntity.getAmount());
 	        		 map.put("orderNo", orderNostr);
 	                 map.put("createTime", createTimeStr);
 	                 map.put("allamount", allamount);
