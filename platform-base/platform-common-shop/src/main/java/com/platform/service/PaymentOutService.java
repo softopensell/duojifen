@@ -33,6 +33,7 @@ public interface PaymentOutService {
      * @return list
      */
     List<PaymentOutEntity> queryList(Map<String, Object> map);
+    List<PaymentOutEntity> queryAll(Map<String, Object> map);
     
     Map<String,Object> queryStat(Map<String, Object> params);
 

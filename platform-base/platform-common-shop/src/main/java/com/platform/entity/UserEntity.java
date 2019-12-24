@@ -152,6 +152,54 @@ public class UserEntity implements Serializable {
     private BigDecimal bonusMeInvitedPoints;
 	
     private BigDecimal userPreBalance;
+    
+//    //属于A区
+//    private String aArea;
+//    //属于B区
+//    private String bArea;
+    //父类的右节点
+    private Integer invitedRightUserId;
+    //邀请人ID 默认 left 节点
+    private Integer invitedUserId;
+    //服务中心名称
+    private String fwName;
+    //AB区选择
+    private Integer aOrB;
+    
+    
+	public Integer getaOrB() {
+		return aOrB;
+	}
+
+	public void setaOrB(Integer aOrB) {
+		this.aOrB = aOrB;
+	}
+
+	public String getFwName() {
+		return fwName;
+	}
+
+	public void setFwName(String fwName) {
+		this.fwName = fwName;
+	}
+
+	public Integer getInvitedRightUserId() {
+		return invitedRightUserId;
+	}
+
+	public void setInvitedRightUserId(Integer invitedRightUserId) {
+		this.invitedRightUserId = invitedRightUserId;
+	}
+
+	public Integer getInvitedUserId() {
+		return invitedUserId;
+	}
+
+	public void setInvitedUserId(Integer invitedUserId) {
+		this.invitedUserId = invitedUserId;
+	}
+
+
 	/**
      * 设置：
      */

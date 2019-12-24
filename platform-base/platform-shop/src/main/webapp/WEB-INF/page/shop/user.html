@@ -10,7 +10,7 @@
 	<div v-show="showList">
         <Row :gutter="16">
             <div class="search-group">
-                <i-col span="4">
+                <i-col span="2">
                     <i-input v-model="q.userName" @on-enter="query" placeholder="账号"/>
                 </i-col>
                 <i-col span="4">
@@ -25,7 +25,18 @@
 	                  <i-option :value="0">预注册</i-option> 
 	                  <i-option :value="1">成功</i-option> 
 	                  <i-option :value="2">失败</i-option> 
-	                  <i-option :value="2">下线</i-option> 
+	                  <i-option :value="3">下线</i-option> 
+	                </i-select>
+	
+                </i-col>
+                 <i-col span="2">
+                    <i-select v-model="q.aOrB" @on-change="query" filterable  placeholder="AB区">
+	                  <!--  
+	                  <i-option v-for="status in userStatuss" :value="status.value" :key="status.value">{{status.name}}
+	                   </i-option> 
+	                   -->
+	                  <i-option :value="0">A区</i-option> 
+	                  <i-option :value="1">B区</i-option> 
 	                </i-select>
 	
                 </i-col>

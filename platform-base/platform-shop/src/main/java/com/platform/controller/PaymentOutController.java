@@ -31,7 +31,9 @@ import com.platform.entity.GoodsOrderEntity;
 import com.platform.entity.PaymentInfoEntity;
 import com.platform.entity.PaymentLogEntity;
 import com.platform.entity.PaymentOutEntity;
+import com.platform.entity.PlatformFwManagerEntity;
 import com.platform.entity.UserEntity;
+import com.platform.facade.DjfBonusFacade;
 import com.platform.service.PaymentInfoService;
 import com.platform.service.PaymentOutService;
 import com.platform.service.UserService;
@@ -68,6 +70,8 @@ public class PaymentOutController extends AbstractController{
     private UserService userService;
     @Autowired
     private IdWorkCache idWorkCache;
+    @Autowired
+	private DjfBonusFacade djfBonusFacade ;
     /**
      * 查看列表
      */
@@ -76,9 +80,21 @@ public class PaymentOutController extends AbstractController{
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-        
 
-        List<PaymentOutEntity> paymentOutList = paymentOutService.queryList(query);
+        List<PaymentOutEntity> paymentOutList = paymentOutService.queryAll(query);
+        for(PaymentOutEntity entity : paymentOutList) {
+        	
+        	if(entity!=null) {
+    			//查询附近服务中心
+		    	PlatformFwManagerEntity fwManagerEntity=djfBonusFacade.getLastFwUserId(entity.getUserId().intValue());
+		    	if(fwManagerEntity!=null) {
+		    		entity.setFwName(fwManagerEntity.getFwName());
+//    		    		entity.setLogisticsNumber(fwManagerEntity.getFwUserName());
+		    	}
+//    		    	paymentInfoService.update(entity);
+    		  }
+        	
+        }
         
         int total = paymentOutService.queryTotal(query);
 

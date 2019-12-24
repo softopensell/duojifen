@@ -72,9 +72,80 @@
 		where id = #{id}
 	</select>
 
+<select id="queryAll" resultType="com.platform.entity.PaymentOutEntity">
+		select
+    			p.`id`,
+    		p.`out_trade_no`,
+    		p.`method`,
+    		p.`payer_type`,
+    		p.`payer`,
+    		p.`receipt_account_type`,
+    		p.`receipt_account`,
+    		p.`receipt_account_real_name`,
+    		p.`amount_type`,
+    		p.`amount`,
+    		p.`fee`,
+    		p.`amount_pre_pay_date`,
+    		p.`curr_balance`,
+    		p.`show_pay_title`,
+    		p.`show_body_desc`,
+    		p.`user_id`,
+    		p.`user_name`,
+    		p.`is_pay_member`,
+    		p.`user_apply_reason`,
+    		p.`operator_id`,
+    		p.`operator_name`,
+    		p.`payment_date`,
+    		p.`audit_statu`,
+    		p.`status`,
+    		p.`sn_trade_no`,
+    		p.`sn_trade_no_desc`,
+    		p.`web_app`,
+    		p.`company_sn`,
+    		p.`create_time`,
+    		p.`update_time`,
+			u.nickname as nickname,
+			u.user_level_type as userLevelType,
+			u.surplus_invest_money as surplusInvestMoney
+		from t_payment_out p
+		left join t_user u on 
+		1=1
+		and p.user_id = u.user_id
+		<if test="userName != null and userName.trim() != ''">
+			AND p.user_name LIKE concat('%',#{userName},'%')
+		</if>
+		<if test="outTradeNo != null and outTradeNo.trim() != ''">
+			AND p.out_trade_no LIKE concat('%',#{outTradeNo},'%')
+		</if>
+		<if test="status != null and status>0">
+			AND p.status =  #{status}
+		</if>
+		<if test="userId != null and userId>0 ">
+			AND p.user_id =  #{userId}
+		</if>
+		<if test="confirmTimeStart != null and confirmTimeStart != ''">
+			AND p.create_time <![CDATA[ >= ]]> #{confirmTimeStart}
+		</if>
+		<if test="confirmTimeEnd != null and confirmTimeEnd != ''">
+			AND p.create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by p.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+
 	<select id="queryList" resultType="com.platform.entity.PaymentOutEntity">
 		select
-    		`id`,
+    			`id`,
     		`out_trade_no`,
     		`method`,
     		`payer_type`,
@@ -103,9 +174,10 @@
     		`web_app`,
     		`company_sn`,
     		`create_time`,
-    		`update_time`
-		from t_payment_out
-		WHERE 1=1
+    		`update_time`,
+		from t_payment_out p
+		where
+		1=1
 		<if test="userName != null and userName.trim() != ''">
 			AND user_name LIKE concat('%',#{userName},'%')
 		</if>
@@ -306,6 +378,4 @@
 				AND create_time <![CDATA[ <= ]]> #{confirmTimeEnd}
 			</if>
 	</select>
-	
-
 </mapper>

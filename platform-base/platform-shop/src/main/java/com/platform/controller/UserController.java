@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -678,9 +680,20 @@ public class UserController extends AbstractController{
  		//取出所有条件
  		MapRemoveNullUtil.removeNullEntry(query);
         List<UserEntity> userList = userService.queryList(query);
+//        if (userList != null && userList.size() != 0) {
+//		    for(UserEntity user : userList) {
+//		    	if(user!=null) {
+//	        	    //查询附近服务中心
+//	        	    PlatformFwManagerEntity fwManagerEntity=djfBonusFacade.getLastFwUserId(user.getUserId());
+//	        	    if(fwManagerEntity!=null) {
+//	        	        user.setFwName(fwManagerEntity.getFwName());
+//	        	    }
+//	            }
+//		    }
+//        }
         ExcelExport ee = new ExcelExport("会员列表_"+DateUtils.formatYYYYMMDD(new Date()));
         String[] header = new String[]{"USERID","会员账号", "昵称","级别","电话","推荐会员","父接点","团队资产","USDT余额","积分",
-        		"总兑换金额","总资产","已收益","剩余资产","基金","上次奖励时间","状态","注册时间"};
+        		"总兑换金额","总资产","已收益","剩余资产","基金","上次奖励时间","状态","注册时间","A区","B区","服务中心"};
         List<Map<String, Object>> list = new ArrayList<>();
         if (userList != null && userList.size() != 0) {
             for (UserEntity user : userList) {
@@ -714,7 +727,23 @@ public class UserController extends AbstractController{
                 	map.put("state", "-");
                 }
                 map.put("registerTime", DateUtils.format(user.getRegisterTime(), "yyyy-MM-dd HH:mm"));
-              
+                if(user.getInvitedRightUserId() == null) {
+                	map.put("bArea","");
+                }else {
+                	map.put("bArea","是");
+                }
+                if(user.getInvitedUserId() == null) {
+                	map.put("aArea","");
+                }else {
+                	map.put("aArea","是");
+                }
+                if(user!=null) {
+        			//查询附近服务中心
+    		    	PlatformFwManagerEntity fwManagerEntity=djfBonusFacade.getLastFwUserId(user.getUserId().intValue());
+    		    	if(fwManagerEntity!=null) {
+    		    		map.put("fwName",fwManagerEntity.getFwName());
+    		    	}
+        		  }
                 list.add(map);
             }
         }
@@ -722,8 +751,6 @@ public class UserController extends AbstractController{
         ee.export(response);
         return R.ok();
     }
-
-
     public static void main(String[] args) {
     	System.out.println(DigestUtils.sha256Hex("888888"));
 	}

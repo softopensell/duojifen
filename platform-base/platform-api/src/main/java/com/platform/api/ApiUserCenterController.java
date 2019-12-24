@@ -1069,7 +1069,7 @@ public class ApiUserCenterController extends ApiBaseAction {
 		  
 		 String orderDesc=fileUrl;//当备注
 			
-		  paymentPluginFacade.submitPayOrder(CompanyConstant.COMPANY_SN_GJZB, paySn, 
+		  PaymentInfoEntity paymentInfoEntity=paymentPluginFacade.submitPayOrder(CompanyConstant.COMPANY_SN_GJZB, paySn, 
 					payMethodPluginType, 
 					payMethodPluginTypeName,
 					GlobalConstant.WEBLOGO_CN, 
@@ -1086,6 +1086,15 @@ public class ApiUserCenterController extends ApiBaseAction {
 					wallet_in_type,
 					PluginConstant.PAYMENT_TYPE_IN
 			);
+		  if(paymentInfoEntity!=null) {
+			//查询附近服务中心
+		    	PlatformFwManagerEntity fwManagerEntity=djfBonusFacade.getLastFwUserId(paymentInfoEntity.getUserId().intValue());
+		    	if(fwManagerEntity!=null) {
+		    		paymentInfoEntity.setLogisticsName(fwManagerEntity.getFwName());
+		    		paymentInfoEntity.setLogisticsNumber(fwManagerEntity.getFwUserName());
+		    	}
+		    	paymentInfoService.update(paymentInfoEntity);
+		  }
 		return this.toResponsSuccess(paySn);
     }
     

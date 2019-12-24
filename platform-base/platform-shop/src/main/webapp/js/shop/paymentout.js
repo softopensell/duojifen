@@ -7,10 +7,14 @@ $(function () {
 			{label: '用户id', name: 'userId', index: 'user_id', width: 80, hidden: true,align : "center"},
 			{label: '会员账号', name: 'userName', index: 'user_name', width: 80,align : "center"},
 			
+			{label: '会员昵称', name: 'nickname', index: 'nickname', width: 80,align : "center"},
+			{label: '级别', name: 'userLevelType', index: 'userLevelType', width: 80,align : "center"},
+			{label: '剩余资产', name: 'surplusInvestMoney', index: 'surplusInvestMoney', width: 80,align : "center"},
+			
 			{label: '申请日期', name: 'createTime', index: 'create_time', width: 80,align : "center", formatter: function (value) {
                 return transDate(value);
             }},
-            
+            {label: '服务中心', name: 'fwName', index: 'fwName', width: 80,align : "center"},
 //			{label: '收款名称', name: 'receiptAccountRealName', index: 'receipt_account_real_name', width: 80,align : "center"},
             
 			{label: '提币地址', name: 'receiptAccount', index: 'receipt_account', width: 80,align : "center"},

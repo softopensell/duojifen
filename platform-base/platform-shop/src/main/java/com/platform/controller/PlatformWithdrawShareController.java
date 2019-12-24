@@ -66,8 +66,11 @@ public class PlatformWithdrawShareController {
     @RequiresPermissions("platformwithdrawshare:save")
     public R save(@RequestBody PlatformWithdrawShareEntity platformWithdrawShare) {
     	PlatformWithdrawShareEntity temp=platformWithdrawShareService.queryByUserId(platformWithdrawShare.getUserId());
+//    	if(temp!=null) {
+//    		return R.ok();
+//    	}
     	if(temp!=null) {
-    		return R.ok();
+    		return R.error("该账号已存在列表中");
     	}
     	platformWithdrawShare.setState(0);
     	platformWithdrawShare.setUpdateTime(new Date());

@@ -240,16 +240,24 @@
 			u.`user_node_bonus_level`,
 			ul.user_level_name userLevelTypeName,
 			bp.bonus_team_invited_points bonusTeamInvitedPoints,
-			bp.bonus_me_invited_points bonusMeInvitedPoints
+			bp.bonus_me_invited_points bonusMeInvitedPoints,
+			bp.invited_user_id invitedUserId,
+			bp.invited_right_user_id invitedRightUserId
         from t_user u 
         LEFT JOIN t_user_invest_level ul on u.user_level_type = ul.user_level_type
         LEFT JOIN t_bonus_points bp on bp.user_id = u.user_id and bp.blood_type=1
 		WHERE 1=1
+		<if test="aOrB == 1">
+		    AND bp.invited_user_id is not null
+		</if>
+		<if test="aOrB == 0">
+		    AND bp.invited_right_user_id is not null
+		</if>
 		<if test="userName != null and userName.trim() != ''">
 			AND u.user_name LIKE concat('%',#{userName},'%')
 		</if>
 		<if test="mobile != null and mobile.trim() != ''">
-			AND u.mobile = LIKE concat('%',#{mobile},'%')
+			AND u.mobile LIKE concat('%',#{mobile},'%')
 		</if>
 		<if test="state != null and state>=0">
 			AND u.state = #{state}

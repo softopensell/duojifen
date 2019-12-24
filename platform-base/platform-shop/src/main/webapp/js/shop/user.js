@@ -39,6 +39,21 @@ $(function () {
 //			{label: '最后登录时间', name: 'lastLoginTime', index: 'last_login_time', width: 80, formatter: function (value) {
 //                return transDate(value);
 //            }},
+            {label: 'A区', name: 'invitedRightUserId', index: 'invitedRightUserId', width: 80,align : "center",formatter: function (value) {
+				if(value==null){
+					return "";
+				}else{
+					return "是";
+				}
+            }},
+            {label: 'B区', name: 'invitedUserId', index: 'invitedUserId', width: 80,align : "center",formatter: function (value) {
+				if(value==null){
+					return "";
+				}else{
+					return "是";
+				}
+            }},
+//            {label: '服务中心', name: 'fwName', index: 'fwName', width: 80,align : "center"},
             {label: '操作', align: 'center', sortable: false,align : "center",width: 200, formatter: function (value, col, row) {
             	 var operationStr='';
                  operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showInfo(\'' + row.userId +'\')"><i class="fa fa-info-circle"></i>&nbsp;查看</button>';
@@ -454,6 +469,8 @@ let vm = new Vue({
                 postData: {
         		    userName: vm.q.userName,
         		    mobile:vm.q.mobile,
+        		    state:vm.q.state,
+        		    aOrB:vm.q.aOrB
         		},
                 page: page
             }).trigger("reloadGrid");
@@ -1062,7 +1079,7 @@ let vm = new Vue({
        exportUsers:function(){
           var postData={
        		   userName: vm.q.userName,
-      		    mobile:vm.q.mobile,
+      		    mobile:vm.q.mobile
                 	};
        	exportFile('#rrapp', '../user/exportUsers',postData);
        },

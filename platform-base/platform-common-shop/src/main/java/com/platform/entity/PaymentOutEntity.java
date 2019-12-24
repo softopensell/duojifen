@@ -78,6 +78,15 @@ public class PaymentOutEntity implements Serializable {
     private Date createTime;
     //修改时间
     private Date updateTime;
+    
+    //昵称
+    private String nickname;
+    //等级
+    private Integer userLevelType;
+    //剩余资产
+    private BigDecimal surplusInvestMoney;
+    //服务中心
+    private String fwName;
 
     /**
      * 设置：ID
@@ -475,4 +484,38 @@ public class PaymentOutEntity implements Serializable {
     public Date getUpdateTime() {
         return updateTime;
     }
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public Integer getUserLevelType() {
+		return userLevelType;
+	}
+
+	public void setUserLevelType(Integer userLevelType) {
+		this.userLevelType = userLevelType;
+	}
+
+	public BigDecimal getSurplusInvestMoney() {
+		return surplusInvestMoney;
+	}
+
+	public void setSurplusInvestMoney(BigDecimal surplusInvestMoney) {
+		this.surplusInvestMoney = surplusInvestMoney;
+	}
+
+	public String getFwName() {
+		return fwName;
+	}
+
+	public void setFwName(String fwName) {
+		this.fwName = fwName;
+	}
+
+    
 }

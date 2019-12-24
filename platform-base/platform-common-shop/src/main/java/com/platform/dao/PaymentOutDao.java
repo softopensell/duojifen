@@ -1,5 +1,6 @@
 package com.platform.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import com.platform.entity.PaymentOutEntity;
@@ -13,5 +14,6 @@ import com.platform.entity.PaymentOutEntity;
  */
 public interface PaymentOutDao extends BaseDao<PaymentOutEntity> {
 	Map<String,Object> queryStat(Map<String, Object> params);
+	List<PaymentOutEntity> queryAll(Map<String, Object> params);
 
 }

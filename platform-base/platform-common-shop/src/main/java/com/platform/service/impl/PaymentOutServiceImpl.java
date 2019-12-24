@@ -43,6 +43,10 @@ public class PaymentOutServiceImpl implements PaymentOutService {
         return paymentOutDao.queryList(map);
     }
     @Override
+    public List<PaymentOutEntity> queryAll(Map<String, Object> map) {
+        return paymentOutDao.queryAll(map);
+    }
+    @Override
     public Map<String,Object> queryStat(Map<String, Object> params){
     	
     	return paymentOutDao.queryStat(params);

@@ -173,7 +173,4 @@ public class HttpUtil {
         return responseText;
     }
 
-    public static void main(String[] args) {
-
-    }
 }

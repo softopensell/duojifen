@@ -1,17 +1,27 @@
 package com.platform.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
+import com.platform.entity.ActivityItemEntity;
+import com.platform.entity.PaymentOutEntity;
+import com.platform.service.PaymentOutService;
+import com.platform.utils.PageUtils;
+import com.platform.utils.Query;
 import com.platform.utils.R;
 
 /**
@@ -24,8 +34,32 @@ import com.platform.utils.R;
 @RequestMapping("/async/demo/test")
 public class DemoTestController extends AbstractController{
 	private List<DeferredResult<String>> deferredResultList = new ArrayList<>();
+	@Autowired
+	private PaymentOutService paymentOutService;
 	 
-    
+	@ResponseBody
+	@GetMapping("queryList")
+	public List<PaymentOutEntity> queryList() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("user_id", 1158);
+		map.put("create_time", "2019-07-04 17:14:51");
+		return paymentOutService.queryList(map);
+	}
+	
+	@ResponseBody
+	@GetMapping("allList")
+	public R allList(@RequestParam Map<String, Object> params) {
+		 //查询列表数据
+        Query query = new Query(params);
+        List<PaymentOutEntity> activityItemList = paymentOutService.queryList(query);
+        int total = paymentOutService.queryTotal(query);
+
+        PageUtils pageUtil = new PageUtils(activityItemList, total, query.getLimit(), query.getPage());
+
+        return R.ok().put("page", pageUtil);
+		
+	}
+//    
     @ResponseBody
     @GetMapping("/hello")
     public WebAsyncTask<String> helloGet() throws Exception {

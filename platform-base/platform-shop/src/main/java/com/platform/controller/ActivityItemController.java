@@ -24,7 +24,6 @@ import com.platform.utils.PageUtils;
 import com.platform.utils.Query;
 import com.platform.utils.R;
 import com.platform.utils.RandomUtil;
-
 /**
  * Controller
  *
