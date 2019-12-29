@@ -23,7 +23,7 @@ let vm = new Vue({
 		userBlack: {
 			userId:'',
 			userName:'',
-			blackType:0,
+			blackType:2,
 		},
 		ruleValidate: {
 			name: [
@@ -106,7 +106,7 @@ let vm = new Vue({
             let page = $("#jqGrid").jqGrid('getGridParam', 'page');
 			$("#jqGrid").jqGrid('setGridParam', {
                 postData: {
-                	'userShareLevel':0,
+                	'blackType':2,
                 	'name': vm.q.name,
                 	},
                 page: page

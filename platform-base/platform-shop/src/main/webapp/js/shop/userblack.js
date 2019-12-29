@@ -105,7 +105,7 @@ let vm = new Vue({
             let page = $("#jqGrid").jqGrid('getGridParam', 'page');
 			$("#jqGrid").jqGrid('setGridParam', {
                 postData: {
-                	'userShareLevel':0,
+                	'blackType':0,
                 	'name': vm.q.name,
                 	},
                 page: page
