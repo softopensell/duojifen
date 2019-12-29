@@ -356,6 +356,7 @@ public class PaymentPluginFacadeImpl  implements PaymentPluginFacade {
 		Map<String,Object> usermap=new HashMap<>();
 		List<UserEntity> userList=userService.queryList(usermap);
 		for(UserEntity userEntity:userList) {
+			if(userEntity.getBalance()==null)userEntity.setBalance(new BigDecimal(0));
 			int userId=userEntity.getUserId();
 			Map<String,Object> payTotalMap=paymentInfoService.queryStatByUserId(userId,ShopConstant.DJF_TJ_DATE);
 	    	
@@ -490,6 +491,9 @@ public class PaymentPluginFacadeImpl  implements PaymentPluginFacade {
 		    	platformMonitorStadetailEntity.setMonitorType(0);
 		    	platformMonitorStadetailService.save(platformMonitorStadetailEntity);
 		    	errorSum++;
+		    }
+		    if(userEntity.getUserPreBalance()==null) {
+		    	userEntity.setUserPreBalance(new BigDecimal(0));
 		    }
 		    
 		    int allStatBalance=userEntity.getUserPreBalance().intValue()+statBalance.intValue();
