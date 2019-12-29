@@ -39,20 +39,20 @@ $(function () {
 //			{label: '最后登录时间', name: 'lastLoginTime', index: 'last_login_time', width: 80, formatter: function (value) {
 //                return transDate(value);
 //            }},
-            {label: 'A区', name: 'invitedRightUserId', index: 'invitedRightUserId', width: 80,align : "center",formatter: function (value) {
-				if(value==null){
-					return "";
-				}else{
-					return "是";
-				}
-            }},
-            {label: 'B区', name: 'invitedUserId', index: 'invitedUserId', width: 80,align : "center",formatter: function (value) {
-				if(value==null){
-					return "";
-				}else{
-					return "是";
-				}
-            }},
+//            {label: 'A区', name: 'invitedRightUserId', index: 'invitedRightUserId', width: 80,align : "center",formatter: function (value) {
+//				if(value==null){
+//					return "";
+//				}else{
+//					return "是";
+//				}
+//            }},
+//            {label: 'B区', name: 'invitedUserId', index: 'invitedUserId', width: 80,align : "center",formatter: function (value) {
+//				if(value==null){
+//					return "";
+//				}else{
+//					return "是";
+//				}
+//            }},
 //            {label: '服务中心', name: 'fwName', index: 'fwName', width: 80,align : "center"},
             {label: '操作', align: 'center', sortable: false,align : "center",width: 200, formatter: function (value, col, row) {
             	 var operationStr='';

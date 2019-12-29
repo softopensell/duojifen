@@ -28,6 +28,8 @@ public class UserBlackEntity implements Serializable {
     private Date createTime;
     //修改时间
     private Date updateTime;
+    
+    private Integer userShareLevel;
 
     /**
      * 设置：
@@ -120,4 +122,16 @@ public class UserBlackEntity implements Serializable {
     public Date getUpdateTime() {
         return updateTime;
     }
+
+	public Integer getUserShareLevel() {
+		return userShareLevel;
+	}
+
+	public void setUserShareLevel(Integer userShareLevel) {
+		this.userShareLevel = userShareLevel;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 }

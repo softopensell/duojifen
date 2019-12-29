@@ -8,6 +8,7 @@
         <result property="userId" column="user_id"/>
         <result property="userName" column="user_name"/>
         <result property="blackType" column="black_type"/>
+        <result property="userShareLevel" column="user_share_level"/>
         <result property="statu" column="statu"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -19,6 +20,7 @@
 			`user_id`,
 			`user_name`,
 			`black_type`,
+			`user_share_level`,
 			`statu`,
 			`create_time`,
 			`update_time`
@@ -32,6 +34,7 @@
     		`user_id`,
     		`user_name`,
     		`black_type`,
+    		`user_share_level`,
     		`statu`,
     		`create_time`,
     		`update_time`
@@ -40,6 +43,12 @@
 		<if test="name != null and name.trim() != ''">
 			AND name LIKE concat('%',#{name},'%')
 		</if>
+		 <if test="userShareLevel != null">
+            and user_share_level = #{userShareLevel}
+        </if>
+         <if test="blackType != null">
+            and black_type = #{blackType}
+        </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by ${sidx} ${order}
@@ -59,6 +68,13 @@
         <if test="name != null and name.trim() != ''">
             AND name LIKE concat('%',#{name},'%')
         </if>
+         <if test="userShareLevel != null">
+            and user_share_level = #{userShareLevel}
+        </if>
+         <if test="blackType != null">
+            and black_type = #{blackType}
+        </if>
+        
 	</select>
 	 
 	<insert id="save" parameterType="com.platform.entity.UserBlackEntity" useGeneratedKeys="true" keyProperty="id">
@@ -66,6 +82,7 @@
 			`user_id`,
 			`user_name`,
 			`black_type`,
+			`user_share_level`,
 			`statu`,
 			`create_time`,
 			`update_time`)
@@ -73,6 +90,7 @@
 			#{userId},
 			#{userName},
 			#{blackType},
+			#{userShareLevel},
 			#{statu},
 			#{createTime},
 			#{updateTime})
@@ -84,6 +102,7 @@
 			<if test="userId != null">`user_id` = #{userId}, </if>
 			<if test="userName != null">`user_name` = #{userName}, </if>
 			<if test="blackType != null">`black_type` = #{blackType}, </if>
+			<if test="userShareLevel != null">`user_share_level` = #{userShareLevel}, </if>
 			<if test="statu != null">`statu` = #{statu}, </if>
 			<if test="createTime != null">`create_time` = #{createTime}, </if>
 			<if test="updateTime != null">`update_time` = #{updateTime}</if>

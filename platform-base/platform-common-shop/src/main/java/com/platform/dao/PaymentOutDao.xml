@@ -74,7 +74,7 @@
 
 <select id="queryAll" resultType="com.platform.entity.PaymentOutEntity">
 		select
-    			p.`id`,
+    		p.`id`,
     		p.`out_trade_no`,
     		p.`method`,
     		p.`payer_type`,
@@ -109,8 +109,7 @@
 			u.surplus_invest_money as surplusInvestMoney
 		from t_payment_out p
 		left join t_user u on 
-		1=1
-		and p.user_id = u.user_id
+		p.user_id = u.user_id
 		<if test="userName != null and userName.trim() != ''">
 			AND p.user_name LIKE concat('%',#{userName},'%')
 		</if>
@@ -145,7 +144,7 @@
 
 	<select id="queryList" resultType="com.platform.entity.PaymentOutEntity">
 		select
-    			`id`,
+    		`id`,
     		`out_trade_no`,
     		`method`,
     		`payer_type`,
@@ -174,8 +173,8 @@
     		`web_app`,
     		`company_sn`,
     		`create_time`,
-    		`update_time`,
-		from t_payment_out p
+    		`update_time`
+		from t_payment_out
 		where
 		1=1
 		<if test="userName != null and userName.trim() != ''">

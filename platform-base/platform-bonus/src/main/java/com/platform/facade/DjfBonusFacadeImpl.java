@@ -23,11 +23,13 @@ import com.platform.api.entity.BonusPoolJoinMemberVo;
 import com.platform.api.service.ApiBonusInvestOrderService;
 import com.platform.api.service.ApiBonusPoolJoinMemberService;
 import com.platform.cache.BonusAppCache;
+import com.platform.cache.UserBlackCacheUtil;
 import com.platform.constants.BonusConstant;
 import com.platform.constants.PluginConstant;
 import com.platform.entity.BonusPointsVo;
 import com.platform.entity.GoodsOrderEntity;
 import com.platform.entity.PlatformFwManagerEntity;
+import com.platform.entity.UserBlackEntity;
 import com.platform.entity.UserEntity;
 import com.platform.entity.UserInvestLevelEntity;
 import com.platform.mq.model.BonusTaskVo;
@@ -228,8 +230,6 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 		bonusPointsService.update(recommondBonusPoint);
 		
 		
-		
-		
 		//获取二叉树推荐人
 		BonusPointsVo nodeBonusPoint=bonusPointsService.queryByUserIdAndBloodType(curUserId, BonusConstant.BONUS_POINT_BLOODTYPE_BINARYTREE);
 		if(nodeBonusPoint==null) return R.error("不存在层级节点关系");
@@ -239,7 +239,6 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 		//获取二叉树推荐人
 		BonusPointsVo parentNodeBonusPoint=bonusPointsService.queryByUserIdAndBloodType(parentNodeUserId, BonusConstant.BONUS_POINT_BLOODTYPE_BINARYTREE);
 		if(parentNodeBonusPoint==null) return R.error("不存在父类层级节点关系");
-		
 		
 		
 		//获取推荐人 关系
@@ -765,7 +764,7 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 	 */
 	@Transactional
 	public void  bonusEveryShare() {
-		double rate=0.0005;//默认万7
+		double rate=0.0005;
 		int start=Integer.valueOf(sysConfigService.getValue(BonusConstant.BONUS_EVERY_DAY_RANDOM_MIN, "40"));
 		int end=Integer.valueOf(sysConfigService.getValue(BonusConstant.BONUS_EVERY_DAY_RANDOM_MAX, "50"));
 		int randomType=Integer.valueOf(sysConfigService.getValue(BonusConstant.BONUS_EVERY_DAY_RANDOM_TYPE, "1"));
@@ -802,22 +801,21 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 		 
 		 for(UserEntity userEntity:userInversts) {
 			 
-			 toShareBonusEveryOrder(poolDateNumber,userEntity,rate);	 
+			 if(userEntity.getSurplusInvestMoney().intValue()>0) {
+				 toShareBonusEveryOrder(poolDateNumber,userEntity,rate);	 
+			 }
 			  
 		 }
 	}
 	private void toShareBonusEveryOrder(String poolDateNumber,UserEntity userEntity,double rate) {
 		 LOG.info("----------------------该奖励分红------user-------------------userEntity:"+JsonUtil.getJsonByObj(userEntity));
 		 //客户收益
-//		BigDecimal incomeMoney=userEntity.getSurplusInvestMoney().multiply(new BigDecimal(rate));
 		BigDecimal incomeMoney=MoneyFormatUtils.getMultiply(userEntity.getSurplusInvestMoney(), rate);
-//		incomeMoney=MoneyFormatUtils.formatBigDecimal4(incomeMoney);
 		LOG.info("----------------------该奖励分红------incomeMoney:"+incomeMoney);
 		 if(incomeMoney.compareTo(new BigDecimal(0))<=0) {
 			 LOG.info("----------------------金额小于0-------------------就分啦");
 			 return ;
 		 }
-		
 		 
 		 BigDecimal surplusIncomeMoney=addFund(userEntity, incomeMoney);
 		 //增加钱包收益，总收益，增加资产总收益 减少杠杆收益
@@ -836,7 +834,6 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 		 paymentTask.setMemo("资产权益收益");
 		 paymentTask.setMoneyTypeWallet(PluginConstant.PAYMENT_MONEY_TYPE_WALLET_BONUS_JQ);
 		 paymentTask.setPaymentType(PluginConstant.PAYMENT_TYPE_IN);
-		 
 		 
 //		 LOG.info("----------------------写入支付日志---1---paymentTask:"+JsonUtil.getJsonByObj(paymentTask));
 //		 paymentInfoService.addPaymentTask(paymentTask);
@@ -996,8 +993,6 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 				 continue;
 			}
 			
-			
-			
 			//是否已经满额了
 //			String poolDateNumber="PPD_"+DateUtils.formatYYYYMMDD(new Date());
 			//投资扣除判读
@@ -1055,7 +1050,9 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 		}
 		if(teamUserIds.size()==0)return ;
 		LOG.info("----------------------------teamUserIds:"+teamUserIds);
-		Map<Integer,UserEntity> userEntities=userService.getByUserIds(teamUserIds);			
+		Map<Integer,UserEntity> userEntities=userService.getByUserIds(teamUserIds);	
+		//所有节点人
+		Map<Integer,UserEntity> toSharePointUserMap=new HashMap<Integer, UserEntity>();
 		
 		for(int i=0;i<teamUserIds.size()&&!rateQueue.isEmpty();i++) {
 			double levelRate=rateQueue.peek();//取出优先奖励比例 仅仅取出
@@ -1106,10 +1103,6 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 		  		minUserId=rightBonusPointsVo.getUserId();
 		  	}
 		  	
-//		  	if((leftBonusPointsVo.getBonusTeamInvitedPoints().add(leftBonusPointsVo.getBonusMeInvitedPoints())).compareTo((rightBonusPointsVo.getBonusTeamInvitedPoints().add(rightBonusPointsVo.getBonusMeInvitedPoints())))==0) {
-//		  		minUserId=inverstUserId;//相等业绩直接给
-//		  	}
-		  	
 		  	LOG.info("----------------------------minUserId----:"+JsonUtil.getJsonByObj(minUserId));
 		  	if(!teamUserIds.contains(minUserId)) {//判断是否是小区业务
 		  		if(minUserId!=inverstUserId) {
@@ -1130,9 +1123,7 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 		  	
 			if(addBalance.compareTo(new BigDecimal(0))>0) {
 				
-				
 				BigDecimal surplusIncomeMoney=addFund(toUserEntity, addBalance);
-				
 				LOG.info("===========小区奖励===="
 				 		+ "tempBonusPoint.getUserId()======:"+toUserEntity.getUserId()
 				 		+ "---------surplusIncomeMoney=====:"+surplusIncomeMoney);	
@@ -1152,9 +1143,116 @@ public class DjfBonusFacadeImpl  implements DjfBonusFacade {
 				 paymentTask.setMoneyTypeWallet(PluginConstant.PAYMENT_MONEY_TYPE_WALLET_BONUS_NODE_INVEST_POLT);
 				 paymentTask.setPaymentType(PluginConstant.PAYMENT_TYPE_IN);
 				 TaskPaymentProducer.addPaymentTaskVo(paymentTask); 
+				 
+				 toSharePointUserMap.put(toUserEntity.getUserId(), toUserEntity);
 			 }
 			
 				
+		}
+		
+		
+		//特殊小区名单处理
+		
+		for(int i=0;i<teamUserIds.size();i++) {
+			Integer tempUserId=teamUserIds.get(i);
+			if(UserBlackCacheUtil.getIsShareLevelUser(tempUserId)) {//存在特殊值
+				
+				if(toSharePointUserMap.containsKey(tempUserId)) {
+					return ;
+				}
+				UserBlackEntity userBlackEntity=UserBlackCacheUtil.getShareLevelUser(tempUserId);
+				if(i<=userBlackEntity.getUserShareLevel()) {
+					
+					BigDecimal addBalance=incomeMoney.multiply(new BigDecimal(defaultRate));
+					addBalance=MoneyFormatUtils.formatBigDecimal4(addBalance);
+					
+					UserEntity toUserEntity=userEntities.get(teamUserIds.get(i));
+					if(toUserEntity==null) continue;
+					
+					if(!toUserEntity.getState().equals(ShopConstant.SHOP_USER_STATU_SUCCESS)) {
+						LOG.info("----------------------------未激活 不分奖励---------"+toUserEntity.getUserId()); 
+						continue;
+					}
+					
+					//判断用户是否可以满足幸运奖条件
+					//判断是否来源小区
+					//获取节点
+					List<BonusPointsVo> bonusPointsEntities=bonusPointsService.queryByParentUserId(toUserEntity.getUserId(), BonusConstant.BONUS_POINT_BLOODTYPE_BINARYTREE);
+				  	if(bonusPointsEntities==null||bonusPointsEntities.size()<2) {
+				  		continue;
+				  	}
+				  	BonusPointsVo leftBonusPointsVo=null;
+				  	BonusPointsVo rightBonusPointsVo=null;
+				  	BonusPointsVo tempBonusPointsVo=bonusPointsEntities.get(0);
+				  	if(tempBonusPointsVo.getInvitedRightUserId()!=null&&tempBonusPointsVo.getInvitedRightUserId()>0) {
+				  		rightBonusPointsVo=bonusPointsEntities.get(0);
+				  	}
+				  	tempBonusPointsVo=bonusPointsEntities.get(1);
+				  	if(tempBonusPointsVo.getInvitedRightUserId()!=null&&tempBonusPointsVo.getInvitedRightUserId()>0) {
+				  		rightBonusPointsVo=bonusPointsEntities.get(1);
+				  	}
+				  	
+				  	tempBonusPointsVo=bonusPointsEntities.get(0);
+				  	if(tempBonusPointsVo.getInvitedUserId()!=null&&tempBonusPointsVo.getInvitedUserId()>0) {
+				  		leftBonusPointsVo=bonusPointsEntities.get(0);
+				  	}
+				  	tempBonusPointsVo=bonusPointsEntities.get(1);
+				  	if(tempBonusPointsVo.getInvitedUserId()!=null&&tempBonusPointsVo.getInvitedUserId()>0) {
+				  		leftBonusPointsVo=bonusPointsEntities.get(1);
+				  	}
+				  	
+				  	LOG.info("----------------------------leftBonusPointsVo----:"+JsonUtil.getJsonByObj(leftBonusPointsVo));
+				  	LOG.info("----------------------------rightBonusPointsVo----:"+JsonUtil.getJsonByObj(rightBonusPointsVo));
+				  	//left >right
+				  	//min userId
+				  	int minUserId=leftBonusPointsVo.getUserId();
+				  	if((leftBonusPointsVo.getBonusTeamInvitedPoints().add(leftBonusPointsVo.getBonusMeInvitedPoints())).compareTo((rightBonusPointsVo.getBonusTeamInvitedPoints().add(rightBonusPointsVo.getBonusMeInvitedPoints())))>0) {
+				  		minUserId=rightBonusPointsVo.getUserId();
+				  	}
+				  	
+				  	LOG.info("----------------------------minUserId----:"+JsonUtil.getJsonByObj(minUserId));
+				  	if(!teamUserIds.contains(minUserId)) {//判断是否是小区业务
+				  		if(minUserId!=inverstUserId) {
+				  		   //不是小区
+					  		LOG.info("===========奖励=======由于不是来源小区，所有不参与分红===");	
+					  		continue;
+				  		}
+				  	}
+				  	
+				    //判断用户是否可以满足幸运奖条件
+				  	//投资扣除判读
+					if(toUserEntity.getSurplusInvestMoney().compareTo(addBalance)<0) {
+						LOG.info("=========小区奖励==该用的投资杠杆资产不足扣除========:"+toUserEntity.getUserId()
+						+ "---------addBalance=====:"+addBalance);	
+						continue;
+					}
+				  	
+					if(addBalance.compareTo(new BigDecimal(0))>0) {
+						
+						BigDecimal surplusIncomeMoney=addFund(toUserEntity, addBalance);
+						LOG.info("===========小区奖励===="
+						 		+ "tempBonusPoint.getUserId()======:"+toUserEntity.getUserId()
+						 		+ "---------surplusIncomeMoney=====:"+surplusIncomeMoney);	
+						 rateQueue.poll();//取出优先奖励比例 并删除
+						 //增加钱包收益，总收益，增加资产总收益 减少杠杆收益
+						 userService.addUserBalanceAndTotalIncomeAndReduceInverst(toUserEntity.getUserId(), surplusIncomeMoney);
+						 //添加日收益
+						 apiBonusPoolJoinMemberService.incrBonusPoolJoinMemberMoney(poolDateNumber, toUserEntity.getUserId(), surplusIncomeMoney);
+						 //写日志
+						 PaymentTask paymentTask=new PaymentTask();
+						 paymentTask.setAmount(surplusIncomeMoney);
+						 paymentTask.setFee(0);
+						 paymentTask.setUserId(toUserEntity.getUserId());
+						 paymentTask.setPayer(toUserEntity.getUserName());
+						 paymentTask.setUserName(toUserEntity.getUserName());
+						 paymentTask.setMemo("分享社区收益,来自:"+userName);
+						 paymentTask.setMoneyTypeWallet(PluginConstant.PAYMENT_MONEY_TYPE_WALLET_BONUS_NODE_INVEST_POLT);
+						 paymentTask.setPaymentType(PluginConstant.PAYMENT_TYPE_IN);
+						 TaskPaymentProducer.addPaymentTaskVo(paymentTask); 
+					 }
+				}
+			}
+			
 		}
 		
 	}

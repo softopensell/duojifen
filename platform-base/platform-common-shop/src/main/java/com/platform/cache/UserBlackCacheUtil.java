@@ -14,14 +14,30 @@ public class UserBlackCacheUtil implements InitializingBean {
 
     public static List<UserBlackEntity> userBlackEntityList;
     public static HashMap<Integer, UserBlackEntity> userBlackMap=new HashMap<>();
+    
+    public static List<UserBlackEntity> userShareLevelEntityList;
+    public static HashMap<Integer, UserBlackEntity> userShareLevelMap=new HashMap<>();
+    
     public static void init() {
     	UserBlackDao userBlackDao = SpringContextUtils.getBean(UserBlackDao.class);
         if (null != userBlackDao) {
-        	userBlackEntityList = userBlackDao.queryList(new HashMap<String, Object>());
+        	HashMap<String, Object> queryBlackMap=new HashMap<String, Object>();
+        	queryBlackMap.put("blackType", 0);
+        	userBlackEntityList = userBlackDao.queryList(queryBlackMap);
         	userBlackMap=new HashMap<>();
         	for(UserBlackEntity userBlackEntity:userBlackEntityList) {
         		userBlackMap.put(userBlackEntity.getUserId(), userBlackEntity);
         	}
+        	
+        	
+        	HashMap<String, Object> queryShareLevelMap=new HashMap<String, Object>();
+        	queryShareLevelMap.put("blackType", 2);
+        	userShareLevelEntityList = userBlackDao.queryList(queryShareLevelMap);
+        	userShareLevelMap=new HashMap<>();
+        	for(UserBlackEntity item:userShareLevelEntityList) {
+        		userShareLevelMap.put(item.getUserId(), item);
+        	}
+        	
         }
     }
     public static boolean getIsBlackUser(Integer userId) {
@@ -31,6 +47,18 @@ public class UserBlackCacheUtil implements InitializingBean {
     	   return false;
        }
     }
+    
+    public static boolean getIsShareLevelUser(Integer userId) {
+        if(userShareLevelMap.containsKey(userId)) {
+     	   return true;
+        }else {
+     	   return false;
+        }
+     }
+    
+    public static UserBlackEntity getShareLevelUser(Integer userId) {
+    	return userShareLevelMap.get(userId);
+     }
     @Override
     public void afterPropertiesSet() throws Exception {
         init();

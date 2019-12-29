@@ -1,10 +1,11 @@
 $(function () {
     $("#jqGrid").Grid({
-        url: '../userblack/list?blackType=0',
+        url: '../userblack/list?blackType=2',
         colModel: [
 			{label: 'id', name: 'id', index: 'id', key: true, hidden: true},
 			{label: '会员ID', name: 'userId', index: 'user_id', width: 80},
 			{label: '会员名称', name: 'userName', index: 'user_name', width: 80},
+			{label: '分级', name: 'userShareLevel', index: 'user_share_level', width: 80},
 			{
                 label: '时间', name: 'createTime', index: 'create_time', width: 80, formatter: function (value) {
                     return transDate(value);
@@ -43,7 +44,7 @@ let vm = new Vue({
 			vm.userBlack = {
 					userId:'',
 					userName:'',
-					blackType:0,
+					blackType:2,
 			};
 		},
 		update: function (event) {
@@ -58,7 +59,7 @@ let vm = new Vue({
 		},
 		saveOrUpdate: function (event) {
             let url = vm.userBlack.id == null ? "../userblack/save" : "../userblack/update";
-            vm.userBlack.blackType=0
+            vm.userBlack.blackType=2
             Ajax.request({
 			    url: url,
                 params: JSON.stringify(vm.userBlack),

@@ -454,7 +454,7 @@ public class PaymentOutController extends AbstractController{
  		List<PaymentOutEntity> paymentOutList = paymentOutService.queryList(query);
         ExcelExport ee = new ExcelExport("合并提现列表_"+DateUtils.formatYYYYMMDD(new Date()));
         String[] header = new String[]{"交易单号","会员账号", "申请日期","提币地址","提币数量","手续费",
-        		"实际到账","提币状态"};
+        		"实际到账","提币状态","会员昵称","级别","剩余资产","服务中心"};
         List<Map<String, Object>> list = new ArrayList<>();
         HashMap<String,LinkedHashMap<String, Object>> dealMap=new HashMap<String, LinkedHashMap<String,Object>>();
         if (paymentOutList != null && paymentOutList.size() != 0) {
@@ -472,6 +472,8 @@ public class PaymentOutController extends AbstractController{
 	                 map.put("allamount", allamount);
 	                 map.put("free",free);
 	                 map.put("amount",amount);
+	                 map.put("nickname", paymentOutEntity.getNickname());
+                   
             	}else {
             		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
                     map.put("orderNo", paymentOutEntity.getOutTradeNo());
@@ -492,6 +494,13 @@ public class PaymentOutController extends AbstractController{
                     }else {
                     	map.put("statusName", "-");
                     }
+                    
+                    //"级别","剩余资产","服务中心"
+                    map.put("userLevelType", paymentOutEntity.getUserLevelType());
+                    map.put("surplusInvestMoney", paymentOutEntity.getSurplusInvestMoney());
+                    map.put("fwName", paymentOutEntity.getFwName());
+                    
+                    
                     dealMap.put(accountKey, map);
             	}
             }

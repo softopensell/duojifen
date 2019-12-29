@@ -10,7 +10,7 @@
 	<div v-show="showList">
         <Row :gutter="16">
             <div class="search-group">
-                <i-col span="2">
+                <i-col span="4">
                     <i-input v-model="q.userName" @on-enter="query" placeholder="账号"/>
                 </i-col>
                 <i-col span="4">
@@ -29,17 +29,17 @@
 	                </i-select>
 	
                 </i-col>
-                 <i-col span="2">
+                <!-- <i-col span="2">
                     <i-select v-model="q.aOrB" @on-change="query" filterable  placeholder="AB区">
-	                  <!--  
+	                   
 	                  <i-option v-for="status in userStatuss" :value="status.value" :key="status.value">{{status.name}}
 	                   </i-option> 
-	                   -->
+	                   
 	                  <i-option :value="0">A区</i-option> 
 	                  <i-option :value="1">B区</i-option> 
 	                </i-select>
 	
-                </i-col>
+                </i-col> -->
                 <i-button @click="query">查询</i-button>
                 <i-button @click="reloadSearch">重置</i-button>
             </div>
