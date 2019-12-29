@@ -74,14 +74,16 @@ public class UserBlackController {
     	if(userEntity!=null) {
     		userBlack.setUserId(userEntity.getUserId());
     		userBlack.setUserName(userEntity.getUserName());
-    		userBlack.setBlackType(0);
+    		userBlack.setBlackType(userBlack.getBlackType());
+    		userBlack.setUserShareLevel(userBlack.getUserShareLevel());
         	userBlack.setCreateTime(new Date());
         	userBlack.setUpdateTime(new Date());
         	userBlack.setStatu(0);
             userBlackService.save(userBlack);
-            
-            userEntity.setState(ShopConstant.SHOP_USER_STATU_OFFLINE);
-    		userService.update(userEntity);
+            if(userBlack.getBlackType()==0) {
+            	userEntity.setState(ShopConstant.SHOP_USER_STATU_OFFLINE);
+          		userService.update(userEntity);
+            }
             
             UserBlackCacheUtil.init();
     	}
@@ -98,9 +100,14 @@ public class UserBlackController {
     	if(userEntity!=null) {
     		userBlack.setUserId(userEntity.getUserId());
     		userBlack.setUserName(userEntity.getUserName());
+    		userBlack.setBlackType(userBlack.getBlackType());
+    		userBlack.setUserShareLevel(userBlack.getUserShareLevel());
+    		userBlack.setUpdateTime(new Date());
             userBlackService.update(userBlack);
-            userEntity.setState(ShopConstant.SHOP_USER_STATU_OFFLINE);
-    		userService.update(userEntity);
+            if(userBlack.getBlackType()==0) {
+            	userEntity.setState(ShopConstant.SHOP_USER_STATU_OFFLINE);
+          		userService.update(userEntity);
+            }
             
             UserBlackCacheUtil.init();
             
