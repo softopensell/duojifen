@@ -23,11 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.platform.cache.CacheUtil;
 import com.platform.cache.IdWorkCache;
 import com.platform.constants.PluginConstant;
-import com.platform.entity.GoodsOrderDetailEntity;
-import com.platform.entity.GoodsOrderEntity;
 import com.platform.entity.PaymentInfoEntity;
 import com.platform.entity.PaymentLogEntity;
 import com.platform.entity.PaymentOutEntity;
@@ -472,7 +469,7 @@ public class PaymentOutController extends AbstractController{
 	                 map.put("allamount", allamount);
 	                 map.put("free",free);
 	                 map.put("amount",amount);
-	                 map.put("nickname", paymentOutEntity.getNickname());
+	                
                    
             	}else {
             		LinkedHashMap<String, Object> map = new LinkedHashMap<>();
@@ -494,7 +491,7 @@ public class PaymentOutController extends AbstractController{
                     }else {
                     	map.put("statusName", "-");
                     }
-                    
+                    map.put("nickname", paymentOutEntity.getNickname());
                     //"级别","剩余资产","服务中心"
                     map.put("userLevelType", paymentOutEntity.getUserLevelType());
                     map.put("surplusInvestMoney", paymentOutEntity.getSurplusInvestMoney());
