@@ -77,7 +77,7 @@ public class PaymentOutController extends AbstractController{
     public R list(@RequestParam Map<String, Object> params) {
         //查询列表数据
         Query query = new Query(params);
-
+        logger.info("--------query---------"+JsonUtil.getJsonByObj(query));
         List<PaymentOutEntity> paymentOutList = paymentOutService.queryAll(query);
         for(PaymentOutEntity entity : paymentOutList) {
         	
@@ -86,9 +86,7 @@ public class PaymentOutController extends AbstractController{
 		    	PlatformFwManagerEntity fwManagerEntity=djfBonusFacade.getLastFwUserId(entity.getUserId().intValue());
 		    	if(fwManagerEntity!=null) {
 		    		entity.setFwName(fwManagerEntity.getFwName());
-//    		    		entity.setLogisticsNumber(fwManagerEntity.getFwUserName());
 		    	}
-//    		    	paymentInfoService.update(entity);
     		  }
         	
         }
