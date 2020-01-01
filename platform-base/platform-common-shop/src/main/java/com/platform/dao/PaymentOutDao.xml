@@ -110,6 +110,7 @@
 		from t_payment_out p
 		left join t_user u on 
 		p.user_id = u.user_id
+		where 1=1
 		<if test="userName != null and userName.trim() != ''">
 			AND p.user_name LIKE concat('%',#{userName},'%')
 		</if>
