@@ -58,6 +58,9 @@
                     <i-input v-model="q.goodsSn" @on-enter="query" placeholder="商品编码"/>
                 </i-col>
                 <i-col span="3">
+                    <i-input v-model="q.author" @on-enter="query" placeholder="厂家"/>
+                </i-col>
+                <i-col span="3">
                     <i-input v-model="q.categoryName" @on-enter="query" @on-click="QgoodsCategoryTree" icon="eye" readonly="readonly"
                          placeholder="商品分类"/>
                 </i-col>

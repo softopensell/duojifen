@@ -78,6 +78,10 @@
         <if test="search_key != null">
             and search_key like concat('%',#{search_key},'%')
         </if>
+         <if test="author != null">
+            and author like concat('%',#{author},'%')
+        </if>
+        
         
         <if test="sell_status != null and sell_status != ''">
             and sell_status = #{sell_status}
@@ -283,6 +287,9 @@
 		<if test="sellStatus != null and sellStatus != ''">
 			AND g.sell_status = #{sellStatus}
 		</if>
+		  <if test="author != null">
+            and g.author like concat('%',#{author},'%')
+        </if>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by ${sidx} ${order}
@@ -311,6 +318,9 @@
 		<if test="sellStatus != null and sellStatus != ''">
 			AND g.sell_status = #{sellStatus}
 		</if>
+		  <if test="author != null">
+            and g.author like concat('%',#{author},'%')
+        </if>
 	</select>
 	 
 	<insert id="save" parameterType="com.platform.entity.GoodsEntity" useGeneratedKeys="true" keyProperty="id">

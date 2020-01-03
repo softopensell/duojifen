@@ -1,6 +1,6 @@
 $(function () {
     $("#jqGrid").Grid({
-        url: '../user/list',
+        url: '../user/listxxxx',
         colModel: [
 			{label: 'userId', name: 'userId', index: 'user_id', key: true, hidden: true},
 			{label: '账号', name: 'userName', index: 'user_name', width: 80,align : "center"},
@@ -65,7 +65,7 @@ $(function () {
             	 return operationStr;
             }}],
             height:"100%",
-            rowNum:50,
+            rowNum:10,
 //			shrinkToFit: false,
 //			autoScroll: true,          //shrinkToFit: false,autoScroll: true,这两个属性产生水平滚动条   
 //	        autowidth: true,          //必须要,否则没有水平滚动条
@@ -466,6 +466,7 @@ let vm = new Vue({
 //            }
             
 			$("#jqGrid").jqGrid('setGridParam', {
+				url: '../user/list',
                 postData: {
         		    userName: vm.q.userName,
         		    mobile:vm.q.mobile,

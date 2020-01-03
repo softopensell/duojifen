@@ -9,7 +9,7 @@ $(function () {
                 return transImg(value);
             }},
             {label: '店铺', name: 'shopName', index: 'shop_name', align: 'center', width: 80},
-            {label: '作者', name: 'author', index: 'author', align: 'center', width: 80},
+            {label: '厂家', name: 'author', index: 'author', align: 'center', width: 80},
 			{label: '商品分类', name: 'categoryName', index: 'category_name', align: 'center', width: 80},
 			{label: '单价', name: 'retailPrice', index: 'retail_price', align: 'center', width: 80},
 			{label: '库存价', name: 'marketPrice', index: 'market_price', align: 'center', width: 80},
@@ -130,6 +130,7 @@ let vm = new Vue({
 			goodsSn:'',
 			categoryName:'',
 			categoryId:'',
+			author:'',
 			sellStatus:''
 		},
 		sellStatuss:[],
@@ -298,7 +299,10 @@ let vm = new Vue({
 			vm.showList = true;
             let page = $("#jqGrid").jqGrid('getGridParam', 'page');
 			$("#jqGrid").jqGrid('setGridParam', {
-                postData: {'name': vm.q.name,'goodsSn': vm.q.goodsSn,'categoryId':vm.q.categoryId,'sellStatus':vm.q.sellStatus},
+                postData: {'name': vm.q.name,
+                	author:vm.q.author,
+                	'goodsSn': vm.q.goodsSn,
+                	'categoryId':vm.q.categoryId,'sellStatus':vm.q.sellStatus},
                 page: page
             }).trigger("reloadGrid");
             vm.handleReset('formValidate');
@@ -308,6 +312,7 @@ let vm = new Vue({
         			name: '',
         			goodsSn:'',
         			categoryId:'',
+        			author:'',
         			categoryName:'',
         			sellStatus:''
         		}
