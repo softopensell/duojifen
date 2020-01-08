@@ -71,7 +71,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     	
-    	 String requestParams = JsonUtil.getJsonByObj(RequestUtil.getParameters(request));
+        String requestParams = JsonUtil.getJsonByObj(RequestUtil.getParameters(request));
     	log.info("----------AuthorizationInterceptor----------preHandle--------参数请求---------:" + requestParams);
     	String originHeader = request.getHeader("Origin");
         //支持跨域请求
@@ -129,7 +129,6 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         //查询token信息
         TokenEntity tokenEntity = tokenService.queryByToken(token);
         if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
-        	log.info("--------------------preHandle-------token失效，请重新登录--------:");
             returnJson(response,401,"token失效,请先登录!");
    	     	return false;
         }

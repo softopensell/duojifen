@@ -80,15 +80,15 @@ public class ApiBaseAction {
         obj.put("errmsg", msg);
         if (data != null)
             obj.put("data", data);
-        String jsonByObj = JsonUtil.getJsonByObj(obj);
-        logger.info("------toResponsObject----方法执行成功返回参数----------:" + jsonByObj);
+//        String jsonByObj = JsonUtil.getJsonByObj(obj);
+//        logger.info("------toResponsObject----方法执行成功返回参数----------:" + jsonByObj);
         return obj;
     }
 
     public Map<String, Object> toResponsSuccess(Object data) {
         Map<String, Object> rp = toResponsObject(0, "执行成功", data);
-        String jsonByObj = JsonUtil.getJsonByObj(rp);
-        logger.info("------toResponsSuccess----方法执行成功返回参数----------:" + jsonByObj);
+//        String jsonByObj = JsonUtil.getJsonByObj(rp);
+//        logger.info("------toResponsSuccess----方法执行成功返回参数----------:" + jsonByObj);
         return rp;
     }
 
@@ -150,8 +150,8 @@ public class ApiBaseAction {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String jsonByObj = JsonUtil.getJsonByObj(result);
-        logger.info("------getJsonRequest----所有请求参数---getJsonRequest-------:" + jsonByObj);
+//        String jsonByObj = JsonUtil.getJsonByObj(result);
+//        logger.info("------getJsonRequest----所有请求参数---getJsonRequest-------:" + jsonByObj);
         return result;
     }
 
