@@ -15,6 +15,9 @@ public class UserBlackCacheUtil implements InitializingBean {
     public static List<UserBlackEntity> userBlackEntityList;
     public static HashMap<Integer, UserBlackEntity> userBlackMap=new HashMap<>();
     
+    public static List<UserBlackEntity> userMoneyBlackEntityList;
+    public static HashMap<Integer, UserBlackEntity> userMoneyBlackMap=new HashMap<>();
+    
     public static List<UserBlackEntity> userShareLevelEntityList;
     public static HashMap<Integer, UserBlackEntity> userShareLevelMap=new HashMap<>();
     
@@ -38,6 +41,14 @@ public class UserBlackCacheUtil implements InitializingBean {
         		userShareLevelMap.put(item.getUserId(), item);
         	}
         	
+        	HashMap<String, Object> queryMoneyBlackMap=new HashMap<String, Object>();
+        	queryMoneyBlackMap.put("blackType", 100);
+        	userMoneyBlackEntityList = userBlackDao.queryList(queryMoneyBlackMap);
+        	userMoneyBlackMap=new HashMap<>();
+        	for(UserBlackEntity item:userMoneyBlackEntityList) {
+        		userMoneyBlackMap.put(item.getUserId(), item);
+        	}
+        	
         }
     }
     public static boolean getIsBlackUser(Integer userId) {
@@ -46,6 +57,13 @@ public class UserBlackCacheUtil implements InitializingBean {
        }else {
     	   return false;
        }
+    }
+    public static boolean getIsMoneyBlackUser(Integer userId) {
+    	if(userMoneyBlackMap.containsKey(userId)) {
+    		return true;
+    	}else {
+    		return false;
+    	}
     }
     
     public static boolean getIsShareLevelUser(Integer userId) {
@@ -59,6 +77,9 @@ public class UserBlackCacheUtil implements InitializingBean {
     public static UserBlackEntity getShareLevelUser(Integer userId) {
     	return userShareLevelMap.get(userId);
      }
+    public static UserBlackEntity getUserMoneyBlack(Integer userId) {
+    	return userMoneyBlackMap.get(userId);
+    }
     @Override
     public void afterPropertiesSet() throws Exception {
         init();

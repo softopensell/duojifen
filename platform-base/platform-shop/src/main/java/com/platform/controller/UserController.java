@@ -655,6 +655,17 @@ public class UserController extends AbstractController{
     
     
     
+    
+    @RequestMapping("/toModAppFws")
+    public R toModAppFws(Integer userId,String appFwsUserName,Integer appFwsUserId) {//1528 1527  1321
+    	 UserEntity toUserEntity=userService.queryObject(userId); 
+    	 toUserEntity.setAppFwsUserId(appFwsUserId);
+    	 toUserEntity.setAppFwsUserName(appFwsUserName);
+		 userService.update(toUserEntity);
+    	return R.ok();
+    }
+    
+    
     /**
      * 查看列表
      */

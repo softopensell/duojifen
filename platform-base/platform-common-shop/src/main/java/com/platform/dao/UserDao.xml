@@ -65,6 +65,11 @@
         
         <result property="googleSecret" column="google_secret"/>
         <result property="userPreBalance" column="user_pre_balance"/>
+        
+        <result property="appFwsUserName" column="app_fws_user_name"/>
+        <result property="appFwsUserId" column="app_fws_user_id"/>
+        
+        
     </resultMap>
     
     <select id="queryByUserName" resultType="com.platform.entity.UserEntity">
@@ -147,6 +152,8 @@
 			u.`google_secret`,
 			u.`blockchain_secret`,
 			u.`user_node_bonus_level`,
+			u.`app_fws_user_name`,
+			u.`app_fws_user_id`,
 			ul.user_level_name userLevelTypeName,
 			bp.bonus_team_invited_points bonusTeamInvitedPoints,
 			bp.bonus_me_invited_points bonusMeInvitedPoints
@@ -238,6 +245,8 @@
 			u.`blockchain_secret`,
 			u.`user_pre_balance`,
 			u.`user_node_bonus_level`,
+			u.`app_fws_user_name`,
+			u.`app_fws_user_id`,
 			ul.user_level_name userLevelTypeName,
 			bp.bonus_team_invited_points bonusTeamInvitedPoints,
 			bp.bonus_me_invited_points bonusMeInvitedPoints,
@@ -375,6 +384,8 @@
 			`google_secret`,
 			`blockchain_secret`,
 			`user_pre_balance`,
+			`app_fws_user_name`,
+			`app_fws_user_id`,
 			`user_node_bonus_level`
 			)
 		values(
@@ -431,6 +442,8 @@
 			#{googleSecret},
 			#{blockchainSecret},
 			#{userPreBalance},
+			#{appFwsUserName},
+			#{appFwsUserId},
 			#{userNodeBonusLevel})
 	</insert>
 	 
@@ -491,6 +504,8 @@
 			<if test="blockchainSecret != null">`blockchain_secret` = #{blockchainSecret}, </if>
 			<if test="totalInverstOrderSum != null">`total_invest_order_sum` = #{totalInverstOrderSum}, </if>
 			<if test="userPreBalance != null">`user_pre_balance` = #{userPreBalance}, </if>
+			<if test="appFwsUserName != null">`app_fws_user_name` = #{appFwsUserName}, </if>
+			<if test="appFwsUserId != null">`app_fws_user_id` = #{appFwsUserId}, </if>
 			<if test="userNodeBonusLevel != null">`user_node_bonus_level` = #{userNodeBonusLevel}</if>
 		</set>
 		where user_id = #{userId}

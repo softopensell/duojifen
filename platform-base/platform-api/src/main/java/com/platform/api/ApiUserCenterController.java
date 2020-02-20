@@ -30,7 +30,9 @@ import com.platform.api.service.ApiBonusInvestOrderService;
 import com.platform.api.service.ApiBonusPoolJoinMemberService;
 import com.platform.cache.IdWorkCache;
 import com.platform.cache.RegionCacheUtil;
+import com.platform.cache.UserBlackCacheUtil;
 import com.platform.constants.BonusConstant;
+import com.platform.constants.PlatformConstant;
 import com.platform.constants.PluginConstant;
 import com.platform.entity.BonusPointsVo;
 import com.platform.entity.PaymentInfoEntity;
@@ -624,6 +626,8 @@ public class ApiUserCenterController extends ApiBaseAction {
         user.setUserNodeBonusLevel(0);
         user.setSignupUserLevelType(0);
         user.setUserPreBalance(new BigDecimal(0));
+        user.setAppFwsUserId(0);
+        user.setAppFwsUserName("");
 //        user.setUserLevelType(userInvestLevelEntity.getUserLevelType());
 //        user.setSignupUserLevelType(userInvestLevelEntity.getUserLevelType());
 //        user.setUserNodeBonusLevel(userInvestLevelEntity.getUserLevelNodeLevel());
@@ -637,6 +641,9 @@ public class ApiUserCenterController extends ApiBaseAction {
     	if(user2==null) {
     		return this.toResponsFail("创建失败");
     	}
+    	
+    	
+    	
     	resultObj.put("userId", user2.getUserId());
     	//生成接点关系
     	logger.info("-------------创建User完成-------------"); 
@@ -925,6 +932,10 @@ public class ApiUserCenterController extends ApiBaseAction {
         resultObj.put("totalInvestMoney", user.getTotalInvestMoney());//资产总和
         resultObj.put("investIncomeMoney", user.getInvestIncomeMoney());//收益
 //        resultObj.put("totalPoint", user.getTotalPoint());//积分
+        
+       String isOpenMoneyTx= sysConfigService.getValue(PlatformConstant.PLATFORM_OPEN_MONEY_TX, "0");
+       resultObj.put("isOpenMoneyTx", isOpenMoneyTx);//是否支持提现
+       
         return toResponsSuccess(resultObj);
     }
     
@@ -1121,13 +1132,16 @@ public class ApiUserCenterController extends ApiBaseAction {
 			return toResponsFail("支付密码不能为空");
 		}
 		
-		
 //		if(StringUtils.isEmpty(receiptAccount)||receiptAccount.length()>100){
 //			return toResponsFail("提现账号为空或超100字符！");
 //		}
 //		if(StringUtils.isEmpty(receiptAccountRealName)||receiptAccountRealName.length()>50){
 //			return toResponsFail("提现账号为空或超过50字符！");
 //		}
+		
+		if( UserBlackCacheUtil.getIsMoneyBlackUser(user.getUserId())) {
+			 return toResponsFail("您暂时不能提交该申请！");
+		 }
 		
 		if(StringUtils.isNullOrEmpty(withdrawType)){
 			return toResponsFail("到账类型不能为空");
@@ -1145,7 +1159,6 @@ public class ApiUserCenterController extends ApiBaseAction {
 		if(!(toMoney/100>0&&toMoney%100==0)){
 			return toResponsFail("提取数量为100的整数倍");
 		}
-       
 		try {
 			if (!checkGoogleCode(user.getGoogleSecret(), googleVerifyCode) && googleVerifyCode!=1111) {
 			    return toResponsFail("谷歌身份验证错误");
@@ -1155,10 +1168,7 @@ public class ApiUserCenterController extends ApiBaseAction {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
 		Date toPayDate=DateUtils.addDays(new Date(), withdrawType);
-		
         //判读是否已经存在提取数量情况
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("status", PluginConstant.PAYMENT_OUT_STATU_APPLY);
@@ -1678,12 +1688,12 @@ public class ApiUserCenterController extends ApiBaseAction {
 		if(amount==null) {
 			return toResponsFail("转账数量为空！");
 		}
-		if(amount.compareTo(new BigDecimal("10"))<0){
-			return toResponsFail("转账数量为10的整数倍");
+		if(amount.compareTo(new BigDecimal("100"))<0){
+			return toResponsFail("转账数量为100的整数倍");
 		}
 		int toMoney=amount.intValue();
-		if(!(toMoney/10>0&&toMoney%10==0)){
-			return toResponsFail("转账数量为10的整数倍");
+		if(!(toMoney/100>0&&toMoney%100==0)){
+			return toResponsFail("转账数量为100的整数倍");
 		}
 		
 		try {
@@ -1700,6 +1710,9 @@ public class ApiUserCenterController extends ApiBaseAction {
 	     }
        
 		 //验证是否频繁操作
+		 if( UserBlackCacheUtil.getIsMoneyBlackUser(user.getUserId())) {
+			 return toResponsFail("您暂时不能提交该申请！");
+		 }
 		 
 		 
 		 
@@ -1830,6 +1843,194 @@ public class ApiUserCenterController extends ApiBaseAction {
 		toPaymentInfo.setPaymentDate(new Date());
 		toPaymentInfo.setStatus(TradeStatus.TRADE_SUCCESS.code);
 		toUserEntity.setBalance(toBalance.add(toUserPay));
+		paymentOutService.savePaymentOutData(null, toPaymentInfo, toUserEntity);
+		
+		return toResponsSuccess(resultObj);
+    }
+    
+    
+    
+    
+    @ApiOperation(value = "转资产")
+    @PostMapping(value = "transZc")
+    @FrequencyLimit(count=1,time=30,action="transZc",forbiddenTime=60*10)
+    @SingleLock
+    public Object transZc(@LoginUser UserVo loginUser) {
+    	JSONObject jsonParam = getJsonRequest();
+        Map<String, Object> resultObj = new HashMap<String, Object>();
+        UserEntity user = userService.queryObject(loginUser.getUserId());
+        BigDecimal amount=jsonParam.getBigDecimal("amount");//兑换数量
+		Long googleVerifyCode=jsonParam.getLong("googleVerifyCode");//短信验证码 
+		String payPassword=jsonParam.getString("payPassword");//支付密码
+		String remark=jsonParam.getString("remark");//备注
+		String toUserName=jsonParam.getString("toUserName");//支付密码
+		 
+		ApiAssert.isNull(toUserName, "转账账号不能为空");
+        ApiAssert.isNull(googleVerifyCode, "谷歌验证码不能为空");
+        ApiAssert.isNull(amount, "数量不能为空");
+        ApiAssert.isBlank(payPassword, "支付密码不能为空");
+        
+		
+		if(StringUtils.isNullOrEmpty(googleVerifyCode)){
+			return toResponsFail("验证码不能为空");
+		}
+		if(toUserName.equals(user.getUserName())){
+			return toResponsFail("不能给自己转账");
+		}
+		if(amount==null) {
+			return toResponsFail("转账数量为空！");
+		}
+		if(amount.compareTo(new BigDecimal("100"))<0){
+			return toResponsFail("转账数量为100的整数倍");
+		}
+		int toMoney=amount.intValue();
+		if(!(toMoney/100>0&&toMoney%100==0)){
+			return toResponsFail("转账数量为100的整数倍");
+		}
+		
+		try {
+			if (!checkGoogleCode(user.getGoogleSecret(), googleVerifyCode) && googleVerifyCode!=1111) {
+			    return toResponsFail("GOOGL身份验证错误");
+			}
+		} catch (ServletException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		 if(!DigestUtils.sha256Hex(payPassword).equals(user.getPayPassword())){
+	        	return toResponsFail("支付密码错误");
+	     }
+       
+		 //验证是否频繁操作
+		 if( UserBlackCacheUtil.getIsMoneyBlackUser(user.getUserId())) {
+			 return toResponsFail("您暂时不能提交该申请！");
+		 }
+		 
+		 
+		BigDecimal surplusInvestMoney = user.getSurplusInvestMoney();//可提取数量数量
+		if(surplusInvestMoney==null) {
+			surplusInvestMoney = new BigDecimal("0");
+		}
+		if(amount.compareTo(surplusInvestMoney)>0) {
+			return toResponsFail("转账数量超过提取数量余额！");
+		}
+		
+		
+		UserEntity toUserEntity=userService.queryByUserName(toUserName);
+		if(toUserEntity==null) return toResponsFail("转入账号不存在！");
+		
+		
+		//验证是跨区
+		
+		UserEntity parentNodeUser=userService.queryByUserName(toUserEntity.getSignupNodePhone());//父节点人
+        BonusPointsVo nodeUserBonuns=apiBonusPointsService.queryByUserIdAndBloodType(parentNodeUser.getUserId(), BonusConstant.BONUS_PARENT_TYPE_BINARY_TREE);
+        if(nodeUserBonuns==null)return toResponsFail("转入账号不存在！");
+        List<String> strNodeUserIds=StringUtils.splitToList(nodeUserBonuns.getInvitedParentUserIds(), BonusConstant.INVITED_MEMBER_IDS_SPLIT);
+		List<Integer>  teamNodeUserIds=new ArrayList<>();
+		
+		for(String str:strNodeUserIds) {
+			teamNodeUserIds.add(Integer.valueOf(str));
+		}
+		
+		teamNodeUserIds.add(parentNodeUser.getUserId());//包括自己
+		  
+		logger.info("--转账---teamNodeUserIds----"+JsonUtil.getJsonByObj(teamNodeUserIds));
+	   	logger.info("-----转出----"+JsonUtil.getJsonByObj(user));
+	   	logger.info("-----转人----"+JsonUtil.getJsonByObj(toUserEntity));
+	   	logger.info("-----转出--当前余额："+JsonUtil.getJsonByObj(user.getSurplusInvestMoney()));
+	   	logger.info("-----转人--当前余额："+JsonUtil.getJsonByObj(toUserEntity.getSurplusInvestMoney()));
+	   	  
+		if(!teamNodeUserIds.contains(user.getUserId())) {
+			
+			  BonusPointsVo meNodeUserBonuns=apiBonusPointsService.queryByUserIdAndBloodType(user.getUserId(), BonusConstant.BONUS_PARENT_TYPE_BINARY_TREE);
+		      if(meNodeUserBonuns==null)return toResponsFail("账号不存在！");
+			
+		        List<String> meStrNodeUserIds=StringUtils.splitToList(meNodeUserBonuns.getInvitedParentUserIds(), BonusConstant.INVITED_MEMBER_IDS_SPLIT);
+				List<Integer>  meteamNodeUserIds=new ArrayList<>();
+				for(String str:meStrNodeUserIds) {
+					meteamNodeUserIds.add(Integer.valueOf(str));
+				}
+		      if(!meteamNodeUserIds.contains(toUserEntity.getUserId())) {
+		    	  return toResponsFail("您不能向旁部门进行转账！");
+		      }
+		}
+		
+		double defaultTxRate=Double.valueOf(sysConfigService.getValue(BonusConstant.BONUS_WITHDRAW_USER_TX_RATE, "0"));
+		
+
+		BigDecimal toUserPay=MoneyFormatUtils.getMultiply(amount,new BigDecimal((1-defaultTxRate)));//到账
+		
+		BigDecimal fee=MoneyFormatUtils.getMultiply(amount,new BigDecimal(defaultTxRate));//手续费
+		
+		String outTradeNo = "TO"+DateUtils.format(new Date(),"yyMMddHHmmssss")+RandomUtil.getRandom(1000l,9999l);
+		PaymentInfoEntity paymentInfo=new PaymentInfoEntity();
+		String paymentSn = "QA"+DateUtils.format(new Date(),DateUtils.DATE_TIME_PATTERN_YYYY_MM_DD_HH_MM_SS_SSS)+RandomUtil.getRandom(1000l,9999l);
+		paymentSn=idWorkCache.getIdDayHHMMEndRadom("PT", IdWorkCache.ID_WORK_TYPE_PAY_SN, 5);
+		
+		paymentInfo.setAccount(user.getUserName());
+		paymentInfo.setAmount(amount);
+		paymentInfo.setOperatorId(user.getUserId());
+		paymentInfo.setOperatorName(user.getUserName());
+		paymentInfo.setPaymentDate(new Date());
+		paymentInfo.setPaymentPluginId(PluginConstant.PAY_METHOD_PLUGIN_TYPE_OFFLINE);
+		paymentInfo.setPaymentMethod(PluginConstant.PAY_METHOD_PLUGIN_TYPE_OFFLINE_NAME);
+		paymentInfo.setFee(fee);//手续费
+		paymentInfo.setSn(paymentSn);
+		paymentInfo.setUserId(user.getUserId().longValue());
+		paymentInfo.setPayer(user.getUserName());
+		paymentInfo.setUserName(user.getUserName());
+		paymentInfo.setOrderType(2);//
+		paymentInfo.setOrderNo(outTradeNo);
+		paymentInfo.setOrderDesc("转账:"+remark);
+		paymentInfo.setMoneyTypeWallet(PluginConstant.PAYMENT_MONEY_TYPE_WALLET_ZC_TRANS_OUT);
+		paymentInfo.setMemo("转账："+user.getUserName()+"向"+toUserName+"转出：$"+MoneyFormatUtils.formatBigDecimal4(amount)+"。");
+		paymentInfo.setCompanySn(CompanyConstant.COMPANY_SN_GJZB);
+		paymentInfo.setPaymentType(PluginConstant.PAYMENT_TYPE_OUT);
+		paymentInfo.setCreateTime(new Date());
+		paymentInfo.setUpdateTime(new Date());
+		paymentInfo.setPaymentDate(new Date());
+		paymentInfo.setStatus(TradeStatus.TRADE_SUCCESS.code);
+		
+		user.setSurplusInvestMoney(surplusInvestMoney.subtract(amount));//扣款
+		
+		paymentOutService.savePaymentOutData(null, paymentInfo, user);
+		
+		//账号添加数量
+		BigDecimal toBalance = toUserEntity.getSurplusInvestMoney();//可提取数量数量
+		if(toBalance==null) {
+			toBalance = new BigDecimal("0");
+		}
+		
+		String toUutTradeNo =paymentSn;// "TO"+DateUtils.format(new Date(),"yyMMddHHmmssss")+RandomUtil.getRandom(1000l,9999l);
+		PaymentInfoEntity toPaymentInfo=new PaymentInfoEntity();
+		String toPaymentSn = "QA"+DateUtils.format(new Date(),DateUtils.DATE_TIME_PATTERN_YYYY_MM_DD_HH_MM_SS_SSS)+RandomUtil.getRandom(1000l,9999l);
+		toPaymentSn=idWorkCache.getIdDayHHMMEndRadom("PT", IdWorkCache.ID_WORK_TYPE_PAY_SN, 5);
+		
+		toPaymentInfo.setAccount(toUserEntity.getUserName());
+		toPaymentInfo.setAmount(toUserPay);//到账
+		toPaymentInfo.setOperatorId(toUserEntity.getUserId());
+		toPaymentInfo.setOperatorName(toUserEntity.getUserName());
+		toPaymentInfo.setPaymentDate(new Date());
+		toPaymentInfo.setPaymentPluginId(PluginConstant.PAY_METHOD_PLUGIN_TYPE_OFFLINE);
+		toPaymentInfo.setPaymentMethod(PluginConstant.PAY_METHOD_PLUGIN_TYPE_OFFLINE_NAME);
+		toPaymentInfo.setFee(new BigDecimal("0"));
+		toPaymentInfo.setSn(toPaymentSn);
+		toPaymentInfo.setUserId(toUserEntity.getUserId().longValue());
+		toPaymentInfo.setPayer(toUserEntity.getUserName());
+		toPaymentInfo.setUserName(toUserEntity.getUserName());
+		toPaymentInfo.setOrderType(2);//
+		toPaymentInfo.setOrderNo(toUutTradeNo);
+		toPaymentInfo.setOrderDesc("转账:"+remark);
+		toPaymentInfo.setMoneyTypeWallet(PluginConstant.PAYMENT_MONEY_TYPE_WALLET_ZC_TRANS_IN);
+		toPaymentInfo.setMemo("转账："+toUserName+"收到"+user.getUserName()+"转入：$"+MoneyFormatUtils.formatBigDecimal4(toUserPay)+"。");
+		toPaymentInfo.setCompanySn(CompanyConstant.COMPANY_SN_GJZB);
+		toPaymentInfo.setPaymentType(PluginConstant.PAYMENT_TYPE_IN);
+		toPaymentInfo.setCreateTime(new Date());
+		toPaymentInfo.setUpdateTime(new Date());
+		toPaymentInfo.setPaymentDate(new Date());
+		toPaymentInfo.setStatus(TradeStatus.TRADE_SUCCESS.code);
+		toUserEntity.setSurplusInvestMoney(toBalance.add(toUserPay));
+		
 		paymentOutService.savePaymentOutData(null, toPaymentInfo, toUserEntity);
 		
 		return toResponsSuccess(resultObj);

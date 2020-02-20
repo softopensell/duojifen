@@ -27,6 +27,7 @@ public class PluginConstant {
 	
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_NO=0;//钱包的状态默认 0 订单类型，消费类
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_OUT_CONSUMED=1;//余额支付
+	
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_DONATE_OUT=2;//转增 出
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_DONATE_IN=3;//转增 入
 	
@@ -53,6 +54,8 @@ public class PluginConstant {
 	
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_OUT_JF=62;//兑换积分
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_OUT_ZC=620;//消费 资产
+	public static final Integer PAYMENT_MONEY_TYPE_WALLET_ZC_TRANS_IN=621;//消费 资产
+	public static final Integer PAYMENT_MONEY_TYPE_WALLET_ZC_TRANS_OUT=622;//消费 资产
 
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_IN_BACK_JF=63;//退款积分
 	public static final Integer PAYMENT_MONEY_TYPE_WALLET_IN_BACK_MONEY=64;//退款

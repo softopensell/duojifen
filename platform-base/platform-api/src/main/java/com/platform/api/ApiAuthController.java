@@ -2,6 +2,7 @@ package com.platform.api;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
+import com.platform.cache.RedisCacheUtil;
 import com.platform.cache.UserBlackCacheUtil;
 import com.platform.entity.SysUserEntity;
 import com.platform.entity.TokenEntity;
@@ -25,7 +27,9 @@ import com.platform.service.SysUserService;
 import com.platform.service.TokenService;
 import com.platform.service.UserService;
 import com.platform.util.ApiBaseAction;
+import com.platform.util.HttpClientUtil;
 import com.platform.util.wechat.WeixinCacheService;
+import com.platform.utils.CharUtil;
 import com.platform.utils.auth.GoogleAuthenticator;
 import com.platform.validator.ApiAssert;
 
@@ -52,8 +56,6 @@ public class ApiAuthController extends ApiBaseAction {
     @Autowired
     private SysUserService sysUserService;
     
-    @Autowired
-	private WeixinCacheService weixinCache;
     private boolean  checkGoogleCode(String secret,long code) throws ServletException, IOException {
 		 long t = System.currentTimeMillis(); 
 		 GoogleAuthenticator ga = new GoogleAuthenticator(); 
@@ -61,6 +63,30 @@ public class ApiAuthController extends ApiBaseAction {
 		 boolean r = ga.check_code(secret, code, t); 
        return r;
    }
+    
+    /**
+     * 获取用户信息
+     */
+    @ApiOperation(value = "fwsappp信息")
+    @PostMapping("toLoginAppFws")
+    public Object toLoginAppFws(@LoginUser UserVo loginUser) {
+    	 Map<String, Object> resultObj = new HashMap<String, Object>();
+    	 UserEntity userInfo = userService.queryObject(loginUser.getUserId());
+    	 String djfToken=CharUtil.getRandomString(32);
+    	 RedisCacheUtil.put(djfToken, 10*1000, userInfo.getUserId());
+    	 String apiFwsUrl="http://fws.huacaijie.cn/api/auth/addAppToken";
+    	 
+    	 Map<String, String> params=new HashMap<>();
+    	 params.put("djfToken", djfToken);
+    	 params.put("userId", userInfo.getAppFwsUserId().toString());
+    	 HttpClientUtil.doGet(apiFwsUrl, params);
+    	 
+    	 resultObj.put("djfToken", djfToken);
+    	 
+    	 return toResponsSuccess(resultObj);
+    }
+    
+    
     /**
      * 登录
      */
@@ -100,6 +126,9 @@ public class ApiAuthController extends ApiBaseAction {
        }
         //生成token
         Map<String, Object> map = tokenService.createToken(userEntity.getUserId());
+        userEntity.setAppFwsUserId(0);
+        userEntity.setPassword(null);
+        userEntity.setPayPassword(null);
         map.put("userInfo", userEntity);
         return toResponsSuccess(map);
     }
@@ -115,11 +144,12 @@ public class ApiAuthController extends ApiBaseAction {
 		String userName = jsonParams.getString("userName");
 		
 		SysUserEntity sysUserEntity=sysUserService.queryByUserName(userName);
-//		if(sysUserEntity.getUserId().equals(1111)) {
-//		}
 		UserEntity userEntity=new UserEntity();
         //生成token
         Map<String, Object> map = tokenService.createToken(userEntity.getUserId());
+        userEntity.setAppFwsUserId(0);
+        userEntity.setPassword(null);
+        userEntity.setPayPassword(null);
         map.put("userInfo", userEntity);
         return toResponsSuccess(map);
     }

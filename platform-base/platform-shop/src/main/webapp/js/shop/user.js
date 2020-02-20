@@ -20,6 +20,9 @@ $(function () {
             {label: '上次奖励时间', name: 'shareInvestLastTime', index: 'share_invest_last_time', width: 120,align : "center", formatter: function (value) {
                 return transDate(value);
             }},
+            {label: '服务商', name: 'appFwsUserName', index: 'app_fws_user_name', width: 80,align : "center"},
+            {label: '服务商ID', name: 'appFwsUserId', index: 'app_fws_user_id', width: 80,align : "center"},
+            
             {
                 label: '状态', name: 'state', index: 'state', width: 80,align : "center", formatter: function (value,col,row) {
                 	if(value==0){
@@ -62,6 +65,7 @@ $(function () {
             	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showUserStat(\'' + row.userId +'\')">查看对账</button><br/>';
             	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showModNode(\'' + row.userId +'\')">更新节点</button>';
             	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.showUserCenter(\'' + row.userId +'\')">服务中心</button><br/>';
+            	 operationStr=operationStr+'<button class="btn btn-outline btn-danger btn-sm" onclick="vm.toShowModFwsTap(\'' + row.userId +'\')">服务商</button><br/>';
             	 return operationStr;
             }}],
             height:"100%",
@@ -290,6 +294,10 @@ let vm = new Vue({
         movePayUserId:'',
         moveToUserId:'',
         
+        
+        modUserFwsModal:false,
+        appFwsUserName:'',
+        appFwsUserId:'',
 	},
 	methods: {
 		query: function () {
@@ -1077,6 +1085,32 @@ let vm = new Vue({
 	               }
 			});
        },
+       
+       
+       toShowModFwsTap:function(userId){
+    	   vm.modUserFwsModal=true;
+    	   vm.curUserId=userId;
+       },
+       toModFwsTap:function(){
+    	    var userId=vm.curUserId;
+    	    var appFwsUserName=vm.appFwsUserName;
+	       	var appFwsUserId=vm.appFwsUserId;
+	       	Ajax.request({
+				    url: '../user/toModAppFws',
+	               params: {
+	               	userId:userId,
+	               	appFwsUserName:appFwsUserName,
+	               	appFwsUserId:appFwsUserId,
+	                },
+	               successCallback: function (r) {
+	               	vm.modUserFwsModal=false;
+	                   alert('操作成功', function (index) {
+	                       vm.reload();
+	                   });
+	               }
+			});
+       },
+       
        exportUsers:function(){
           var postData={
        		   userName: vm.q.userName,

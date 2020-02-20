@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.platform.annotation.IgnoreAuth;
 import com.platform.annotation.LoginUser;
 import com.platform.annotation.SingleLock;
+import com.platform.cache.RedisCacheUtil;
 import com.platform.codegen.utils.QRCodeUtil;
 import com.platform.constants.BonusConstant;
 import com.platform.entity.APIMemberQr;
@@ -131,6 +132,8 @@ public class ApiUserController extends ApiBaseAction {
     	user.setTotalInverstOrderSum(0);
     	user.setTotalIncome(new BigDecimal(0));
     	user.setUserPreBalance(new BigDecimal(0));
+    	user.setAppFwsUserId(0);
+    	user.setAppFwsUserName("");
     	//判断推荐人 金额扣除 是否满足
     	UserInvestLevelEntity userInvestLevelEntity= userInvestLevelService.queryByLevelType(user.getSignupUserLevelType());
         if(userInvestLevelEntity==null) return R.error("内购金额不存在");
@@ -154,16 +157,19 @@ public class ApiUserController extends ApiBaseAction {
     	JSONObject jsonParams = getJsonRequest();
         String mobile = jsonParams.getString("mobile");
         ApiAssert.isBlank(mobile, "手机号不能为空");
-        UserEntity user = userService.queryByMobile(mobile);
-        if(user==null) {
-        	user = userService.queryByUserName(mobile);
-        	if(user==null) {
+        UserEntity userInfo = userService.queryByMobile(mobile);
+        if(userInfo==null) {
+        	userInfo = userService.queryByUserName(mobile);
+        	if(userInfo==null) {
         		return toResponsFail("用户不存在");
         	}
          }
+        userInfo.setAppFwsUserId(0);
+	   	 userInfo.setPassword(null);
+	   	 userInfo.setPayPassword(null);
         Map<String, Object> resultObj = new HashMap<>();
-        resultObj.put("user", user);
-        List<BonusPointsVo>  bonusPointsVos= apiBonusPointsService.queryByParentUserId(user.getUserId(), BonusConstant.BONUS_POINT_BLOODTYPE_BINARYTREE);
+        resultObj.put("user", userInfo);
+        List<BonusPointsVo>  bonusPointsVos= apiBonusPointsService.queryByParentUserId(userInfo.getUserId(), BonusConstant.BONUS_POINT_BLOODTYPE_BINARYTREE);
         resultObj.put("bonusPointsVos", bonusPointsVos);
         
         return toResponsSuccess(resultObj);
@@ -175,13 +181,18 @@ public class ApiUserController extends ApiBaseAction {
     	JSONObject jsonParams = getJsonRequest();
     	String userName = jsonParams.getString("userName");
     	ApiAssert.isBlank(userName, "账号不能为空");
-    	UserEntity user = userService.queryByUserName(userName);
-    	if(user==null) {
+    	UserEntity userInfo = userService.queryByUserName(userName);
+    	if(userInfo==null) {
     			return toResponsFail("用户不存在");
     	}
+    	
+    	 userInfo.setAppFwsUserId(0);
+    	 userInfo.setPassword(null);
+    	 userInfo.setPayPassword(null);
+    	 
     	Map<String, Object> resultObj = new HashMap<>();
-    	resultObj.put("user", user);
-    	List<BonusPointsVo>  bonusPointsVos= apiBonusPointsService.queryByParentUserId(user.getUserId(), BonusConstant.BONUS_POINT_BLOODTYPE_BINARYTREE);
+    	resultObj.put("user", userInfo);
+    	List<BonusPointsVo>  bonusPointsVos= apiBonusPointsService.queryByParentUserId(userInfo.getUserId(), BonusConstant.BONUS_POINT_BLOODTYPE_BINARYTREE);
     	resultObj.put("bonusPointsVos", bonusPointsVos);
     	
     	return toResponsSuccess(resultObj);
@@ -573,6 +584,9 @@ public class ApiUserController extends ApiBaseAction {
     }
     
     
+    
+  
+    
     /**
      * 获取用户信息
      */
@@ -581,6 +595,9 @@ public class ApiUserController extends ApiBaseAction {
     public Object queryUserInfo(@LoginUser UserVo loginUser) {
     	 Map<String, Object> resultObj = new HashMap<String, Object>();
     	 UserEntity userInfo = userService.queryObject(loginUser.getUserId());
+    	 userInfo.setAppFwsUserId(0);
+    	 userInfo.setPassword(null);
+    	 userInfo.setPayPassword(null);
         resultObj.put("userInfo", userInfo);
         return toResponsSuccess(resultObj);
     }
@@ -589,6 +606,9 @@ public class ApiUserController extends ApiBaseAction {
     public Object queryUserAddress(@LoginUser UserVo loginUser) {
     	Map<String, Object> resultObj = new HashMap<String, Object>();
     	UserEntity userInfo = userService.queryObject(loginUser.getUserId());
+    	 userInfo.setAppFwsUserId(0);
+    	 userInfo.setPassword(null);
+    	 userInfo.setPayPassword(null);
     	resultObj.put("userInfo", userInfo);
     	return toResponsSuccess(resultObj);
     }

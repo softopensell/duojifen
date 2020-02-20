@@ -153,10 +153,8 @@ public class UserEntity implements Serializable {
 	
     private BigDecimal userPreBalance;
     
-//    //属于A区
-//    private String aArea;
-//    //属于B区
-//    private String bArea;
+    private String appFwsUserName;
+    private Integer appFwsUserId;
     //父类的右节点
     private Integer invitedRightUserId;
     //邀请人ID 默认 left 节点
@@ -925,6 +923,22 @@ public class UserEntity implements Serializable {
 
 	public void setUserPreBalance(BigDecimal userPreBalance) {
 		this.userPreBalance = userPreBalance;
+	}
+
+	public String getAppFwsUserName() {
+		return appFwsUserName;
+	}
+
+	public void setAppFwsUserName(String appFwsUserName) {
+		this.appFwsUserName = appFwsUserName;
+	}
+
+	public Integer getAppFwsUserId() {
+		return appFwsUserId;
+	}
+
+	public void setAppFwsUserId(Integer appFwsUserId) {
+		this.appFwsUserId = appFwsUserId;
 	}
     
     

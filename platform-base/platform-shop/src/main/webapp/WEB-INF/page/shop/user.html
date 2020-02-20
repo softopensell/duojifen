@@ -461,6 +461,29 @@
     </Modal>
     
     
+    
+    <Modal
+        title="添加服务商账号"
+        v-model="modUserFwsModal"
+        @on-ok="toModFwsTap"
+        >
+       <i-form :label-width="100">
+	        <Row>
+	        	<i-col span="12">
+	        	   <Form-item label="账号名称">
+	        	   <i-input type="text" v-model="appFwsUserName"  placeholder="账号名称"/>
+	        	   </Form-item>
+	        	</i-col>
+	        	<i-col span="12">
+	        	   <Form-item label="账号ID">
+	        	   <i-input type="text" v-model="appFwsUserId"  placeholder="账号ID"/>
+	        	   </Form-item>
+	        	</i-col>
+	        </Row>
+	        
+        </i-form>
+    </Modal>
+    
 </div>
 
 <!-- 选择部门 -->

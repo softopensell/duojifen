@@ -91,6 +91,8 @@ public class UserServiceImpl implements UserService {
     	user.setTotalIncome(new BigDecimal(0));
     	user.setShareInvestLastTime(new Date());
     	user.setUserPreBalance(new BigDecimal(0));
+    	user.setAppFwsUserId(0);
+    	user.setAppFwsUserName("");
     	
         return userDao.save(user);
     }
