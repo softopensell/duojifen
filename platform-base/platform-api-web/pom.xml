@@ -10,7 +10,7 @@
      <packaging>war</packaging>
     <description>API独立接口模块</description>
     <properties>
-        <quartz-version>2.2.3</quartz-version>
+        <quartz-version>2.3.2</quartz-version>
     </properties>
     <dependencies>
         <dependency>
